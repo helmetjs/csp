@@ -1,0 +1,38 @@
+{
+  "name": "helmet-crossdomain",
+  "author": "Adam Baldwin <baldwin@andyet.net> (http://andyet.net/team/baldwin)",
+  "contributors": [
+    "Evan Hahn <me@evanhahn.com> (http://evanhahn.com)"
+  ],
+  "description": "Content Security Policy middleware.",
+  "version": "0.1.0",
+  "keywords": [
+    "helmet",
+    "security",
+    "express",
+    "connect",
+    "content",
+    "security",
+    "policy",
+    "csp",
+    "xss"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/helmetjs/csp.git"
+  },
+  "bugs": "https://github.com/helmetjs/csp/issues",
+  "scripts": {
+    "test": "mocha"
+  },
+  "dependencies": {
+    "camelize": "^1.0.0",
+    "platform": "^1.2.0",
+    "underscore": "^1.6.0"
+  },
+  "devDependencies": {
+    "connect": "^2.25.7",
+    "mocha": "^1.21.4",
+    "supertest": "^0.13.0"
+  }
+}
