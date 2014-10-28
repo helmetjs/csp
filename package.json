@@ -1,5 +1,5 @@
 {
-  "name": "helmet-crossdomain",
+  "name": "helmet-csp",
   "author": "Adam Baldwin <baldwin@andyet.net> (http://andyet.net/team/baldwin)",
   "contributors": [
     "Evan Hahn <me@evanhahn.com> (http://evanhahn.com)"
