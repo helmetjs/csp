@@ -26,13 +26,13 @@
     "test": "mocha"
   },
   "dependencies": {
-    "camelize": "^1.0.0",
-    "platform": "^1.2.0",
-    "underscore": "^1.6.0"
+    "camelize": "1.0.0",
+    "platform": "1.2.0",
+    "underscore": "1.6.0"
   },
   "devDependencies": {
-    "connect": "^2.25.7",
-    "mocha": "^1.21.4",
-    "supertest": "^0.13.0"
+    "connect": "^3.3.1",
+    "mocha": "^2.0.1",
+    "supertest": "^0.14.0"
   }
 }
