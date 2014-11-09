@@ -37,7 +37,7 @@ module.exports = function csp(options) {
   var safari5 = options.safari5 || false;
 
   DIRECTIVES.forEach(function (directive) {
-    // normalize camelCase to spinal-case
+    // Normalize camelCase to spinal-case
     var cameledKey = camelize(directive);
     var cameledValue = options[cameledKey];
     if (cameledValue && (cameledKey !== directive)) {
@@ -52,31 +52,24 @@ module.exports = function csp(options) {
       return;
     }
 
-    // expand space separated source list
-    var shouldWrapInArray = (_(value).isString()) && (
-      (directive !== 'sandbox') ||
-      ((directive === 'sandbox') && (value !== true))
-    );
-    if (shouldWrapInArray) {
-      options[directive] = value.split(/\s/g);
+    // Normalize to array
+    if (!Array.isArray(value)) {
+      if (directive === 'sandbox' && value === true) {
+        options[directive] = [];
+      } else if (_.isString(value)) {
+        options[directive] = value.split(/\s/g);
+      } else {
+        throw new Error('Invalid directive: ' + directive + ' ' + value);
+      }
+      value = options[directive];
     }
-  });
 
-  // check quoted source
-  _.each(options, function (value) {
-    if (Array.isArray(value)) {
-      MUST_BE_QUOTED.forEach(function (must) {
-        if (value.indexOf(must) !== -1) {
-          throw new Error(value + ' must be quoted');
-        }
-      });
-    } else {
-      MUST_BE_QUOTED.forEach(function (must) {
-        if (value === must) {
-          throw new Error(value + ' must be quoted');
-        }
-      });
-    }
+    // Check quoted source
+    MUST_BE_QUOTED.forEach(function (must) {
+      if (value.indexOf(must) !== -1) {
+        throw new Error(value + ' must be quoted');
+      }
+    });
   });
 
   if (reportOnly && !options['report-uri']) {
@@ -94,8 +87,9 @@ module.exports = function csp(options) {
 
     DIRECTIVES.forEach(function (directive) {
       var value = options[directive];
-      if ((value !== null) && (value !== undefined)) {
-        policy[directive] = value;
+      if (value) {
+        // Clone the array so we don't later mutate `options` by mistake
+        policy[directive] = value.slice();
       }
     });
 
@@ -121,13 +115,8 @@ module.exports = function csp(options) {
 
           policy['default-src'] = policy['default-src'] || ['*'];
 
-          Object.keys(options).forEach(function (key) {
-            var value = options[key];
-            if (Array.isArray(value)) {
-              // Clone the array so we don't later mutate `options` by mistake
-              value = value.slice();
-            }
-
+          Object.keys(policy).forEach(function (key) {
+            var value = policy[key];
             if (key === 'connect-src') {
               policy['xhr-src'] = value;
             } else if (key === 'default-src') {
@@ -140,21 +129,19 @@ module.exports = function csp(options) {
               policy[key] = value;
             }
 
-            if (Array.isArray(policy[key])) {
-              var index;
-              if ((index = policy[key].indexOf("'unsafe-inline'")) !== -1) {
-                if (key === 'script-src') {
-                  policy[key][index] = "'inline-script'";
-                } else {
-                  policy[key].splice(index, 1);
-                }
+            var index;
+            if ((index = policy[key].indexOf("'unsafe-inline'")) !== -1) {
+              if (key === 'script-src') {
+                policy[key][index] = "'inline-script'";
+              } else {
+                policy[key].splice(index, 1);
               }
-              if ((index = policy[key].indexOf("'unsafe-eval'")) !== -1) {
-                if (key === 'script-src') {
-                  policy[key][index] = "'eval-script'";
-                } else {
-                  policy[key].splice(index, 1);
-                }
+            }
+            if ((index = policy[key].indexOf("'unsafe-eval'")) !== -1) {
+              if (key === 'script-src') {
+                policy[key][index] = "'eval-script'";
+              } else {
+                policy[key].splice(index, 1);
               }
             }
           });
@@ -194,13 +181,7 @@ module.exports = function csp(options) {
     }
 
     var policyString = _.map(policy, function (value, key) {
-      if ((key === 'sandbox') && (value === true)) {
-        return 'sandbox';
-      } else if (Array.isArray(value)) {
-        return key + ' ' + value.join(' ');
-      } else {
-        return key + ' ' + value;
-      }
+      return [key].concat(value).join(' ');
     }).join(';');
 
     if (setAllHeaders || unknownBrowser) {
