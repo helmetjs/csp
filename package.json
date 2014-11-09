@@ -5,7 +5,7 @@
     "Evan Hahn <me@evanhahn.com> (http://evanhahn.com)"
   ],
   "description": "Content Security Policy middleware.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "keywords": [
     "helmet",
     "security",
