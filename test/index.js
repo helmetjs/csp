@@ -172,6 +172,9 @@ describe('csp middleware', function () {
     assert.throws(function() {
       csp({ 'default-src': 'self' });
     }, Error);
+    assert.throws(function() {
+      csp({ 'default-src': 'self unsafe-inline' });
+    }, Error);
   });
 
   it('throws an error reportOnly is true and there is no report-uri', function () {

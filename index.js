@@ -37,6 +37,7 @@ module.exports = function csp(options) {
   var safari5 = options.safari5 || false;
 
   DIRECTIVES.forEach(function (directive) {
+    // normalize camelCase to spinal-case
     var cameledKey = camelize(directive);
     var cameledValue = options[cameledKey];
     if (cameledValue && (cameledKey !== directive)) {
@@ -45,8 +46,23 @@ module.exports = function csp(options) {
       }
       options[directive] = cameledValue;
     }
+
+    var value = options[directive];
+    if (!value) {
+      return;
+    }
+
+    // expand space separated source list
+    var shouldWrapInArray = (_(value).isString()) && (
+      (directive !== 'sandbox') ||
+      ((directive === 'sandbox') && (value !== true))
+    );
+    if (shouldWrapInArray) {
+      options[directive] = value.split(/\s/g);
+    }
   });
 
+  // check quoted source
   _.each(options, function (value) {
     if (Array.isArray(value)) {
       MUST_BE_QUOTED.forEach(function (must) {
@@ -80,14 +96,6 @@ module.exports = function csp(options) {
       var value = options[directive];
       if ((value !== null) && (value !== undefined)) {
         policy[directive] = value;
-      }
-
-      var shouldWrapInArray = (_(value).isString()) && (
-        (directive !== 'sandbox') ||
-        ((directive === 'sandbox') && (value !== true))
-      );
-      if (shouldWrapInArray) {
-        policy[directive] = value.split(/\s/g);
       }
     });
 
