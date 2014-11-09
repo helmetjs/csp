@@ -74,6 +74,7 @@ module.exports = function csp(options) {
 
     var browser = platform.parse(req.headers['user-agent']);
     var version = parseFloat(browser.version);
+    var unknownBrowser = false;
 
     DIRECTIVES.forEach(function (directive) {
 
@@ -194,7 +195,7 @@ module.exports = function csp(options) {
       break;
 
       default:
-        setAllHeaders = true;
+        unknownBrowser = true;
 
     }
 
@@ -208,7 +209,7 @@ module.exports = function csp(options) {
       }
     }).join(';');
 
-    if (setAllHeaders) {
+    if (setAllHeaders || unknownBrowser) {
       headers = ALL_HEADERS;
     }
 
