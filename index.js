@@ -77,7 +77,6 @@ module.exports = function csp(options) {
     var unknownBrowser = false;
 
     DIRECTIVES.forEach(function (directive) {
-
       var value = options[directive];
       if ((value !== null) && (value !== undefined)) {
         policy[directive] = value;
@@ -90,11 +89,9 @@ module.exports = function csp(options) {
       if (shouldWrapInArray) {
         policy[directive] = value.split(/\s/g);
       }
-
     });
 
     switch (browser.name) {
-
       case 'IE':
         if (version >= 10) {
           headers.push('X-Content-Security-Policy');
@@ -109,19 +106,14 @@ module.exports = function csp(options) {
         break;
 
       case 'Firefox':
-
         if (version >= 23) {
-
           headers.push('Content-Security-Policy');
-
         } else if ((version >= 4) && (version < 23)) {
-
           headers.push('X-Content-Security-Policy');
 
           policy['default-src'] = policy['default-src'] || ['*'];
 
           Object.keys(options).forEach(function (key) {
-
             var value = options[key];
             if (Array.isArray(value)) {
               // Clone the array so we don't later mutate `options` by mistake
@@ -141,7 +133,6 @@ module.exports = function csp(options) {
             }
 
             if (Array.isArray(policy[key])) {
-
               var index;
               if ((index = policy[key].indexOf("'unsafe-inline'")) !== -1) {
                 if (key === 'script-src') {
@@ -157,13 +148,9 @@ module.exports = function csp(options) {
                   policy[key].splice(index, 1);
                 }
               }
-
             }
-
           });
-
         }
-
         break;
 
       case 'Chrome':
@@ -196,7 +183,6 @@ module.exports = function csp(options) {
 
       default:
         unknownBrowser = true;
-
     }
 
     var policyString = _.map(policy, function (value, key) {
@@ -222,9 +208,6 @@ module.exports = function csp(options) {
         res.setHeader(headerName, policyString);
       });
     }
-
     next();
-
   };
-
 };
