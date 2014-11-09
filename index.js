@@ -97,102 +97,102 @@ module.exports = function csp(options) {
 
       case 'IE':
         if (version >= 10) {
-        headers.push('X-Content-Security-Policy');
-        if (!setAllHeaders) {
-          if (policy.sandbox) {
-            policy = { sandbox: policy.sandbox };
-          } else {
-            policy = {};
+          headers.push('X-Content-Security-Policy');
+          if (!setAllHeaders) {
+            if (policy.sandbox) {
+              policy = { sandbox: policy.sandbox };
+            } else {
+              policy = {};
+            }
           }
         }
-      }
-      break;
+        break;
 
       case 'Firefox':
 
         if (version >= 23) {
 
-        headers.push('Content-Security-Policy');
+          headers.push('Content-Security-Policy');
 
-      } else if ((version >= 4) && (version < 23)) {
+        } else if ((version >= 4) && (version < 23)) {
 
-        headers.push('X-Content-Security-Policy');
+          headers.push('X-Content-Security-Policy');
 
-        policy['default-src'] = policy['default-src'] || ['*'];
+          policy['default-src'] = policy['default-src'] || ['*'];
 
-        Object.keys(options).forEach(function (key) {
+          Object.keys(options).forEach(function (key) {
 
-          var value = options[key];
-          if (Array.isArray(value)) {
-            // Clone the array so we don't later mutate `options` by mistake
-            value = value.slice();
-          }
-
-          if (key === 'connect-src') {
-            policy['xhr-src'] = value;
-          } else if (key === 'default-src') {
-            if (version < 5) {
-              policy.allow = value;
-            } else {
-              policy['default-src'] = value;
+            var value = options[key];
+            if (Array.isArray(value)) {
+              // Clone the array so we don't later mutate `options` by mistake
+              value = value.slice();
             }
-          } else if (key !== 'sandbox') {
-            policy[key] = value;
-          }
 
-          if (Array.isArray(policy[key])) {
-
-            var index;
-            if ((index = policy[key].indexOf("'unsafe-inline'")) !== -1) {
-              if (key === 'script-src') {
-                policy[key][index] = "'inline-script'";
+            if (key === 'connect-src') {
+              policy['xhr-src'] = value;
+            } else if (key === 'default-src') {
+              if (version < 5) {
+                policy.allow = value;
               } else {
-                policy[key].splice(index, 1);
+                policy['default-src'] = value;
               }
-            }
-            if ((index = policy[key].indexOf("'unsafe-eval'")) !== -1) {
-              if (key === 'script-src') {
-                policy[key][index] = "'eval-script'";
-              } else {
-                policy[key].splice(index, 1);
-              }
+            } else if (key !== 'sandbox') {
+              policy[key] = value;
             }
 
-          }
+            if (Array.isArray(policy[key])) {
 
-        });
+              var index;
+              if ((index = policy[key].indexOf("'unsafe-inline'")) !== -1) {
+                if (key === 'script-src') {
+                  policy[key][index] = "'inline-script'";
+                } else {
+                  policy[key].splice(index, 1);
+                }
+              }
+              if ((index = policy[key].indexOf("'unsafe-eval'")) !== -1) {
+                if (key === 'script-src') {
+                  policy[key][index] = "'eval-script'";
+                } else {
+                  policy[key].splice(index, 1);
+                }
+              }
 
-      }
+            }
 
-      break;
+          });
+
+        }
+
+        break;
 
       case 'Chrome':
         if ((version >= 14) && (version < 25)) {
-        headers.push('X-WebKit-CSP');
-      } else if (version >= 25) {
-        headers.push('Content-Security-Policy');
-      }
-      break;
+          headers.push('X-WebKit-CSP');
+        } else if (version >= 25) {
+          headers.push('Content-Security-Policy');
+        }
+        break;
 
       case 'Safari':
         if (version >= 7) {
-        headers.push('Content-Security-Policy');
-      } else if ((version >= 6) || ((version >= 5.1) && safari5)) {
-        headers.push('X-WebKit-CSP');
-      }
-      break;
+          headers.push('Content-Security-Policy');
+        } else if ((version >= 6) || ((version >= 5.1) && safari5)) {
+          headers.push('X-WebKit-CSP');
+        }
+        break;
 
       case 'Opera':
         if (version >= 15) {
-        headers.push('Content-Security-Policy');
-      }
-      break;
+          headers.push('Content-Security-Policy');
+        }
+        break;
 
       case 'Chrome Mobile':
         if (version >= 14) {
-        headers.push('Content-Security-Policy');
-      }
-      break;
+          headers.push('Content-Security-Policy');
+        }
+        break;
 
       default:
         unknownBrowser = true;
