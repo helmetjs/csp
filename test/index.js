@@ -127,7 +127,19 @@ describe('csp middleware', function () {
     .expect('X-Content-Security-Policy', /default-src 'self' domain.com/)
     .expect('Content-Security-Policy', /default-src 'self' domain.com/)
     .expect('X-WebKit-CSP', /default-src 'self' domain.com/)
-    .end(done);
+    .end(function(err) {
+      if (err) {
+        return done(err);
+      }
+      // unknown browser doesn't affect the next request
+      request(app).get('/').set('User-Agent', AGENTS['Chrome 27'].string)
+      .expect('Content-Security-Policy', /default-src 'self' domain.com/)
+      .expect(function(res) {
+        assert(!res.get('X-Content-Security-Policy'));
+        assert(!res.get('X-WebKit-CSP'));
+      })
+      .end(done);
+    });
   });
 
   it('sets the report-only headers', function (done) {
