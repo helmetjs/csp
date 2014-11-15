@@ -31,8 +31,8 @@
     "platform": "1.2.0"
   },
   "devDependencies": {
-    "connect": "^3.3.1",
+    "connect": "^3.3.3",
     "mocha": "^2.0.1",
-    "supertest": "^0.14.0"
+    "supertest": "^0.15.0"
   }
 }
