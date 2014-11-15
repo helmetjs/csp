@@ -1,4 +1,4 @@
-var _ = require("underscore");
+var _ = require("lodash");
 var camelize = require("camelize");
 var platform = require("platform");
 

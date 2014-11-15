@@ -1,6 +1,6 @@
 var csp = require('..');
 
-var _ = require('underscore');
+var _ = require('lodash');
 var connect = require('connect');
 var request = require('supertest');
 var assert = require('assert');

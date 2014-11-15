@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "camelize": "1.0.0",
-    "platform": "1.2.0",
-    "underscore": "1.6.0"
+    "lodash": "2.4.1",
+    "platform": "1.2.0"
   },
   "devDependencies": {
     "connect": "^3.3.1",
