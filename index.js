@@ -37,6 +37,7 @@ module.exports = function csp(options) {
   var safari5 = options.safari5 || false;
 
   DIRECTIVES.forEach(function (directive) {
+    // Normalize camelCase to spinal-case
     var cameledKey = camelize(directive);
     var cameledValue = options[cameledKey];
     if (cameledValue && (cameledKey !== directive)) {
@@ -45,22 +46,30 @@ module.exports = function csp(options) {
       }
       options[directive] = cameledValue;
     }
-  });
 
-  _.each(options, function (value) {
-    if (Array.isArray(value)) {
-      MUST_BE_QUOTED.forEach(function (must) {
-        if (value.indexOf(must) !== -1) {
-          throw new Error(value + ' must be quoted');
-        }
-      });
-    } else {
-      MUST_BE_QUOTED.forEach(function (must) {
-        if (value === must) {
-          throw new Error(value + ' must be quoted');
-        }
-      });
+    var value = options[directive];
+    if (!value) {
+      return;
     }
+
+    // Normalize to array
+    if (!Array.isArray(value)) {
+      if (directive === 'sandbox' && value === true) {
+        options[directive] = [];
+      } else if (_.isString(value)) {
+        options[directive] = value.split(/\s/g);
+      } else {
+        throw new Error('Invalid directive: ' + directive + ' ' + value);
+      }
+      value = options[directive];
+    }
+
+    // Check quoted source
+    MUST_BE_QUOTED.forEach(function (must) {
+      if (value.indexOf(must) !== -1) {
+        throw new Error(value + ' must be quoted');
+      }
+    });
   });
 
   if (reportOnly && !options['report-uri']) {
@@ -77,70 +86,48 @@ module.exports = function csp(options) {
     var unknownBrowser = false;
 
     DIRECTIVES.forEach(function (directive) {
-
       var value = options[directive];
-      if ((value !== null) && (value !== undefined)) {
-        policy[directive] = value;
+      if (value) {
+        // Clone the array so we don't later mutate `options` by mistake
+        policy[directive] = value.slice();
       }
-
-      var shouldWrapInArray = (_(value).isString()) && (
-        (directive !== 'sandbox') ||
-        ((directive === 'sandbox') && (value !== true))
-      );
-      if (shouldWrapInArray) {
-        policy[directive] = value.split(/\s/g);
-      }
-
     });
 
     switch (browser.name) {
-
       case 'IE':
         if (version >= 10) {
-        headers.push('X-Content-Security-Policy');
-        if (!setAllHeaders) {
-          if (policy.sandbox) {
-            policy = { sandbox: policy.sandbox };
-          } else {
-            policy = {};
+          headers.push('X-Content-Security-Policy');
+          if (!setAllHeaders) {
+            if (policy.sandbox) {
+              policy = { sandbox: policy.sandbox };
+            } else {
+              policy = {};
+            }
           }
         }
-      }
-      break;
+        break;
 
       case 'Firefox':
-
         if (version >= 23) {
+          headers.push('Content-Security-Policy');
+        } else if ((version >= 4) && (version < 23)) {
+          headers.push('X-Content-Security-Policy');
 
-        headers.push('Content-Security-Policy');
+          policy['default-src'] = policy['default-src'] || ['*'];
 
-      } else if ((version >= 4) && (version < 23)) {
-
-        headers.push('X-Content-Security-Policy');
-
-        policy['default-src'] = policy['default-src'] || ['*'];
-
-        Object.keys(options).forEach(function (key) {
-
-          var value = options[key];
-          if (Array.isArray(value)) {
-            // Clone the array so we don't later mutate `options` by mistake
-            value = value.slice();
-          }
-
-          if (key === 'connect-src') {
-            policy['xhr-src'] = value;
-          } else if (key === 'default-src') {
-            if (version < 5) {
-              policy.allow = value;
-            } else {
-              policy['default-src'] = value;
+          Object.keys(policy).forEach(function (key) {
+            var value = policy[key];
+            if (key === 'connect-src') {
+              policy['xhr-src'] = value;
+            } else if (key === 'default-src') {
+              if (version < 5) {
+                policy.allow = value;
+              } else {
+                policy['default-src'] = value;
+              }
+            } else if (key !== 'sandbox') {
+              policy[key] = value;
             }
-          } else if (key !== 'sandbox') {
-            policy[key] = value;
-          }
-
-          if (Array.isArray(policy[key])) {
 
             var index;
             if ((index = policy[key].indexOf("'unsafe-inline'")) !== -1) {
@@ -157,56 +144,44 @@ module.exports = function csp(options) {
                 policy[key].splice(index, 1);
               }
             }
-
-          }
-
-        });
-
-      }
-
-      break;
+          });
+        }
+        break;
 
       case 'Chrome':
         if ((version >= 14) && (version < 25)) {
-        headers.push('X-WebKit-CSP');
-      } else if (version >= 25) {
-        headers.push('Content-Security-Policy');
-      }
-      break;
+          headers.push('X-WebKit-CSP');
+        } else if (version >= 25) {
+          headers.push('Content-Security-Policy');
+        }
+        break;
 
       case 'Safari':
         if (version >= 7) {
-        headers.push('Content-Security-Policy');
-      } else if ((version >= 6) || ((version >= 5.1) && safari5)) {
-        headers.push('X-WebKit-CSP');
-      }
-      break;
+          headers.push('Content-Security-Policy');
+        } else if ((version >= 6) || ((version >= 5.1) && safari5)) {
+          headers.push('X-WebKit-CSP');
+        }
+        break;
 
       case 'Opera':
         if (version >= 15) {
-        headers.push('Content-Security-Policy');
-      }
-      break;
+          headers.push('Content-Security-Policy');
+        }
+        break;
 
       case 'Chrome Mobile':
         if (version >= 14) {
-        headers.push('Content-Security-Policy');
-      }
-      break;
+          headers.push('Content-Security-Policy');
+        }
+        break;
 
       default:
         unknownBrowser = true;
-
     }
 
     var policyString = _.map(policy, function (value, key) {
-      if ((key === 'sandbox') && (value === true)) {
-        return 'sandbox';
-      } else if (Array.isArray(value)) {
-        return key + ' ' + value.join(' ');
-      } else {
-        return key + ' ' + value;
-      }
+      return [key].concat(value).join(' ');
     }).join(';');
 
     if (setAllHeaders || unknownBrowser) {
@@ -222,9 +197,6 @@ module.exports = function csp(options) {
         res.setHeader(headerName, policyString);
       });
     }
-
     next();
-
   };
-
 };
