@@ -21,6 +21,7 @@ describe("csp middleware", function () {
     "object-src": ["object.com"],
     "media-src": ["media.com"],
     "frame-src": ["frame.com"],
+    "frame-ancestors": ["frameancestor.com"],
     "sandbox": ["allow-forms", "allow-scripts"],
     "report-uri": "/report-violation"
   };
@@ -35,6 +36,7 @@ describe("csp middleware", function () {
     objectSrc: ["object.com"],
     mediaSrc: ["media.com"],
     frameSrc: ["frame.com"],
+    frameAncestors: ["frameancestor.com"],
     sandbox: ["allow-forms", "allow-scripts"],
     reportUri: "/report-violation"
   };
@@ -201,6 +203,7 @@ describe("csp middleware", function () {
       .expect(header, /object-src object.com/)
       .expect(header, /media-src media.com/)
       .expect(header, /frame-src frame.com/)
+      .expect(header, /frame-ancestors frameancestor.com/)
       .expect(header, /sandbox allow-forms allow-scripts/)
       .expect(header, /report-uri \/report-violation/)
       .end(done);
@@ -218,6 +221,7 @@ describe("csp middleware", function () {
       .expect(header, /object-src object.com/)
       .expect(header, /media-src media.com/)
       .expect(header, /frame-src frame.com/)
+      .expect(header, /frame-ancestors frameancestor.com/)
       .expect(header, /sandbox allow-forms allow-scripts/)
       .expect(header, /report-uri \/report-violation/)
       .end(done);
@@ -240,6 +244,7 @@ describe("csp middleware", function () {
     .expect(header, /object-src object.com/)
     .expect(header, /media-src media.com/)
     .expect(header, /frame-src frame.com/)
+    .expect(header, /frame-ancestors frameancestor.com/)
     .expect(header, /sandbox allow-forms allow-scripts/)
     .expect(header, /report-uri \/report-violation/)
     .end(done);

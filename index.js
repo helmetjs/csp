@@ -15,6 +15,7 @@ var DIRECTIVES = [
   "img-src",
   "media-src",
   "frame-src",
+  "frame-ancestors",
   "font-src",
   "connect-src",
   "style-src",
@@ -153,6 +154,12 @@ module.exports = function csp(options) {
           headers.push("X-WebKit-CSP");
         } else if (version >= 25) {
           headers.push("Content-Security-Policy");
+        }
+
+        // older versions of Chrome don't support frame-ancestors,
+        // and will crash the tab if we send the header
+        if (version <= 40 && policy['frame-ancestors']) {
+          delete policy['frame-ancestors'];
         }
         break;
 
