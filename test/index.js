@@ -21,6 +21,7 @@ describe("csp middleware", function () {
     "object-src": ["object.com"],
     "media-src": ["media.com"],
     "frame-src": ["frame.com"],
+    "frame-ancestors": ["frameancestor.com"],
     "sandbox": ["allow-forms", "allow-scripts"],
     "report-uri": "/report-violation"
   };
@@ -35,6 +36,7 @@ describe("csp middleware", function () {
     objectSrc: ["object.com"],
     mediaSrc: ["media.com"],
     frameSrc: ["frame.com"],
+    frameAncestors: ["frameancestor.com"],
     sandbox: ["allow-forms", "allow-scripts"],
     reportUri: "/report-violation"
   };
@@ -50,10 +52,16 @@ describe("csp middleware", function () {
     },
     "Chrome 24": {
       string: "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17",
-      header: "X-WebKit-CSP"
+      header: "X-WebKit-CSP",
+      noFrameAncestors: true
     },
     "Chrome 27": {
       string: "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
+      header: "Content-Security-Policy",
+      noFrameAncestors: true
+    },
+    "Chrome 41": {
+      string: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2252.2 Safari/537.36",
       header: "Content-Security-Policy"
     },
     "Opera 15": {
@@ -192,7 +200,7 @@ describe("csp middleware", function () {
     it("sets the header properly for " + name + " given dashed names", function (done) {
       var app = use(POLICY);
       var header = agent.header;
-      request(app).get("/").set("User-Agent", agent.string)
+      var req = request(app).get("/").set("User-Agent", agent.string)
       .expect(header, /default-src 'self' default.com/)
       .expect(header, /script-src scripts.com/)
       .expect(header, /img-src img.com/)
@@ -202,14 +210,18 @@ describe("csp middleware", function () {
       .expect(header, /media-src media.com/)
       .expect(header, /frame-src frame.com/)
       .expect(header, /sandbox allow-forms allow-scripts/)
-      .expect(header, /report-uri \/report-violation/)
-      .end(done);
+      .expect(header, /report-uri \/report-violation/);
+
+      if (!agent.noFrameAncestors) {
+          req.expect(header, /frame-ancestors frameancestor.com/)
+      }
+      req.end(done);
     });
 
     it("sets the header properly for " + name + " given camelCased names", function (done) {
       var app = use(CAMELCASE_POLICY);
       var header = agent.header;
-      request(app).get("/").set("User-Agent", agent.string)
+      var req = request(app).get("/").set("User-Agent", agent.string)
       .expect(header, /default-src 'self' default.com/)
       .expect(header, /script-src scripts.com/)
       .expect(header, /img-src img.com/)
@@ -219,8 +231,12 @@ describe("csp middleware", function () {
       .expect(header, /media-src media.com/)
       .expect(header, /frame-src frame.com/)
       .expect(header, /sandbox allow-forms allow-scripts/)
-      .expect(header, /report-uri \/report-violation/)
-      .end(done);
+      .expect(header, /report-uri \/report-violation/);
+
+      if (!agent.noFrameAncestors) {
+          req.expect(header, /frame-ancestors frameancestor.com/)
+      }
+      req.end(done);
     });
 
   });
@@ -240,6 +256,7 @@ describe("csp middleware", function () {
     .expect(header, /object-src object.com/)
     .expect(header, /media-src media.com/)
     .expect(header, /frame-src frame.com/)
+    .expect(header, /frame-ancestors frameancestor.com/)
     .expect(header, /sandbox allow-forms allow-scripts/)
     .expect(header, /report-uri \/report-violation/)
     .end(done);
