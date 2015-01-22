@@ -266,9 +266,9 @@ describe("csp middleware", function () {
       request(app).get("/").set("User-Agent", AGENTS[browser].string)
       .end(function(err, res) {
         if (err) { return done(err); }
-        assert(res.header["x-webkit-csp"] === undefined);
-        assert(res.header["content-security-policy"] === undefined);
-        assert(res.header["x-content-security-policy"] === undefined);
+        assert.equal(res.header["x-webkit-csp"], undefined);
+        assert.equal(res.header["content-security-policy"], undefined);
+        assert.equal(res.header["x-content-security-policy"], undefined);
         done();
       });
     });
@@ -292,9 +292,9 @@ describe("csp middleware", function () {
     request(app).get("/").set("User-Agent", AGENTS["Android 4.4.3"].string)
     .end(function(err, res) {
       if (err) { return done(err); }
-      assert(res.header["x-webkit-csp"] === undefined);
-      assert(res.header["content-security-policy"] === undefined);
-      assert(res.header["x-content-security-policy"] === undefined);
+      assert.equal(res.header["x-webkit-csp"], undefined);
+      assert.equal(res.header["content-security-policy"], undefined);
+      assert.equal(res.header["x-content-security-policy"], undefined);
       done();
     });
   });
@@ -322,7 +322,7 @@ describe("csp middleware", function () {
         if (err) {
           return done(err);
         }
-        assert(res.header[ua.header.toLowerCase()] === undefined);
+        assert.equal(res.header[ua.header.toLowerCase()], undefined);
         done();
       });
     });
