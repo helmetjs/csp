@@ -93,6 +93,14 @@ describe("csp middleware", function () {
       string: "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
       header: "X-Content-Security-Policy",
       special: true
+    },
+    "Android 4.1.2": {
+      string: "Mozilla/5.0 (Linux; U; Android 4.1.2; fr-fr; GT-P5110 Build/JZO54K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30",
+      special: true
+    },
+    "Android 4.4.3": {
+      string: "Mozilla/5.0 (Linux; Android 4.4.3; HTC_One Build/KTU84L) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/33.0.0.0 Mobile Safari/537.36",
+      header: "Content-Security-Policy"
     }
   };
 
@@ -244,7 +252,8 @@ describe("csp middleware", function () {
   [
     "Safari 5.1",
     "Internet Explorer 8",
-    "Internet Explorer 9"
+    "Internet Explorer 9",
+    "Android 4.1.2"
   ].forEach(function (browser) {
 
     it("doesn't set the property for " + browser + " by default", function (done) {
@@ -268,6 +277,21 @@ describe("csp middleware", function () {
     });
     request(app).get("/").set("User-Agent", AGENTS["Safari 5.1"].string)
     .expect("X-WebKit-CSP", "default-src a.com", done);
+  });
+
+  it("lets you disable Android", function (done) {
+    var app = use({
+      disableAndroid: true,
+      "default-src": "a.com"
+    });
+    request(app).get("/").set("User-Agent", AGENTS["Android 4.4.3"].string)
+    .end(function(err, res) {
+      if (err) { return done(err); }
+      assert(res.header["x-webkit-csp"] === undefined);
+      assert(res.header["content-security-policy"] === undefined);
+      assert(res.header["x-content-security-policy"] === undefined);
+      done();
+    });
   });
 
   [10, 11].forEach(function (version) {
