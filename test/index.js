@@ -128,9 +128,7 @@ describe("csp middleware", function () {
     .expect("Content-Security-Policy", /default-src 'self' domain.com/)
     .expect("X-WebKit-CSP", /default-src 'self' domain.com/)
     .end(function(err) {
-      if (err) {
-        return done(err);
-      }
+      if (err) { return done(err); }
       // unknown browser doesn't affect the next request
       request(app).get("/").set("User-Agent", AGENTS["Chrome 27"].string)
       .expect("Content-Security-Policy", /default-src 'self' domain.com/)
@@ -185,9 +183,7 @@ describe("csp middleware", function () {
 
   _.each(AGENTS, function(agent, name) {
 
-    if (agent.special) {
-      return;
-    }
+    if (agent.special) { return; }
 
     it("sets the header properly for " + name + " given dashed names", function (done) {
       var app = use(POLICY);
@@ -255,9 +251,7 @@ describe("csp middleware", function () {
       var app = use(POLICY);
       request(app).get("/").set("User-Agent", AGENTS[browser].string)
       .end(function(err, res) {
-        if (err) {
-          return done(err);
-        }
+        if (err) { return done(err); }
         assert(res.header["x-webkit-csp"] === undefined);
         assert(res.header["content-security-policy"] === undefined);
         assert(res.header["x-content-security-policy"] === undefined);
