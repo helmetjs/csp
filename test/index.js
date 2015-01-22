@@ -94,6 +94,11 @@ describe("csp middleware", function () {
       header: "X-Content-Security-Policy",
       special: true
     },
+    "iOS Chrome 40": {
+      string: "Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) CriOS/40.0.2214.69 Mobile/12B440 Safari/600.1.4 (000920)",
+      header: "Content-Security-Policy",
+      special: true
+    },
     "Android 4.1.2": {
       string: "Mozilla/5.0 (Linux; U; Android 4.1.2; fr-fr; GT-P5110 Build/JZO54K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30",
       special: true
@@ -322,6 +327,30 @@ describe("csp middleware", function () {
       });
     });
 
+  });
+
+  it("appends connect-src 'self' in iOS Chrome when connect-src is already defined", function (done) {
+    var app = use(POLICY);
+    var iosChrome = AGENTS["iOS Chrome 40"];
+    request(app).get("/").set("User-Agent", iosChrome.string)
+    .expect(iosChrome.header, /connect-src (?:'self' connect.com)|(?:connect.com 'self')/)
+    .end(done);
+  });
+
+  it("adds connect-src 'self' in iOS Chrome when connect-src is undefined", function (done) {
+    var app = use({ styleSrc: ["'self'"] });
+    var iosChrome = AGENTS["iOS Chrome 40"];
+    request(app).get("/").set("User-Agent", iosChrome.string)
+    .expect(iosChrome.header, /connect-src 'self'/)
+    .end(done);
+  });
+
+  it("does nothing in iOS Chrome if connect-src 'self' is defined", function (done) {
+    var app = use({ connectSrc: ["'self'"] });
+    var iosChrome = AGENTS["iOS Chrome 40"];
+    request(app).get("/").set("User-Agent", iosChrome.string)
+    .expect(iosChrome.header, /connect-src 'self'/)
+    .end(done);
   });
 
   it("doesn't splice the original array", function (done) {
