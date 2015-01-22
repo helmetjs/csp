@@ -19,10 +19,15 @@ module.exports = function csp(options) {
     var browserHandler = browserHandlers[browser.name] || browserHandlers.default;
 
     var headerData = browserHandler(browser, directives, options);
-    var policyString = makePolicyString(headerData.directives);
 
     if (options.setAllHeaders) {
       headerData.headers = config.allHeaders;
+    }
+    headerData.directives = headerData.directives || directives;
+
+    var policyString;
+    if (headerData.headers.length) {
+      policyString = makePolicyString(headerData.directives);
     }
 
     headerData.headers.forEach(function(header) {
