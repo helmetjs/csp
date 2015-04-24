@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Compatibility Test Page</title>
+        <link rel="stylesheet" type="text/css" href="style-src/style.css">
+        <link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/helmetjs/csp/master/test/fixtures/directive-compatibility/test-page/style-src/blocked-style.css">
+        <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="font-src/fonts.css">
+        <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+        <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+        <script src="script-src/script.js"></script>
+        <script src="https://raw.githubusercontent.com/helmetjs/csp/master/test/fixtures/directive-compatibility/test-page/script-src/blocked-script.js"></script>
+    </head>
+    <body>
+
+
+        <!--
+
+            IF YOU CHANGE THIS FILE RESTART THE SERVER.
+
+            For more info on the templating see https://github.com/analog-nico/serve-spa
+
+        -->
+
+        <% var browser = require('platform').parse(req.headers["user-agent"]); %>
+
+        <h1>User Agent: <%= req.headers["user-agent"] %></h1>
+        <h2>Identified as: <%= String(browser) + ' &mdash; (' + browser.name + ')' %></h2>
+
+
+        <table border="1">
+            <tr>
+                <th>Directive</th>
+                <th>Test</th>
+                <th>Content</th>
+                <th>Expected</th>
+                <th>Result</th>
+            </tr>
+            <tr>
+                <td>connect-src</td>
+                <td>XHR</td>
+                <td>
+                    <div id="connect-src-xhr"></div>
+                    <script>
+                        $.ajax({
+                            url: '/hello',
+                            success: function (res) {
+                                $('#connect-src-xhr').text(res);
+                                $('#connect-src-xhr-result').text('OK');
+                            },
+                            error: function () {
+                                $('#connect-src-xhr').text('FAILED');
+                                $('#connect-src-xhr-result').text('FAILED');
+                            }
+                        })
+                    </script>
+                </td>
+                <td>hello</td>
+                <td>
+                    <div id="connect-src-xhr-result">
+                        Pending
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>connect-src</td>
+                <td>Blocked XHR</td>
+                <td>
+                    <div id="connect-src-blocked-xhr"></div>
+                </td>
+                <td>xhr not executed</td>
+                <td>
+                    <div id="connect-src-blocked-xhr-result">
+                        Pending
+                    </div>
+                    <script>
+                        $.ajax({
+                            url: 'http://echo.jsontest.com/should/not_show_up',
+                            success: function (res) {
+                                $('#connect-src-blocked-xhr').text(JSON.stringify(res));
+                                $('#connect-src-blocked-xhr-result').text('FAILED');
+                            },
+                            error: function () {
+                                $('#connect-src-blocked-xhr').text('xhr not executed');
+                                $('#connect-src-blocked-xhr-result').text('OK');
+                            }
+                        })
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <td>font-src</td>
+                <td>@font-face</td>
+                <td id="font-src-font-face">hand-written</td>
+                <td><img src="font-src/font-face-expected.png" alt="hand-written"/></td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>font-src</td>
+                <td>Blocked @font-face</td>
+                <td id="font-src-blocked-font-face" style="font-family: sans-serif;">sans-serif</td>
+                <td style="font-family: sans-serif;">sans-serif</td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>frame-src</td>
+                <td>&lt;iframe&gt;</td>
+                <td>
+                    <iframe src="frame-src/index.html" frameborder="0"></iframe>
+                </td>
+                <td>
+                    <h1>IFrame laoded</h1>
+                </td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>frame-src</td>
+                <td>Blocked &lt;iframe&gt;</td>
+                <td>
+                    <iframe src="http://wikipedia.com" frameborder="0"></iframe>
+                </td>
+                <td>
+                    <i>NOT Wikipedia - just white</i>
+                </td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>img-src</td>
+                <td>PNG File</td>
+                <td><img src="img-src/green.png" alt=""/></td>
+                <td style="background-color: green;"></td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>img-src</td>
+                <td>Blocked PNG File</td>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Angla_tuulikud_Saaremaal.jpg/320px-Angla_tuulikud_Saaremaal.jpg" alt="Windmills"/></td>
+                <td><i>Alt Text "Windmills" - image must be missing</i></td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>media-src</td>
+                <td>&lt;video&gt;</td>
+                <td>
+                    <!--<video width="320" height="240" controls>-->
+                        <!--<source src="http://commons.wikimedia.org/wiki/File:Derk_Thijs_wint_nationale_titel_windsurfing_Weeknummer_75-36_-_Open_Beelden_-_56019.ogv" type="video/ogv">-->
+                        <!--Your browser does not support the video tag.-->
+                    <!--</video>-->
+                </td>
+                <td></td>
+                <td>TODO</td>
+            </tr>
+            <tr>
+                <td>media-src</td>
+                <td>Blocked &lt;video&gt;</td>
+                <td></td>
+                <td></td>
+                <td>TODO</td>
+            </tr>
+            <tr>
+                <td>object-src</td>
+                <td>&lt;embed&gt;</td>
+                <td></td>
+                <td></td>
+                <td>TODO</td>
+            </tr>
+            <tr>
+                <td>object-src</td>
+                <td>Blocked &lt;embed&gt;</td>
+                <td></td>
+                <td></td>
+                <td>TODO</td>
+            </tr>
+            <tr>
+                <td>script-src</td>
+                <td>JS File</td>
+                <td>
+                    <div id="script-src-js-file"></div>
+                </td>
+                <td>script executed</td>
+                <td>
+                    <div id="script-src-js-file-result">
+                        Pending
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>script-src</td>
+                <td>'unsafe-inline'</td>
+                <td>
+                    <div id="script-src-unsafe-inline"></div>
+                </td>
+                <td>script executed</td>
+                <td>
+                    <div id="script-src-unsafe-inline-result">
+                        Pending
+                    </div>
+                    <script>
+                        $('#script-src-unsafe-inline').text('script executed');
+                        $('#script-src-unsafe-inline-result').text('OK');
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <td>script-src</td>
+                <td>'unsafe-eval'</td>
+                <td>
+                    <div id="script-src-unsafe-eval"></div>
+                </td>
+                <td>script executed</td>
+                <td>
+                    <div id="script-src-unsafe-eval-result">
+                        Pending
+                    </div>
+                    <script>
+                        eval("$('#script-src-unsafe-eval').text('script executed'); $('#script-src-unsafe-eval-result').text('OK');");
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <td>script-src</td>
+                <td>Blocked JS File</td>
+                <td>
+                    <div id="script-src-blocked-js-file"></div>
+                </td>
+                <td>script not executed</td>
+                <td>
+                    <div id="script-src-blocked-js-file-result">Pending</div>
+                    <script>
+                        $(function () {
+                            if ($('#script-src-blocked-js-file').text() !== 'script executed') {
+                                $('#script-src-blocked-js-file').text('script not executed');
+                                $('#script-src-blocked-js-file-result').text('OK');
+                            }
+                        });
+                    </script>
+                </td>
+            </tr>
+            <tr>
+                <td>style-src</td>
+                <td>CSS File</td>
+                <td id="style-src-css-file" style="background-color: red;">
+                    <!-- style-src/style.css referenced in header -->
+                </td>
+                <td style="background-color: green;"></td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>style-src</td>
+                <td>'unsafe-inline'</td>
+                <td id="style-src-unsafe-inline" style="background-color: red;">
+                    <style>
+                        #style-src-unsafe-inline {
+                            background-color: green !important;
+                        }
+                    </style>
+                </td>
+                <td style="background-color: green;"></td>
+                <td>MANUAL</td>
+            </tr>
+            <tr>
+                <td>style-src</td>
+                <td>Blocked CSS File</td>
+                <td id="style-src-blocked-css-file" style="background-color: green;">
+                    <!-- style-src/blocked-style.css referenced in header -->
+                </td>
+                <td style="background-color: green;"></td>
+                <td>MANUAL</td>
+            </tr>
+        </table>
+    </body>
+</html>
