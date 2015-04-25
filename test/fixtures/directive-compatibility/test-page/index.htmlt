@@ -25,10 +25,13 @@
 
         <% var browser = require('platform').parse(req.headers["user-agent"]); %>
 
-        <h1>User Agent: <%= req.headers["user-agent"] %></h1>
-        <h2>Identified as: <%= String(browser) + ' &mdash; (' + browser.name + ')' %></h2>
+        <b>User Agent:</b> <%= req.headers["user-agent"] %><br/>
+        <b>Identified as:</b> name "<%= browser.name %>", version <%= parseFloat(browser.version) %>, os.family "<%= browser.os.family %>", os.version <%= parseFloat(browser.os.version) %><br/>
+        <b>Content-Security-Policy:</b> <%= res.getHeader('Content-Security-Policy') %><br/>
+        <b>X-Content-Security-Policy:</b> <%= res.getHeader('X-Content-Security-Policy') %><br/>
+        <b>X-WebKit-CSP:</b> <%= res.getHeader('X-WebKit-CSP') %><br/>
 
-
+        &nbsp;
         <table border="1">
             <tr>
                 <th>Directive</th>
@@ -107,7 +110,7 @@
                 <td>frame-src</td>
                 <td>&lt;iframe&gt;</td>
                 <td>
-                    <iframe src="frame-src/index.html" frameborder="0"></iframe>
+                    <iframe src="frame-src/index.html" frameborder="0" width="240" height="80"></iframe>
                 </td>
                 <td>
                     <h1>IFrame laoded</h1>
@@ -118,7 +121,7 @@
                 <td>frame-src</td>
                 <td>Blocked &lt;iframe&gt;</td>
                 <td>
-                    <iframe src="http://wikipedia.com" frameborder="0"></iframe>
+                    <iframe src="http://wikipedia.com" frameborder="0" width="240" height="80"></iframe>
                 </td>
                 <td>
                     <i>NOT Wikipedia - just white</i>
@@ -128,50 +131,50 @@
             <tr>
                 <td>img-src</td>
                 <td>PNG File</td>
-                <td><img src="img-src/green.png" alt=""/></td>
+                <td><img src="img-src/green.png" alt="" style="width: 240px; height: 80px;"/></td>
                 <td style="background-color: green;"></td>
                 <td>MANUAL</td>
             </tr>
             <tr>
                 <td>img-src</td>
                 <td>Blocked PNG File</td>
-                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Angla_tuulikud_Saaremaal.jpg/320px-Angla_tuulikud_Saaremaal.jpg" alt="Windmills"/></td>
+                <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Angla_tuulikud_Saaremaal.jpg/320px-Angla_tuulikud_Saaremaal.jpg" alt="Windmills" style="width: 240px; height: 80px;"/></td>
                 <td><i>Alt Text "Windmills" - image must be missing</i></td>
                 <td>MANUAL</td>
             </tr>
-            <tr>
-                <td>media-src</td>
-                <td>&lt;video&gt;</td>
-                <td>
-                    <!--<video width="320" height="240" controls>-->
-                        <!--<source src="http://commons.wikimedia.org/wiki/File:Derk_Thijs_wint_nationale_titel_windsurfing_Weeknummer_75-36_-_Open_Beelden_-_56019.ogv" type="video/ogv">-->
-                        <!--Your browser does not support the video tag.-->
-                    <!--</video>-->
-                </td>
-                <td></td>
-                <td>TODO</td>
-            </tr>
-            <tr>
-                <td>media-src</td>
-                <td>Blocked &lt;video&gt;</td>
-                <td></td>
-                <td></td>
-                <td>TODO</td>
-            </tr>
-            <tr>
-                <td>object-src</td>
-                <td>&lt;embed&gt;</td>
-                <td></td>
-                <td></td>
-                <td>TODO</td>
-            </tr>
-            <tr>
-                <td>object-src</td>
-                <td>Blocked &lt;embed&gt;</td>
-                <td></td>
-                <td></td>
-                <td>TODO</td>
-            </tr>
+            <!--<tr>-->
+                <!--<td>media-src</td>-->
+                <!--<td>&lt;video&gt;</td>-->
+                <!--<td>-->
+                    <!--&lt;!&ndash;<video width="320" height="240" controls>&ndash;&gt;-->
+                        <!--&lt;!&ndash;<source src="http://commons.wikimedia.org/wiki/File:Derk_Thijs_wint_nationale_titel_windsurfing_Weeknummer_75-36_-_Open_Beelden_-_56019.ogv" type="video/ogv">&ndash;&gt;-->
+                        <!--&lt;!&ndash;Your browser does not support the video tag.&ndash;&gt;-->
+                    <!--&lt;!&ndash;</video>&ndash;&gt;-->
+                <!--</td>-->
+                <!--<td></td>-->
+                <!--<td>TODO</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>media-src</td>-->
+                <!--<td>Blocked &lt;video&gt;</td>-->
+                <!--<td></td>-->
+                <!--<td></td>-->
+                <!--<td>TODO</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>object-src</td>-->
+                <!--<td>&lt;embed&gt;</td>-->
+                <!--<td></td>-->
+                <!--<td></td>-->
+                <!--<td>TODO</td>-->
+            <!--</tr>-->
+            <!--<tr>-->
+                <!--<td>object-src</td>-->
+                <!--<td>Blocked &lt;embed&gt;</td>-->
+                <!--<td></td>-->
+                <!--<td></td>-->
+                <!--<td>TODO</td>-->
+            <!--</tr>-->
             <tr>
                 <td>script-src</td>
                 <td>JS File</td>
