@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <title>Compatibility Test Page</title>
         <link rel="stylesheet" type="text/css" href="style-src/style.css">
-        <link rel="stylesheet" type="text/css" href="https://raw.githubusercontent.com/helmetjs/csp/master/test/fixtures/directive-compatibility/test-page/style-src/blocked-style.css">
+        <link rel="stylesheet" type="text/css" href="http://analog-nico.github.io/for-helmetjs-csp/blocked-style.css">
         <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
         <link rel="stylesheet" type="text/css" href="font-src/fonts.css">
         <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
