@@ -15,7 +15,8 @@ app.use(csp({
     frameSrc: ["'self'"],
     imgSrc: ["'self'"],
     scriptSrc: ["'self'", "https://code.jquery.com", "'unsafe-inline'", "'unsafe-eval'"],
-    styleSrc: ["'self'", "'unsafe-inline'"]
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    safari5: true
 }));
 
 app.get('/hello', function (req, res) {
