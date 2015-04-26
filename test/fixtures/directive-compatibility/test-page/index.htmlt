@@ -12,6 +12,7 @@
     <script src="connect-src/xhr.js"></script>
     <script src="script-src/script.js"></script>
     <script src="https://raw.githubusercontent.com/helmetjs/csp/master/test/fixtures/directive-compatibility/test-page/script-src/blocked-script.js"></script>
+    <script src="script-src/blocked-script-result.js"></script>
 </head>
 <body>
 
@@ -204,14 +205,6 @@
         <td>script not executed</td>
         <td>
             <div id="script-src-blocked-js-file-result">Pending</div>
-            <script>
-                $(function () {
-                    if ($('#script-src-blocked-js-file').text() !== 'script executed') {
-                        $('#script-src-blocked-js-file').text('script not executed');
-                        $('#script-src-blocked-js-file-result').text('OK');
-                    }
-                });
-            </script>
         </td>
     </tr>
     <tr>
