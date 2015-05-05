@@ -33,4 +33,37 @@ You can specify keys in a camel-cased fashion (`imgSrc`) or dashed (`img-src`); 
 
 There are a lot of inconsistencies in how browsers implement CSP. Helmet sniffs the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 1.0 spec.
 
-*Note*: If you're using the `reportUri` feature and you're using [csurf](https://github.com/expressjs/csurf), you might have errors. [Check this out](https://github.com/expressjs/csurf/issues/20) for a workaround.
+*Note*: If you're using the `reportUri` feature and you're using [csurf](https://github.com/expressjs/csurf), you might have errors. The fix is to simply put your report route above this middleware, just like anything you want to do before something else:
+
+```js
+// Report CSP violations
+app.post('/csp', bodyParser.json(), function (req, res) {
+  // TODO - requires production level logging
+  if (req.body) {
+    // Just send to debug to see if this is working
+    debug('CSP Violation: ' + JSON.stringify(req.body));
+  } else {
+    debug('CSP Violation: No data received!');
+  }
+  res.status(204).end();
+});
+
+// after do all your normal stuff
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })
+app.use(csurf())
+// ...
+```
+
+This works with Safari on OSX Mavericks.  For some reason Chrome (Version 42.0.2311.135 (64-bit)) does not work.
+
+Example output:
+
+```
+TPG:app CSP Violation: {"csp-report":{"document-uri":"http://localhost:3000/","referrer":"","violated-directive":"font-src 'self' https://themes.googleusercontent.com","original-policy":"default-src 'self';script-src 'self' 'unsafe-inline' http://ajax.googleapis.com https://ajax.googleapis.com http://www.google-analytics.com https://www.google-analytics.com;object-src 'none';img-src 'self' data: https://d1ir1l1v07ijd0.cloudfront.net/ http://chart.googleapis.com https://chart.googleapis.com http://www.google-analytics.com https://www.google-analytics.com;media-src 'self';frame-src 'none';font-src 'self' https://themes.googleusercontent.com;connect-src 'self' ws://127.0.0.1:35729/livereload;style-src 'self' 'unsafe-inline' http://fonts.googleapis.com https://fonts.googleapis.com;report-uri /csp;sandbox allow-same-origin allow-forms allow-scripts","blocked-uri":"http://fonts.gstatic.com"}} +6s
+```
+
+References:
+
+* https://github.com/expressjs/csurf/issues/20
+* https://mathiasbynens.be/notes/csp-reports
