@@ -21,11 +21,7 @@ app.use(csp({
   mediaSrc: ['media.com'],
   frameSrc: ['frame.com'],
   sandbox: ['allow-forms', 'allow-scripts'],
-  reportUri: '/report-violation',
-  reportOnly: false, // set to true if you only want to report errors
-  setAllHeaders: false, // set to true if you want to set all headers
-  disableAndroid: false, // set to true to disable CSP on Android (can be flaky)
-  safari5: false // set to true if you want to force buggy CSP in Safari 5
+  reportUri: '/report-violation', reportOnly: false, // set to true if you only want to report errors setAllHeaders: false, // set to true if you want to set all headers disableAndroid: false, // set to true to disable CSP on Android (can be flaky) safari5: false // set to true if you want to force buggy CSP in Safari 5
 }));
 ```
 
@@ -33,4 +29,25 @@ You can specify keys in a camel-cased fashion (`imgSrc`) or dashed (`img-src`); 
 
 There are a lot of inconsistencies in how browsers implement CSP. Helmet sniffs the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 1.0 spec.
 
-*Note*: If you're using the `reportUri` feature and you're using [csurf](https://github.com/expressjs/csurf), you might have errors. [Check this out](https://github.com/expressjs/csurf/issues/20) for a workaround.
+Handling CSP violations
+-----------------------
+
+If you've specified a `reportUri`, browsers will POST any CSP violations to your server. Here's a simple example of a route that handles those reports:
+
+```js
+// You need a JSON parser first.
+app.use(bodyParser.json());
+
+app.post('/report-violation', function (req, res) {
+  if (req.body) {
+    console.log('CSP Violation: ', req.body);
+  } else {
+    console.log('CSP Violation: No data received!');
+  }
+  res.status(204).end();
+});
+```
+
+Not all browsers send CSP violations the same.
+
+*Note*: If you're using a CSRF module like [csurf](https://github.com/expressjs/csurf), you might have problems posting without a valid CSRF token. The fix is to simply put your CSP report route *above* csurf middleware.
