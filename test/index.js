@@ -250,10 +250,10 @@ describe("csp middleware", function () {
   });
 
   it("does nothing in iOS Chrome if connect-src 'self' is defined", function (done) {
-    var app = use({ connectSrc: ["'self'"] });
+    var app = use({ connectSrc: ["somedomain.com", "'self'"] });
     var iosChrome = AGENTS["iOS Chrome 40"];
     request(app).get("/").set("User-Agent", iosChrome.string)
-    .expect(iosChrome.header, "connect-src 'self'")
+    .expect(iosChrome.header, "connect-src somedomain.com 'self'")
     .end(done);
   });
 
