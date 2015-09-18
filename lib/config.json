@@ -4,6 +4,24 @@
     "Content-Security-Policy",
     "X-WebKit-CSP"
   ],
+  "supportedDirectives": [
+    "baseUri",
+    "childSrc",
+    "connectSrc",
+    "defaultSrc",
+    "fontSrc",
+    "formAction",
+    "frameAncestors",
+    "frameSrc",
+    "imgSrc",
+    "mediaSrc",
+    "objectSrc",
+    "pluginTypes",
+    "reportUri",
+    "sandbox",
+    "scriptSrc",
+    "styleSrc"
+  ],
   "mustBeQuoted": [
     "none",
     "self",

@@ -105,7 +105,11 @@ describe("csp middleware", function () {
     .end(function (err, res) {
       if (err) { return done(err); }
 
-      assert.equal(res.headers["content-security-policy"].trim(), "script-src; sandbox");
+      var header = res.headers["content-security-policy"];
+      var split = header.split(";").map(function (str) { return str.trim(); }).sort();
+
+      assert.equal(split[0], "sandbox");
+      assert.equal(split[1], "script-src");
 
       done();
     });

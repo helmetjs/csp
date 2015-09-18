@@ -27,9 +27,10 @@
     "test": "mocha"
   },
   "dependencies": {
+    "camelize": "1.0.0",
     "content-security-policy-builder": "0.2.0",
     "lodash.isstring": "3.0.1",
-    "lodash.omit": "3.1.0",
+    "lodash.pick": "3.1.0",
     "platform": "1.3.0"
   },
   "devDependencies": {

@@ -1,22 +1,18 @@
 var platform = require("platform");
 var cspBuilder = require("content-security-policy-builder");
 var isString = require("lodash.isstring");
-var omit = require("lodash.omit");
+var pick = require("lodash.pick");
+var camelize = require("camelize");
 
 var config = require("./lib/config");
 var browserHandlers = require("./lib/browser-handlers");
 
-module.exports = function csp(options) {
-  options = options || { defaultSrc: "'self'" };
+module.exports = function csp(passedOptions) {
+  var options = camelize(passedOptions) || { defaultSrc: "'self'" };
 
   checkOptions(options);
 
-  var directives = omit(options, [
-    "reportOnly",
-    "setAllHeaders",
-    "disableAndroid",
-    "safari5"
-  ]);
+  var directives = pick(options, config.supportedDirectives);
 
   return function csp(req, res, next) {
     var browser = platform.parse(req.headers["user-agent"]);
@@ -45,7 +41,7 @@ module.exports = function csp(options) {
 };
 
 function checkOptions(options) {
-  if (options.reportOnly && !options["report-uri"] && !options.reportUri) {
+  if (options.reportOnly && !options.reportUri) {
     throw new Error("Please remove reportOnly or add a report-uri.");
   }
 
