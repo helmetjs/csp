@@ -100,7 +100,7 @@ describe("csp middleware", function () {
 
   it("can set empty directives", function (done) {
     var app = use({
-      scriptSrc: "",
+      scriptSrc: [],
       sandbox: [""]
     });
 

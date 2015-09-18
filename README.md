@@ -11,27 +11,54 @@ Usage:
 var csp = require('helmet-csp');
 
 app.use(csp({
+  // Specify directives as normal
   defaultSrc: ["'self'", 'default.com'],
-  scriptSrc: ['scripts.com'],
+  scriptSrc: ["'self'", "'unsafe-inline'"],
   styleSrc: ['style.com'],
-  imgSrc: ['img.com'],
-  connectSrc: ['connect.com'],
-  fontSrc: ['font.com'],
-  objectSrc: ['object.com'],
-  mediaSrc: ['media.com'],
-  frameSrc: ['frame.com'],
+  imgSrc: ['img.com', 'data:'],
   sandbox: ['allow-forms', 'allow-scripts'],
   reportUri: '/report-violation',
-  reportOnly: false, // set to true if you only want to report errors
-  setAllHeaders: false, // set to true if you want to set all headers
-  disableAndroid: false, // set to true to disable CSP on Android (can be flaky)
-  safari5: false // set to true if you want to force buggy CSP in Safari 5
+
+  // Set to an empty array to allow nothing through
+  objectSrc: [],
+
+  // Set to true if you only want browsers to report errors, not block them
+  reportOnly: false,
+
+  // Set to true if you want to blindly set all headers: Content-Security-Policy,
+  // X-WebKit-CSP, and X-Content-Security-Policy.
+  setAllHeaders: false,
+
+  // Set to true if you want to disable CSP on Android.
+  disableAndroid: false,
+
+  // Set to true if you want to force buggy CSP in Safari 5.1 and below.
+  safari5: false
 }));
 ```
 
-You can specify keys in a camel-cased fashion (`imgSrc`) or dashed (`img-src`); they are equivalent.
+You can specify keys in a camel-cased fashion (`imgSrc`) or dashed (`img-src`); they are equivalent. The following directives are allowed:
 
-There are a lot of inconsistencies in how browsers implement CSP. Helmet sniffs the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 1.0 spec.
+* `baseUri`
+* `childSrc`
+* `connectSrc`
+* `defaultSrc`
+* `fontSrc`
+* `formAction`
+* `frameAncestors`
+* `frameSrc`
+* `imgSrc`
+* `manifestSrc`
+* `mediaSrc`
+* `objectSrc`
+* `pluginTypes`
+* `reportUri`
+* `sandbox`
+* `scriptSrc`
+* `styleSrc`
+* `upgradeInsecureRequests`
+
+There are a lot of inconsistencies in how browsers implement CSP. Helmet sniffs the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 2.0 spec.
 
 Handling CSP violations
 -----------------------
