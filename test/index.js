@@ -283,5 +283,4 @@ describe("csp middleware", function () {
     assert.equal(csp.name, "csp");
     assert.equal(csp().name, "csp");
   });
-
 });
