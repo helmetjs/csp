@@ -5,12 +5,7 @@ var connect = require("connect");
 var request = require("supertest");
 var assert = require("assert");
 
-function helloWorld(req, res) {
-  res.end("Hello world!");
-}
-
 describe("csp middleware", function () {
-
   var POLICY = {
     "default-src": ["'self'", "default.com"],
     "script-src": ["scripts.com"],
@@ -112,7 +107,9 @@ describe("csp middleware", function () {
   function use (policy) {
     var result = connect();
     result.use(csp(policy));
-    result.use(helloWorld);
+    result.use(function (req, res) {
+      res.end('Hello world!');
+    });
     return result;
   }
 
