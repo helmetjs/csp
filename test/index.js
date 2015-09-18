@@ -8,32 +8,35 @@ var AGENTS = require("./browser-data");
 
 describe("csp middleware", function () {
   var POLICY = {
-    "default-src": ["'self'", "default.com"],
-    "script-src": ["scripts.com"],
-    "style-src": ["style.com"],
-    "img-src": ["img.com"],
-    "connect-src": ["connect.com"],
-    "font-src": ["font.com"],
-    "object-src": ["object.com"],
-    "media-src": ["media.com"],
+    baseUri: "*",
+    "child-src": ["child.com"],
+    connectSrc: ["connect.com"],
+    "default-src": ["'self'"],
+    fontSrc: ["font.com"],
+    "form-action": ["formaction.com"],
+    frameAncestors: ["frameancestor.com"],
     "frame-src": ["frame.com"],
-    "sandbox": ["allow-forms", "allow-scripts"],
-    "report-uri": "/report-violation"
+    imgSrc: ["data:", "img.com"],
+    "manifest-src": ["manifest.com"],
+    mediaSrc: ["media.com"],
+    "object-src": ["object.com"],
+    pluginTypes: ["application/x-shockwave-flash"],
+    "report-uri": "/report-violation",
+    sandbox: [],
+    "script-src": ["'unsafe-eval'", "scripts.com"],
+    styleSrc: ["styles.com", "'unsafe-inline'"],
+    "upgrade-insecure-requests": ""
   };
 
-  var CAMELCASE_POLICY = {
-    defaultSrc: ["'self'", "default.com"],
-    scriptSrc: ["scripts.com"],
-    styleSrc: ["style.com"],
-    imgSrc: ["img.com"],
-    connectSrc: ["connect.com"],
-    fontSrc: ["font.com"],
-    objectSrc: ["object.com"],
-    mediaSrc: ["media.com"],
-    frameSrc: ["frame.com"],
-    sandbox: ["allow-forms", "allow-scripts"],
-    reportUri: "/report-violation"
-  };
+  var EXPECTED_POLICY = [
+    "base-uri *; child-src child.com; connect-src connect.com; default-src ",
+    "'self'; font-src font.com; form-action formaction.com; frame-ancestors ",
+    "frameancestor.com; frame-src frame.com; img-src data: img.com; ",
+    "manifest-src manifest.com; media-src media.com; object-src object.com; ",
+    "plugin-types application/x-shockwave-flash; report-uri /report-violation; ",
+    "sandbox; script-src 'unsafe-eval' scripts.com; style-src styles.com ",
+    "'unsafe-inline'; upgrade-insecure-requests"
+  ].join("");
 
   function use(policy) {
     var result = connect();
@@ -149,69 +152,31 @@ describe("csp middleware", function () {
   });
 
   _.each(AGENTS, function(agent, name) {
-
     if (agent.special) { return; }
 
-    it("sets the header properly for " + name + " given dashed names", function (done) {
+    it("sets the header properly for " + name, function (done) {
       var app = use(POLICY);
       var header = agent.header;
       request(app).get("/").set("User-Agent", agent.string)
-      .expect(header, /default-src 'self' default.com/)
-      .expect(header, /script-src scripts.com/)
-      .expect(header, /img-src img.com/)
-      .expect(header, /connect-src connect.com/)
-      .expect(header, /font-src font.com/)
-      .expect(header, /object-src object.com/)
-      .expect(header, /media-src media.com/)
-      .expect(header, /frame-src frame.com/)
-      .expect(header, /sandbox allow-forms allow-scripts/)
-      .expect(header, /report-uri \/report-violation/)
+      .expect(header, EXPECTED_POLICY)
       .end(done);
     });
-
-    it("sets the header properly for " + name + " given camelCased names", function (done) {
-      var app = use(CAMELCASE_POLICY);
-      var header = agent.header;
-      request(app).get("/").set("User-Agent", agent.string)
-      .expect(header, /default-src 'self' default.com/)
-      .expect(header, /script-src scripts.com/)
-      .expect(header, /img-src img.com/)
-      .expect(header, /connect-src connect.com/)
-      .expect(header, /font-src font.com/)
-      .expect(header, /object-src object.com/)
-      .expect(header, /media-src media.com/)
-      .expect(header, /frame-src frame.com/)
-      .expect(header, /sandbox allow-forms allow-scripts/)
-      .expect(header, /report-uri \/report-violation/)
-      .end(done);
-    });
-
   });
 
   it("sets the header properly for Firefox 22", function (done) {
     var app = use(POLICY);
     var header = "X-Content-Security-Policy";
     request(app).get("/").set("User-Agent", AGENTS["Firefox 22"].string)
-    .expect(header, /default-src 'self' default.com/)
-    .expect(header, /script-src scripts.com/)
-    .expect(header, /img-src img.com/)
+    .expect(header, /default-src 'self'/)
     .expect(header, /xhr-src connect.com/)
-    .expect(header, /font-src font.com/)
-    .expect(header, /object-src object.com/)
-    .expect(header, /media-src media.com/)
-    .expect(header, /frame-src frame.com/)
-    .expect(header, /sandbox allow-forms allow-scripts/)
-    .expect(header, /report-uri \/report-violation/)
     .end(done);
   });
 
   [
     "Safari 4.1",
     "Safari 5.1 on OS X",
-    "Safari 5.1 on Windows Server 2008",
-    "Android 4.1.2"
+    "Safari 5.1 on Windows Server 2008"
   ].forEach(function (browser) {
-
     it("doesn't set the property for " + browser + " by default", function (done) {
       var app = use(POLICY);
       request(app).get("/").set("User-Agent", AGENTS[browser].string)
@@ -223,7 +188,6 @@ describe("csp middleware", function () {
         done();
       });
     });
-
   });
 
   it("sets the header for Safari 4.1 if you force it", function (done) {

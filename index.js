@@ -9,7 +9,6 @@ var browserHandlers = require("./lib/browser-handlers");
 
 module.exports = function csp(passedOptions) {
   var options = camelize(passedOptions) || { defaultSrc: "'self'" };
-
   checkOptions(options);
 
   var directives = pick(options, config.supportedDirectives);
