@@ -6,6 +6,7 @@
   ],
   "description": "Content Security Policy middleware.",
   "version": "0.2.3",
+  "license": "MIT",
   "keywords": [
     "helmet",
     "security",
