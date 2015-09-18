@@ -163,10 +163,7 @@ describe("csp middleware", function () {
   });
 
   it("sets the header properly for Firefox 22", function (done) {
-    var policy = _.extend({
-      safari5: true
-    }, POLICY);
-    var app = use(policy);
+    var app = use(POLICY);
     var header = "X-Content-Security-Policy";
     request(app).get("/").set("User-Agent", AGENTS["Firefox 22"].string)
     .expect(header, /default-src 'self' default.com/)
