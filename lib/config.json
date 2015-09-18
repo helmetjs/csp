@@ -1,15 +1,13 @@
-var config = {
-  allHeaders: [
+{
+  "allHeaders": [
     "X-Content-Security-Policy",
     "Content-Security-Policy",
     "X-WebKit-CSP"
   ],
-  mustBeQuoted: [
+  "mustBeQuoted": [
     "none",
     "self",
     "unsafe-inline",
     "unsafe-eval"
   ]
-};
-
-module.exports = config;
+}
