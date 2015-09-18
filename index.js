@@ -1,5 +1,5 @@
 var platform = require("platform");
-var cspBuilder = require("content-security-policy-builder"); // TODO npm install this
+var cspBuilder = require("content-security-policy-builder");
 var isString = require("lodash.isstring");
 var omit = require("lodash.omit");
 
