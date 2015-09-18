@@ -35,7 +35,7 @@ describe("csp middleware", function () {
     reportUri: "/report-violation"
   };
 
-  function use (policy) {
+  function use(policy) {
     var result = connect();
     result.use(csp(policy));
     result.use(function (req, res) {
