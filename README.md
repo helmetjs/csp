@@ -54,4 +54,4 @@ app.post('/report-violation', function (req, res) {
 
 Not all browsers send CSP violations the same.
 
-*Note*: If you're using a CSRF module like [csurf](https://github.com/expressjs/csurf), you might have problems posting without a valid CSRF token. The fix is to simply put your CSP report route *above* csurf middleware.
+*Note*: If you're using a CSRF module like [csurf](https://github.com/expressjs/csurf), you might have problems handling these violations without a valid CSRF token. The fix is to put your CSP report route *above* csurf middleware.
