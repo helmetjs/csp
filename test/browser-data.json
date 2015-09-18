@@ -87,6 +87,14 @@
     "string": "Mozilla/5.0 (Windows Phone 8.1; ARM; Trident/7.0; Touch; rv:11; IEMobile/11.0; NOKIA; Lumia 928) like Gecko",
     "header": "X-Content-Security-Policy"
   },
+  "Microsoft Edge on Windows 10": {
+    "string": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.0",
+    "header": "Content-Security-Policy"
+  },
+  "Microsoft Edge on Windows Phone": {
+    "string": "Mozilla/5.0 (Windows Phone 10.0; Android 4.2.1; DEVICE INFO) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Mobile Safari/537.36 Edge/12.0",
+    "header": "Content-Security-Policy"
+  },
   "iOS Chrome 40": {
     "string": "Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) CriOS/40.0.2214.69 Mobile/12B440 Safari/600.1.4 (000920)",
     "header": "Content-Security-Policy",
