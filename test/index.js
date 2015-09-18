@@ -4,6 +4,7 @@ var _ = require("lodash");
 var connect = require("connect");
 var request = require("supertest");
 var assert = require("assert");
+var AGENTS = require("./browser-data");
 
 describe("csp middleware", function () {
   var POLICY = {
@@ -32,76 +33,6 @@ describe("csp middleware", function () {
     frameSrc: ["frame.com"],
     sandbox: ["allow-forms", "allow-scripts"],
     reportUri: "/report-violation"
-  };
-
-  var AGENTS = {
-    "Firefox 22": {
-      string: "Mozilla/5.0 (Windows NT 6.2; rv:22.0) Gecko/20130405 Firefox/22.0",
-      special: true
-    },
-    "Firefox 23": {
-      string: "Mozilla/5.0 (Windows NT 6.2; rv:22.0) Gecko/20130405 Firefox/23.0",
-      header: "Content-Security-Policy"
-    },
-    "Chrome 24": {
-      string: "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17",
-      header: "X-WebKit-CSP"
-    },
-    "Chrome 27": {
-      string: "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
-      header: "Content-Security-Policy"
-    },
-    "Opera 15": {
-      string: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.117 Safari/537.36 OPR/15.0.1387.64",
-      header: "Content-Security-Policy"
-    },
-    "Opera 21": {
-      string: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/34.0.1847.132 Safari/537.36 OPR/21.0.1432.67",
-      header: "Content-Security-Policy"
-    },
-    "Safari 5.1": {
-      string: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/534.55.3 (KHTML, like Gecko) Version/5.1.3 Safari/534.53.10",
-      special: true
-    },
-    "Safari 6": {
-      string: "Mozilla/5.0 (Macintosh; Intel Mac OS X 1084) AppleWebKit/536.30.1 (KHTML like Gecko) Version/6.0.5 Safari/536.30.1",
-      header: "X-WebKit-CSP"
-    },
-    "Safari 7": {
-      string: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.74.9 (KHTML, like Gecko) Version/7.0.2 Safari/537.74.9",
-      header: "Content-Security-Policy"
-    },
-    "Internet Explorer 8": {
-      string: "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64; en-US)",
-      special: true
-    },
-    "Internet Explorer 9": {
-      string: "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
-      special: true
-    },
-    "Internet Explorer 10": {
-      string: "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
-      header: "X-Content-Security-Policy",
-      special: true
-    },
-    "Internet Explorer 11": {
-      string: "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
-      header: "X-Content-Security-Policy",
-      special: true
-    },
-    "iOS Chrome 40": {
-      string: "Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) CriOS/40.0.2214.69 Mobile/12B440 Safari/600.1.4 (000920)",
-      header: "Content-Security-Policy",
-      special: true
-    },
-    "Android 4.1.2": {
-      string: "Mozilla/5.0 (Linux; U; Android 4.1.2; fr-fr; GT-P5110 Build/JZO54K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Safari/534.30",
-      special: true
-    },
-    "Android 4.4.3": {
-      string: "Mozilla/5.0 (Linux; Android 4.4.3; HTC_One Build/KTU84L) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/33.0.0.0 Mobile Safari/537.36",
-      header: "Content-Security-Policy"
-    }
   };
 
   function use (policy) {
