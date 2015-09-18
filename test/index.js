@@ -39,7 +39,7 @@ describe("csp middleware", function () {
     var result = connect();
     result.use(csp(policy));
     result.use(function (req, res) {
-      res.end('Hello world!');
+      res.end("Hello world!");
     });
     return result;
   }
@@ -89,10 +89,26 @@ describe("csp middleware", function () {
       "report-uri": "/reporter"
     });
     request(app).get("/").set("User-Agent", AGENTS["Firefox 23"].string)
-    .expect("X-Content-Security-Policy-Report-Only", /default-src 'self'/)
-    .expect("Content-Security-Policy-Report-Only", /default-src 'self'/)
-    .expect("X-WebKit-CSP-Report-Only", /default-src 'self'/)
+    .expect("X-Content-Security-Policy-Report-Only", "default-src 'self'; report-uri /reporter")
+    .expect("Content-Security-Policy-Report-Only", "default-src 'self'; report-uri /reporter")
+    .expect("X-WebKit-CSP-Report-Only", "default-src 'self'; report-uri /reporter")
     .end(done);
+  });
+
+  it("can set empty directives", function (done) {
+    var app = use({
+      scriptSrc: "",
+      sandbox: [""]
+    });
+
+    request(app).get("/").set("User-Agent", AGENTS["Firefox 23"].string)
+    .end(function (err, res) {
+      if (err) { return done(err); }
+
+      assert.equal(res.headers["content-security-policy"].trim(), "script-src; sandbox");
+
+      done();
+    });
   });
 
   it("throws an error when directives need quotes", function () {
@@ -106,13 +122,19 @@ describe("csp middleware", function () {
       csp({ "script-src": ["unsafe-inline"] });
     }, Error);
     assert.throws(function() {
-      csp({ "script-src": ["unsafe-eval"] });
+      csp({ scriptSrc: "unsafe-eval" });
+    }, Error);
+    assert.throws(function() {
+      csp({ "style-src": ["unsafe-inline"] });
+    }, Error);
+    assert.throws(function() {
+      csp({ styleSrc: "unsafe-eval" });
     }, Error);
     assert.throws(function() {
       csp({ "default-src": "self" });
     }, Error);
     assert.throws(function() {
-      csp({ "default-src": "self unsafe-inline" });
+      csp({ defaultSrc: "self unsafe-inline" });
     }, Error);
   });
 

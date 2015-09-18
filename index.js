@@ -1,16 +1,22 @@
 var platform = require("platform");
+var cspBuilder = require("content-security-policy-builder"); // TODO npm install this
+var isString = require("lodash.isstring");
+var omit = require("lodash.omit");
 
 var config = require("./lib/config");
-var parseDirectivesFromOptions = require("./lib/parse-directives");
 var browserHandlers = require("./lib/browser-handlers");
-var makePolicyString = require("./lib/make-policy-string");
 
 module.exports = function csp(options) {
-  options = options || { "default-src": ["'self'"] };
-  var directives = parseDirectivesFromOptions(options);
-  if (options.reportOnly && !directives["report-uri"]) {
-    throw new Error("Please remove reportOnly or add a report-uri.");
-  }
+  options = options || { defaultSrc: "'self'" };
+
+  checkOptions(options);
+
+  var directives = omit(options, [
+    "reportOnly",
+    "setAllHeaders",
+    "disableAndroid",
+    "safari5"
+  ]);
 
   return function csp(req, res, next) {
     var browser = platform.parse(req.headers["user-agent"]);
@@ -25,7 +31,7 @@ module.exports = function csp(options) {
 
     var policyString;
     if (headerData.headers.length) {
-      policyString = makePolicyString(headerData.directives);
+      policyString = cspBuilder({ directives: headerData.directives });
     }
 
     headerData.headers.forEach(function(header) {
@@ -37,3 +43,25 @@ module.exports = function csp(options) {
     next();
   };
 };
+
+function checkOptions(options) {
+  if (options.reportOnly && !options["report-uri"] && !options.reportUri) {
+    throw new Error("Please remove reportOnly or add a report-uri.");
+  }
+
+  Object.keys(options).forEach(function (key) {
+    var value = options[key];
+
+    if (isString(value)) {
+      value = value.trim().split(/\s+/);
+    } else if (!Array.isArray(value)) {
+      return;
+    }
+
+    config.mustBeQuoted.forEach(function (mustBeQuoted) {
+      if (value.indexOf(mustBeQuoted) !== -1) {
+        throw new Error(mustBeQuoted + " must be quoted.");
+      }
+    });
+  });
+}
