@@ -183,7 +183,9 @@ describe("csp middleware", function () {
   });
 
   [
-    "Safari 5.1",
+    "Safari 4.1",
+    "Safari 5.1 on OS X",
+    "Safari 5.1 on Windows Server 2008",
     "Android 4.1.2"
   ].forEach(function (browser) {
 
@@ -201,19 +203,28 @@ describe("csp middleware", function () {
 
   });
 
+  it("sets the header for Safari 4.1 if you force it", function (done) {
+    var app = use({
+      safari5: true,
+      "default-src": "a.com"
+    });
+    request(app).get("/").set("User-Agent", AGENTS["Safari 4.1"].string)
+    .expect("X-WebKit-CSP", "default-src a.com", done);
+  });
+
   it("sets the header for Safari 5.1 if you force it", function (done) {
     var app = use({
       safari5: true,
       "default-src": "a.com"
     });
-    request(app).get("/").set("User-Agent", AGENTS["Safari 5.1"].string)
+    request(app).get("/").set("User-Agent", AGENTS["Safari 5.1 on OS X"].string)
     .expect("X-WebKit-CSP", "default-src a.com", done);
   });
 
   it("lets you disable Android", function (done) {
     var app = use({
       disableAndroid: true,
-      "default-src": "a.com"
+      defaultSrc: "a.com"
     });
     request(app).get("/").set("User-Agent", AGENTS["Android 4.4.3"].string)
     .end(function(err, res) {
