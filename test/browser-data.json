@@ -47,8 +47,16 @@
     "string": "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
     "header": "X-Content-Security-Policy"
   },
+  "Internet Explorer 9 on Xbox 360": {
+    "string": "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0; Xbox)",
+    "header": "X-Content-Security-Policy"
+  },
   "Internet Explorer 10": {
     "string": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
+    "header": "X-Content-Security-Policy"
+  },
+  "Internet Explorer 10 on Xbox One": {
+    "string": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0; Xbox; Xbox One)",
     "header": "X-Content-Security-Policy"
   },
   "Internet Explorer 11 on Windows 7": {
