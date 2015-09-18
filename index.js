@@ -6,7 +6,6 @@ var browserHandlers = require("./lib/browser-handlers");
 var makePolicyString = require("./lib/make-policy-string");
 
 module.exports = function csp(options) {
-
   options = options || { "default-src": ["'self'"] };
   var directives = parseDirectivesFromOptions(options);
   if (options.reportOnly && !directives["report-uri"]) {
@@ -14,7 +13,6 @@ module.exports = function csp(options) {
   }
 
   return function csp(req, res, next) {
-
     var browser = platform.parse(req.headers["user-agent"]);
     var browserHandler = browserHandlers[browser.name] || browserHandlers.default;
 
@@ -37,7 +35,5 @@ module.exports = function csp(options) {
     });
 
     next();
-
   };
-
 };

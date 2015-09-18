@@ -184,8 +184,6 @@ describe("csp middleware", function () {
 
   [
     "Safari 5.1",
-    "Internet Explorer 8",
-    "Internet Explorer 9",
     "Android 4.1.2"
   ].forEach(function (browser) {
 
@@ -225,36 +223,6 @@ describe("csp middleware", function () {
       assert.equal(res.header["x-content-security-policy"], undefined);
       done();
     });
-  });
-
-  [10, 11].forEach(function (version) {
-
-    var ua = AGENTS["Internet Explorer " + version];
-
-    it("sets the header for IE " + version + " if sandbox is true", function (done) {
-      var app = use({ sandbox: true });
-      request(app).get("/").set("User-Agent", ua.string)
-      .expect(ua.header, "sandbox", done);
-    });
-
-    it("sets the header for IE " + version + " if sandbox is an array", function (done) {
-      var app = use({ sandbox: ["allow-forms", "allow-scripts"] });
-      request(app).get("/").set("User-Agent", ua.string)
-      .expect(ua.header, /sandbox allow-forms allow-scripts/, done);
-    });
-
-    it("doesn't set the header for IE " + version + " if sandbox isn't specified", function (done) {
-      var app = use({ "default-src": ["'self'"] });
-      request(app).get("/").set("User-Agent", ua.string)
-      .end(function (err, res) {
-        if (err) {
-          return done(err);
-        }
-        assert.equal(res.header[ua.header.toLowerCase()], undefined);
-        done();
-      });
-    });
-
   });
 
   it("appends connect-src 'self' in iOS Chrome when connect-src is already defined", function (done) {

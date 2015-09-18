@@ -35,23 +35,25 @@
     "string": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.74.9 (KHTML, like Gecko) Version/7.0.2 Safari/537.74.9",
     "header": "Content-Security-Policy"
   },
+  "Internet Explorer 7": {
+    "string": "Mozilla/5.0 (Windows; U; MSIE 7.0; Windows NT 6.0; en-US)",
+    "header": "X-Content-Security-Policy"
+  },
   "Internet Explorer 8": {
     "string": "Mozilla/5.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; GTB7.4; InfoPath.2; SV1; .NET CLR 3.3.69573; WOW64; en-US)",
-    "special": true
+    "header": "X-Content-Security-Policy"
   },
   "Internet Explorer 9": {
     "string": "Mozilla/5.0 (Windows; U; MSIE 9.0; Windows NT 9.0; en-US)",
-    "special": true
+    "header": "X-Content-Security-Policy"
   },
   "Internet Explorer 10": {
     "string": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
-    "header": "X-Content-Security-Policy",
-    "special": true
+    "header": "X-Content-Security-Policy"
   },
   "Internet Explorer 11": {
     "string": "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
-    "header": "X-Content-Security-Policy",
-    "special": true
+    "header": "X-Content-Security-Policy"
   },
   "iOS Chrome 40": {
     "string": "Mozilla/5.0 (iPhone; CPU iPhone OS 8_1_2 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) CriOS/40.0.2214.69 Mobile/12B440 Safari/600.1.4 (000920)",
