@@ -17,10 +17,12 @@
     "mediaSrc",
     "objectSrc",
     "pluginTypes",
+    "reflectedXss",
     "reportUri",
     "sandbox",
     "scriptSrc",
-    "styleSrc"
+    "styleSrc",
+    "upgradeInsecureRequests"
   ],
   "mustBeQuoted": [
     "none",
