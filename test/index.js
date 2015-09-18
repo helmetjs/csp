@@ -47,7 +47,7 @@ describe("csp middleware", function () {
   it("sets headers by string", function (done) {
     var app = use({ "default-src": "a.com b.biz" });
     request(app).get("/")
-    .expect("Content-Security-Policy", /default-src a.com b.biz/, done);
+    .expect("Content-Security-Policy", "default-src a.com b.biz", done);
   });
 
   it("sets all the headers if you tell it to", function (done) {
@@ -56,18 +56,18 @@ describe("csp middleware", function () {
       "default-src": ["'self'", "domain.com"]
     });
     request(app).get("/").set("User-Agent", AGENTS["Firefox 23"].string)
-    .expect("X-Content-Security-Policy", /default-src 'self' domain.com/)
-    .expect("Content-Security-Policy", /default-src 'self' domain.com/)
-    .expect("X-WebKit-CSP", /default-src 'self' domain.com/)
+    .expect("X-Content-Security-Policy", "default-src 'self' domain.com")
+    .expect("Content-Security-Policy", "default-src 'self' domain.com")
+    .expect("X-WebKit-CSP", "default-src 'self' domain.com")
     .end(done);
   });
 
   it("sets all the headers if you provide an unknown user-agent", function (done) {
     var app = use({ "default-src": ["'self'", "domain.com"] });
     request(app).get("/").set("User-Agent", "Burrito Browser")
-    .expect("X-Content-Security-Policy", /default-src 'self' domain.com/)
-    .expect("Content-Security-Policy", /default-src 'self' domain.com/)
-    .expect("X-WebKit-CSP", /default-src 'self' domain.com/)
+    .expect("X-Content-Security-Policy", "default-src 'self' domain.com")
+    .expect("Content-Security-Policy", "default-src 'self' domain.com")
+    .expect("X-WebKit-CSP", "default-src 'self' domain.com")
     .end(function(err) {
       if (err) { return done(err); }
       // unknown browser doesn't affect the next request
@@ -277,7 +277,7 @@ describe("csp middleware", function () {
     var app = use({ connectSrc: ["'self'"] });
     var iosChrome = AGENTS["iOS Chrome 40"];
     request(app).get("/").set("User-Agent", iosChrome.string)
-    .expect(iosChrome.header, /connect-src 'self'/)
+    .expect(iosChrome.header, "connect-src 'self'")
     .end(done);
   });
 
