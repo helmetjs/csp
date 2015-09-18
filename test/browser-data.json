@@ -51,8 +51,24 @@
     "string": "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)",
     "header": "X-Content-Security-Policy"
   },
-  "Internet Explorer 11": {
+  "Internet Explorer 11 on Windows 7": {
     "string": "Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko",
+    "header": "X-Content-Security-Policy"
+  },
+  "Internet Explorer 11 on Windows 8.1": {
+    "string": "Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; Touch; rv:11.0) like Gecko",
+    "header": "X-Content-Security-Policy"
+  },
+  "Internet Explorer 11 on Windows 8.1 with Enterprise Mode": {
+    "string": "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; Trident/4.0; Tablet PC 2.0)",
+    "header": "X-Content-Security-Policy"
+  },
+  "Internet Explorer 11 on Windows 8.1 with compatibility view": {
+    "string": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.3; Trident/7.0; Touch)",
+    "header": "X-Content-Security-Policy"
+  },
+  "Internet Explorer 11 on Windows Phone 8.1": {
+    "string": "Mozilla/5.0 (Windows Phone 8.1; ARM; Trident/7.0; Touch; rv:11; IEMobile/11.0; NOKIA; Lumia 928) like Gecko",
     "header": "X-Content-Security-Policy"
   },
   "iOS Chrome 40": {
