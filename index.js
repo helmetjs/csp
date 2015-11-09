@@ -2,6 +2,8 @@ var platform = require("platform");
 var cspBuilder = require("content-security-policy-builder");
 var isString = require("lodash.isstring");
 var pick = require("lodash.pick");
+var reduce = require("lodash.reduce");
+var some = require("lodash.some");
 var camelize = require("camelize");
 
 var config = require("./lib/config");
@@ -12,6 +14,7 @@ module.exports = function csp(passedOptions) {
   checkOptions(options);
 
   var directives = pick(options, config.supportedDirectives);
+  var dynamic = isDynamic(directives);
 
   return function csp(req, res, next) {
     var browser = platform.parse(req.headers["user-agent"]);
@@ -23,6 +26,7 @@ module.exports = function csp(passedOptions) {
       headerData.headers = config.allHeaders;
     }
     headerData.directives = headerData.directives || directives;
+    if (dynamic) headerData.directives = parseDynamic(headerData.directives, [req]);
 
     var policyString;
     if (headerData.headers.length) {
@@ -59,4 +63,45 @@ function checkOptions(options) {
       }
     });
   });
+}
+
+/**
+ * Run through directives to see if any value
+ * is a function.
+ * @param {Object.<String,Array|String|Function>}
+ * @return {Boolean}
+ */
+function isDynamic(directives) {
+  return some(directives, function(directive) {
+    directive = [].concat(directive); // cast to array
+    return some(directive, function(val) {
+      return typeof val === "function";
+    });
+  });
+}
+
+/**
+ * Parses dynamic directives, returning a brand
+ * new object where all functions have been
+ * turned into string
+ * @param {Object.<String,Array|String|Function>
+ * @return {Object.<String,Array|String>}
+ */
+function parseDynamic(directives, args) {
+
+  // a recursive function to convert any dynamic values into static ones
+  function handle(value) {
+    if (Array.isArray(value))
+      return value.map(handle);
+
+    if (typeof value === 'function')
+      return handle(value.apply(null, args));
+
+    return value;
+  }
+
+  return reduce(directives, function(memo, directive, key) {
+    memo[key] = handle(directive, args);
+    return memo;
+  }, {});
 }
