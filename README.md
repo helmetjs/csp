@@ -82,3 +82,29 @@ app.post('/report-violation', function (req, res) {
 Not all browsers send CSP violations the same.
 
 *Note*: If you're using a CSRF module like [csurf](https://github.com/expressjs/csurf), you might have problems handling these violations without a valid CSRF token. The fix is to put your CSP report route *above* csurf middleware.
+
+Generating Nonces
+_________________
+
+You can dynamically generating nonces to allow inline `<script>`
+tags to be safely evaluated. Here's a simple example:
+
+```js
+
+var uuid = require('node-uuid');
+
+app.use(csp({
+  scriptSrc: [
+    "'self'",
+    function(req) {
+      var nonce = uuid.v4();
+      req.nonce = nonce;
+      return "'nonce-" + nonce + "'"; // 'nonce-$RANDOM'
+    }
+  ]
+}))
+
+app.use(function(req, res) {
+  res.end('<script nonce="' + req.nonce + '">alert(1 + 1);</script>');
+});
+```
