@@ -118,6 +118,32 @@ describe("csp middleware", function () {
     });
   });
 
+  it("can generate dynamic values", function(done) {
+    var app = use({
+      defaultSrc: function(req) {
+        return req.originalUrl;
+      },
+      scriptSrc: [
+        "'self'",
+        function(req) {
+          return 'bar'
+        }
+      ]
+    });
+
+    request(app).get('/').set("User-Agent", AGENTS["Firefox 23"].string)
+    .end(function(err, res) {
+      if (err) { return done(err); }
+
+      var header = res.headers["content-security-policy"];
+      var split = header.split(";").map(function (str) { return str.trim(); }).sort();
+
+      assert.equal(split[0], "default-src /");
+      assert.equal(split[1], "script-src 'self' bar");
+      done();
+    });
+  });
+
   it("throws an error when directives need quotes", function () {
     assert.throws(function() {
       csp({ "default-src": ["none"] });

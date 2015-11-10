@@ -26,7 +26,10 @@ module.exports = function csp(passedOptions) {
 
     var policyString;
     if (headerData.headers.length) {
-      policyString = cspBuilder({ directives: headerData.directives });
+      policyString = cspBuilder({
+        directives: headerData.directives,
+        arguments: [req]
+      });
     }
 
     headerData.headers.forEach(function(header) {
