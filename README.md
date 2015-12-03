@@ -67,7 +67,9 @@ If you've specified a `reportUri`, browsers will POST any CSP violations to your
 
 ```js
 // You need a JSON parser first.
-app.use(bodyParser.json());
+app.use(bodyParser.json({
+  type: ['json', 'application/csp-report']
+}));
 
 app.post('/report-violation', function (req, res) {
   if (req.body) {
