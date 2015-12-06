@@ -1,0 +1,14 @@
+@font-face {
+    font-family: 'Indie Flower Self Hosted';
+    font-style: normal;
+    font-weight: 400;
+    src: url(Indie_Flower/IndieFlower.ttf) format('truetype');
+}
+
+#font-src-font-face {
+    font-family: 'Indie Flower Self Hosted', sans-serif !important;
+}
+
+#font-src-blocked-font-face {
+    font-family: 'Indie Flower', sans-serif !important;
+}

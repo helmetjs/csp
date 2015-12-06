@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Compatibility Test Page</title>
+    <link rel="stylesheet" type="text/css" href="style-src/style.css">
+    <link rel="stylesheet" type="text/css" href="http://analog-nico.github.io/for-helmetjs-csp/blocked-style.css">
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="font-src/fonts.css">
+    <link href='http://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+    <script src="connect-src/xhr.js"></script>
+    <script src="script-src/script.js"></script>
+    <script src="https://raw.githubusercontent.com/helmetjs/csp/master/test/fixtures/directive-compatibility/test-page/script-src/blocked-script.js"></script>
+    <script src="script-src/blocked-script-result.js"></script>
+</head>
+<body>
+
+<!--
+
+    IF YOU CHANGE THIS FILE RESTART THE SERVER.
+
+    For more info on the templating see https://github.com/analog-nico/serve-spa
+
+-->
+
+<% var browser = require('platform').parse(req.headers["user-agent"]); %>
+
+<b>User Agent:</b> <%= req.headers["user-agent"] %><br/>
+<b>Identified as:</b> name "<%= browser.name %>", version <%= parseFloat(browser.version) %>, os.family "<%= browser.os.family %>", os.version <%= parseFloat(browser.os.version) %><br/>
+<b>Content-Security-Policy:</b> <%= res.getHeader('Content-Security-Policy') %><br/>
+<b>X-Content-Security-Policy:</b> <%= res.getHeader('X-Content-Security-Policy') %><br/>
+<b>X-WebKit-CSP:</b> <%= res.getHeader('X-WebKit-CSP') %><br/>
+
+&nbsp;
+<table border="1">
+    <tr>
+        <th>Directive</th>
+        <th>Test</th>
+        <th>Content</th>
+        <th>Expected</th>
+        <th>Result</th>
+    </tr>
+    <tr>
+        <td>connect-src</td>
+        <td>XHR</td>
+        <td>
+            <div id="connect-src-xhr"></div>
+        </td>
+        <td>hello</td>
+        <td>
+            <div id="connect-src-xhr-result">
+                Pending
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>connect-src</td>
+        <td>Blocked XHR</td>
+        <td>
+            <div id="connect-src-blocked-xhr"></div>
+        </td>
+        <td>xhr not executed</td>
+        <td>
+            <div id="connect-src-blocked-xhr-result">
+                Pending
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>font-src</td>
+        <td>@font-face</td>
+        <td id="font-src-font-face">hand-written</td>
+        <td><img src="font-src/font-face-expected.png" alt="hand-written"/></td>
+        <td>MANUAL</td>
+    </tr>
+    <tr>
+        <td>font-src</td>
+        <td>Blocked @font-face</td>
+        <td id="font-src-blocked-font-face" style="font-family: sans-serif;">sans-serif</td>
+        <td style="font-family: sans-serif;">sans-serif</td>
+        <td>MANUAL</td>
+    </tr>
+    <tr>
+        <td>frame-src</td>
+        <td>&lt;iframe&gt;</td>
+        <td>
+            <iframe src="frame-src/index.html" frameborder="0" width="240" height="30"></iframe>
+        </td>
+        <td>
+            IFrame laoded
+        </td>
+        <td>MANUAL</td>
+    </tr>
+    <tr>
+        <td>frame-src</td>
+        <td>Blocked &lt;iframe&gt;</td>
+        <td>
+            <iframe src="http://wikipedia.com" frameborder="0" width="240" height="80"></iframe>
+        </td>
+        <td>
+            <i>NOT Wikipedia - just white</i>
+        </td>
+        <td>MANUAL</td>
+    </tr>
+    <tr>
+        <td>img-src</td>
+        <td>PNG File</td>
+        <td><img src="img-src/green.png" alt="" style="width: 240px; height: 20px;"/></td>
+        <td style="background-color: green;"></td>
+        <td>MANUAL</td>
+    </tr>
+    <tr>
+        <td>img-src</td>
+        <td>Blocked PNG File</td>
+        <td><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Angla_tuulikud_Saaremaal.jpg/320px-Angla_tuulikud_Saaremaal.jpg" alt="Windmills" style="width: 240px; height: 60px;"/></td>
+        <td><i>Alt Text "Windmills" - image must be missing</i></td>
+        <td>MANUAL</td>
+    </tr>
+    <!--<tr>-->
+    <!--<td>media-src</td>-->
+    <!--<td>&lt;video&gt;</td>-->
+    <!--<td>-->
+    <!--&lt;!&ndash;<video width="320" height="240" controls>&ndash;&gt;-->
+    <!--&lt;!&ndash;<source src="http://commons.wikimedia.org/wiki/File:Derk_Thijs_wint_nationale_titel_windsurfing_Weeknummer_75-36_-_Open_Beelden_-_56019.ogv" type="video/ogv">&ndash;&gt;-->
+    <!--&lt;!&ndash;Your browser does not support the video tag.&ndash;&gt;-->
+    <!--&lt;!&ndash;</video>&ndash;&gt;-->
+    <!--</td>-->
+    <!--<td></td>-->
+    <!--<td>TODO</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<td>media-src</td>-->
+    <!--<td>Blocked &lt;video&gt;</td>-->
+    <!--<td></td>-->
+    <!--<td></td>-->
+    <!--<td>TODO</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<td>object-src</td>-->
+    <!--<td>&lt;embed&gt;</td>-->
+    <!--<td></td>-->
+    <!--<td></td>-->
+    <!--<td>TODO</td>-->
+    <!--</tr>-->
+    <!--<tr>-->
+    <!--<td>object-src</td>-->
+    <!--<td>Blocked &lt;embed&gt;</td>-->
+    <!--<td></td>-->
+    <!--<td></td>-->
+    <!--<td>TODO</td>-->
+    <!--</tr>-->
+    <tr>
+        <td>script-src</td>
+        <td>JS File</td>
+        <td>
+            <div id="script-src-js-file"></div>
+        </td>
+        <td>script executed</td>
+        <td>
+            <div id="script-src-js-file-result">
+                Pending
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>script-src</td>
+        <td>'unsafe-inline'</td>
+        <td>
+            <div id="script-src-unsafe-inline"></div>
+        </td>
+        <td>script executed</td>
+        <td>
+            <div id="script-src-unsafe-inline-result">
+                Pending
+            </div>
+            <script>
+                $('#script-src-unsafe-inline').text('script executed');
+                $('#script-src-unsafe-inline-result').text('OK');
+            </script>
+        </td>
+    </tr>
+    <tr>
+        <td>script-src</td>
+        <td>'unsafe-eval'</td>
+        <td>
+            <div id="script-src-unsafe-eval"></div>
+        </td>
+        <td>script executed</td>
+        <td>
+            <div id="script-src-unsafe-eval-result">
+                Pending
+            </div>
+            <script>
+                eval("$('#script-src-unsafe-eval').text('script executed'); $('#script-src-unsafe-eval-result').text('OK');");
+            </script>
+        </td>
+    </tr>
+    <tr>
+        <td>script-src</td>
+        <td>Blocked JS File</td>
+        <td>
+            <div id="script-src-blocked-js-file"></div>
+        </td>
+        <td>script not executed</td>
+        <td>
+            <div id="script-src-blocked-js-file-result">Pending</div>
+        </td>
+    </tr>
+    <tr>
+        <td>style-src</td>
+        <td>CSS File</td>
+        <td id="style-src-css-file" style="background-color: red;">
+            <!-- style-src/style.css referenced in header -->
+        </td>
+        <td style="background-color: green;"></td>
+        <td>MANUAL</td>
+    </tr>
+    <tr>
+        <td>style-src</td>
+        <td>'unsafe-inline'</td>
+        <td id="style-src-unsafe-inline" style="background-color: red;">
+            <style>
+                #style-src-unsafe-inline {
+                    background-color: green !important;
+                }
+            </style>
+        </td>
+        <td style="background-color: green;"></td>
+        <td>MANUAL</td>
+    </tr>
+    <tr>
+        <td>style-src</td>
+        <td>Blocked CSS File</td>
+        <td id="style-src-blocked-css-file" style="background-color: green;">
+            <!-- style-src/blocked-style.css referenced in header -->
+        </td>
+        <td style="background-color: green;"></td>
+        <td>MANUAL</td>
+    </tr>
+</table>
+
+</body>
+</html>

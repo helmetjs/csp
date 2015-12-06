@@ -35,8 +35,10 @@
   },
   "devDependencies": {
     "connect": "^3.3.5",
+    "express": "^4.12.3",
     "lodash": "^3.7.0",
     "mocha": "^2.2.1",
+    "serve-spa": "^0.2.2",
     "supertest": "^0.15.0"
   }
 }
