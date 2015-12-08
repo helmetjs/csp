@@ -26,7 +26,9 @@ module.exports = function csp(passedOptions) {
       headerData.headers = config.allHeaders;
     }
     headerData.directives = headerData.directives || directives;
-    if (dynamic) headerData.directives = parseDynamic(headerData.directives, [req]);
+    if (dynamic) {
+      headerData.directives = parseDynamic(headerData.directives, [req]);
+    }
 
     var policyString;
     if (headerData.headers.length) {
@@ -65,12 +67,7 @@ function checkOptions(options) {
   });
 }
 
-/**
- * Run through directives to see if any value
- * is a function.
- * @param {Object.<String,Array|String|Function>}
- * @return {Boolean}
- */
+// Runs through directives to see if any value is a function
 function isDynamic(directives) {
   return some(directives, function(directive) {
     directive = [].concat(directive); // cast to array
@@ -80,28 +77,26 @@ function isDynamic(directives) {
   });
 }
 
-/**
- * Parses dynamic directives, returning a brand
- * new object where all functions have been
- * turned into string
- * @param {Object.<String,Array|String|Function>
- * @return {Object.<String,Array|String>}
- */
-function parseDynamic(directives, args) {
+// Parses dynamic directives, returning a brand new object where
+// all functions have been turned into string
+function parseDynamic(value, args) {
 
-  // a recursive function to convert any dynamic values into static ones
-  function handle(value) {
-    if (Array.isArray(value))
-      return value.map(handle);
-
-    if (typeof value === 'function')
-      return handle(value.apply(null, args));
-
-    return value;
+  if (Array.isArray(value)) {
+    return value.map(function(directive) {
+      return parseDynamic(directive, args);
+    });
   }
 
-  return reduce(directives, function(memo, directive, key) {
-    memo[key] = handle(directive, args);
-    return memo;
-  }, {});
+  if (typeof value === "function") {
+    return parseDynamic(value.apply(null, args), args);
+  }
+
+  if (typeof value === "object") {
+    return reduce(value, function(memo, directive, key) {
+      memo[key] = parseDynamic(directive, args);
+      return memo;
+    }, {});
+  }
+
+  return value;
 }
