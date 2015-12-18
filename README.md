@@ -11,16 +11,17 @@ Usage:
 var csp = require('helmet-csp')
 
 app.use(csp({
-  // Specify directives as normal
-  defaultSrc: ["'self'", 'default.com'],
-  scriptSrc: ["'self'", "'unsafe-inline'"],
-  styleSrc: ['style.com'],
-  imgSrc: ['img.com', 'data:'],
-  sandbox: ['allow-forms', 'allow-scripts'],
-  reportUri: '/report-violation',
+  // Specify directives as normal.
+  directives: {
+    defaultSrc: ["'self'", 'default.com'],
+    scriptSrc: ["'self'", "'unsafe-inline'"],
+    styleSrc: ['style.com'],
+    imgSrc: ['img.com', 'data:'],
+    sandbox: ['allow-forms', 'allow-scripts'],
+    reportUri: '/report-violation'
 
-  // Set to an empty array to allow nothing through
-  objectSrc: [],
+    objectSrc: [], // An empty array allows nothing through
+  }
 
   // Set to true if you only want browsers to report errors, not block them
   reportOnly: false,
@@ -36,27 +37,6 @@ app.use(csp({
   safari5: false
 }))
 ```
-
-You can specify keys in a camel-cased fashion (`imgSrc`) or dashed (`img-src`); they are equivalent. The following directives are allowed:
-
-* `baseUri`
-* `childSrc`
-* `connectSrc`
-* `defaultSrc`
-* `fontSrc`
-* `formAction`
-* `frameAncestors`
-* `frameSrc`
-* `imgSrc`
-* `manifestSrc`
-* `mediaSrc`
-* `objectSrc`
-* `pluginTypes`
-* `reportUri`
-* `sandbox`
-* `scriptSrc`
-* `styleSrc`
-* `upgradeInsecureRequests`
 
 There are a lot of inconsistencies in how browsers implement CSP. Helmet sniffs the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 2.0 spec.
 
@@ -81,30 +61,32 @@ app.post('/report-violation', function (req, res) {
 })
 ```
 
-Not all browsers send CSP violations the same.
+Not all browsers send CSP violations in the same way, so this might require a little work.
 
 *Note*: If you're using a CSRF module like [csurf](https://github.com/expressjs/csurf), you might have problems handling these violations without a valid CSRF token. The fix is to put your CSP report route *above* csurf middleware.
 
-Generating Nonces
+Generating nonces
 -----------------
 
-You can dynamically generating nonces to allow inline `<script>` tags to be safely evaluated. Here's a simple example:
+You can dynamically generate nonces to allow inline `<script>` tags to be safely evaluated. Here's a simple example:
 
 ```js
-var uuid = require("node-uuid")
+var uuid = require('node-uuid')
+
+app.use(function (req, res) {
+  req.locals.nonce = uuid.v4()
+})
 
 app.use(csp({
   scriptSrc: [
     "'self'",
-    function(req) {
-      var nonce = uuid.v4()
-      req.nonce = nonce
-      return "'nonce-" + nonce + "'"  // 'nonce-$RANDOM'
+    function (req) {
+      return "'nonce-" + req.locals.nonce + "'"  // 'nonce-614d9122-d5b0-4760-aecf-3a5d17cf0ac9'
     }
   ]
 }))
 
-app.use(function(req, res) {
-  res.end("<script nonce='" + req.nonce + "'>alert(1 + 1);</script>")
+app.use(function (req, res) {
+  res.end('<script nonce="' + req.nonce + '">alert(1 + 1);</script>')
 })
 ```
