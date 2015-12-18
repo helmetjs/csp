@@ -31,8 +31,8 @@
     "content-security-policy-builder": "1.0.0",
     "lodash.isstring": "3.0.1",
     "lodash.pick": "3.1.0",
-    "lodash.reduce": "^3.1.2",
-    "lodash.some": "^3.2.3",
+    "lodash.reduce": "3.1.2",
+    "lodash.some": "3.2.3",
     "platform": "1.3.0"
   },
   "devDependencies": {
