@@ -1,14 +1,14 @@
 Content Security Policy middleware
 ==================================
-
 [![Build Status](https://travis-ci.org/helmetjs/csp.svg?branch=master)](https://travis-ci.org/helmetjs/csp)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
 Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate XSS vulnerabilities, unintended frames, malicious frames, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/).
 
 Usage:
 
 ```javascript
-var csp = require('helmet-csp');
+var csp = require('helmet-csp')
 
 app.use(csp({
   // Specify directives as normal
@@ -34,7 +34,7 @@ app.use(csp({
 
   // Set to true if you want to force buggy CSP in Safari 5.1 and below.
   safari5: false
-}));
+}))
 ```
 
 You can specify keys in a camel-cased fashion (`imgSrc`) or dashed (`img-src`); they are equivalent. The following directives are allowed:
@@ -69,16 +69,16 @@ If you've specified a `reportUri`, browsers will POST any CSP violations to your
 // You need a JSON parser first.
 app.use(bodyParser.json({
   type: ['json', 'application/csp-report']
-}));
+}))
 
 app.post('/report-violation', function (req, res) {
   if (req.body) {
-    console.log('CSP Violation: ', req.body);
+    console.log('CSP Violation: ', req.body)
   } else {
-    console.log('CSP Violation: No data received!');
+    console.log('CSP Violation: No data received!')
   }
-  res.status(204).end();
-});
+  res.status(204).end()
+})
 ```
 
 Not all browsers send CSP violations the same.
@@ -91,21 +91,20 @@ Generating Nonces
 You can dynamically generating nonces to allow inline `<script>` tags to be safely evaluated. Here's a simple example:
 
 ```js
-
-var uuid = require("node-uuid");
+var uuid = require("node-uuid")
 
 app.use(csp({
   scriptSrc: [
     "'self'",
     function(req) {
-      var nonce = uuid.v4();
-      req.nonce = nonce;
-      return "'nonce-" + nonce + "'"; // 'nonce-$RANDOM'
+      var nonce = uuid.v4()
+      req.nonce = nonce
+      return "'nonce-" + nonce + "'"  // 'nonce-$RANDOM'
     }
   ]
-}));
+}))
 
 app.use(function(req, res) {
-  res.end("<script nonce='" + req.nonce + "'>alert(1 + 1);</script>");
-});
+  res.end("<script nonce='" + req.nonce + "'>alert(1 + 1);</script>")
+})
 ```

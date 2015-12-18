@@ -24,7 +24,7 @@
   },
   "bugs": "https://github.com/helmetjs/csp/issues",
   "scripts": {
-    "test": "mocha"
+    "test": "standard && mocha"
   },
   "dependencies": {
     "camelize": "1.0.0",
@@ -39,6 +39,14 @@
     "connect": "^3.3.5",
     "lodash": "^3.7.0",
     "mocha": "^2.3.4",
+    "standard": "^5.4.1",
     "supertest": "^1.1.0"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "beforeEach",
+      "it"
+    ]
   }
 }
