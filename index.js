@@ -23,6 +23,8 @@ module.exports = function csp (options) {
     var browser
     if (userAgent) {
       browser = platform.parse(userAgent)
+    } else {
+      browser = {}
     }
 
     var headerKeys

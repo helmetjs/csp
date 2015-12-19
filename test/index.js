@@ -92,6 +92,20 @@ describe('csp middleware', function () {
       .end(done)
   })
 
+  it('sets all the headers if there is no user-agent', function (done) {
+    var app = use({
+      directives: {
+        defaultSrc: ["'self'", 'domain.com']
+      }
+    })
+
+    request(app).get('/').unset('User-Agent')
+      .expect('X-Content-Security-Policy', "default-src 'self' domain.com")
+      .expect('Content-Security-Policy', "default-src 'self' domain.com")
+      .expect('X-WebKit-CSP', "default-src 'self' domain.com")
+      .end(done)
+  })
+
   it('can set the report-only headers', function (done) {
     var app = use({
       reportOnly: true,
