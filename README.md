@@ -3,7 +3,7 @@ Content Security Policy middleware
 [![Build Status](https://travis-ci.org/helmetjs/csp.svg?branch=master)](https://travis-ci.org/helmetjs/csp)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
 
-Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate XSS vulnerabilities, unintended frames, malicious frames, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/).
+Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate XSS vulnerabilities, unintended frames, malicious frames, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/). This module helps set Content Security Policies.
 
 Usage:
 
@@ -30,11 +30,8 @@ app.use(csp({
   // X-WebKit-CSP, and X-Content-Security-Policy.
   setAllHeaders: false,
 
-  // Set to true if you want to disable CSP on Android.
-  disableAndroid: false,
-
-  // Set to true if you want to force buggy CSP in Safari 5.1 and below.
-  safari5: false
+  // Set to true if you want to disable CSP on Android where it can be buggy.
+  disableAndroid: false
 }))
 ```
 
