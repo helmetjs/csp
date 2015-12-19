@@ -73,8 +73,9 @@ You can dynamically generate nonces to allow inline `<script>` tags to be safely
 ```js
 var uuid = require('node-uuid')
 
-app.use(function (req, res) {
+app.use(function (req, res, next) {
   req.locals.nonce = uuid.v4()
+  next()
 })
 
 app.use(csp({

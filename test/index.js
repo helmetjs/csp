@@ -1,63 +1,76 @@
 var csp = require('..')
 
 var _ = require('lodash')
+var parseCsp = require('content-security-policy-parser')
 var connect = require('connect')
 var request = require('supertest')
 var assert = require('assert')
 var AGENTS = require('./browser-data')
 
+var POLICY = {
+  defaultSrc: ["'self'"],
+  'script-src': ['scripts.biz'],
+  styleSrc: ['styles.biz', function (req) {
+    return req.nonce
+  }],
+  objectSrc: [],
+  imgSrc: 'data:'
+}
+
+var EXPECTED_POLICY = {
+  'default-src': ["'self'"],
+  'script-src': ['scripts.biz'],
+  'style-src': ['styles.biz', 'abc123'],
+  'object-src': [],
+  'img-src': ['data:']
+}
+
 describe('csp middleware', function () {
-  var POLICY = {
-    baseUri: '*',
-    'child-src': ['child.com'],
-    connectSrc: ['connect.com'],
-    'default-src': ["'self'"],
-    fontSrc: ['font.com'],
-    'form-action': ['formaction.com'],
-    frameAncestors: ['frameancestor.com'],
-    'frame-src': ['frame.com'],
-    imgSrc: ['data:', 'img.com'],
-    'manifest-src': ['manifest.com'],
-    mediaSrc: ['media.com'],
-    'object-src': ['object.com'],
-    pluginTypes: ['application/x-shockwave-flash'],
-    'report-uri': '/report-violation',
-    sandbox: [],
-    'script-src': ["'unsafe-eval'", 'scripts.com'],
-    styleSrc: ['styles.com', "'unsafe-inline'"],
-    'upgrade-insecure-requests': ''
-  }
-
-  var EXPECTED_POLICY = [
-    'base-uri *; child-src child.com; connect-src connect.com; default-src ',
-    "'self'; font-src font.com; form-action formaction.com; frame-ancestors ",
-    'frameancestor.com; frame-src frame.com; img-src data: img.com; ',
-    'manifest-src manifest.com; media-src media.com; object-src object.com; ',
-    'plugin-types application/x-shockwave-flash; report-uri /report-violation; ',
-    "sandbox; script-src 'unsafe-eval' scripts.com; style-src styles.com ",
-    "'unsafe-inline'; upgrade-insecure-requests"
-  ].join('')
-
-  function use (policy) {
+  function use (options) {
     var result = connect()
-    result.use(csp(policy))
+    result.use(function (req, res, next) {
+      req.nonce = 'abc123'
+      next()
+    })
+    result.use(csp(options))
     result.use(function (req, res) {
       res.end('Hello world!')
     })
     return result
   }
 
-  it('sets headers by string', function (done) {
-    var app = use({ 'default-src': 'a.com b.biz' })
-    request(app).get('/')
-      .expect('Content-Security-Policy', 'default-src a.com b.biz', done)
+  it('sets an empty header when passed no arguments', function (done) {
+    var app = use()
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .expect('Content-Security-Policy', '')
+      .end(done)
+  })
+
+  it('sets an empty header when passed an empty object', function (done) {
+    var app = use({})
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .expect('Content-Security-Policy', '')
+      .end(done)
+  })
+
+  it('sets an empty header when passed no directives', function (done) {
+    var app = use({ directives: {} })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .expect('Content-Security-Policy', '')
+      .end(done)
   })
 
   it('sets all the headers if you tell it to', function (done) {
     var app = use({
       setAllHeaders: true,
-      'default-src': ["'self'", 'domain.com']
+      directives: {
+        defaultSrc: ["'self'", 'domain.com']
+      }
     })
+
     request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
       .expect('X-Content-Security-Policy', "default-src 'self' domain.com")
       .expect('Content-Security-Policy', "default-src 'self' domain.com")
@@ -66,109 +79,69 @@ describe('csp middleware', function () {
   })
 
   it('sets all the headers if you provide an unknown user-agent', function (done) {
-    var app = use({ 'default-src': ["'self'", 'domain.com'] })
+    var app = use({
+      directives: {
+        defaultSrc: ["'self'", 'domain.com']
+      }
+    })
+
     request(app).get('/').set('User-Agent', 'Burrito Browser')
       .expect('X-Content-Security-Policy', "default-src 'self' domain.com")
       .expect('Content-Security-Policy', "default-src 'self' domain.com")
       .expect('X-WebKit-CSP', "default-src 'self' domain.com")
-      .end(function (err) {
-        if (err) { return done(err) }
-        // unknown browser doesn't affect the next request
-        request(app).get('/').set('User-Agent', AGENTS['Chrome 27'].string)
-          .expect('Content-Security-Policy', "default-src 'self' domain.com")
-          .expect(function (res) {
-            assert(!res.get('X-Content-Security-Policy'))
-            assert(!res.get('X-WebKit-CSP'))
-          })
-          .end(done)
-      })
+      .end(done)
   })
 
-  it('sets the report-only headers', function (done) {
+  it('can set the report-only headers', function (done) {
     var app = use({
       reportOnly: true,
       setAllHeaders: true,
-      'default-src': ["'self'"],
-      'report-uri': '/reporter'
+      directives: {
+        'default-src': ["'self'"],
+        'report-uri': '/reporter'
+      }
     })
+
     request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
-      .expect('X-Content-Security-Policy-Report-Only', "default-src 'self'; report-uri /reporter")
-      .expect('Content-Security-Policy-Report-Only', "default-src 'self'; report-uri /reporter")
-      .expect('X-WebKit-CSP-Report-Only', "default-src 'self'; report-uri /reporter")
-      .end(done)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var expected = {
+          'default-src': ["'self'"],
+          'report-uri': ['/reporter']
+        }
+
+        assert.equal(res.headers['content-security-policy'], undefined)
+        assert.equal(res.headers['x-content-security-policy'], undefined)
+        assert.equal(res.headers['x-webkit-csp'], undefined)
+
+        assert.deepEqual(parseCsp(res.headers['content-security-policy-report-only']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-content-security-policy-report-only']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-webkit-csp-report-only']), expected)
+
+        done()
+      })
   })
 
   it('can set empty directives', function (done) {
     var app = use({
-      scriptSrc: [],
-      sandbox: ['']
+      directives: {
+        scriptSrc: [],
+        sandbox: ['']
+      }
     })
 
     request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
       .end(function (err, res) {
         if (err) { return done(err) }
 
-        var header = res.headers['content-security-policy']
-        var split = header.split(';').map(function (str) { return str.trim() }).sort()
-
-        assert.equal(split[0], 'sandbox')
-        assert.equal(split[1], 'script-src')
+        assert.deepEqual(parseCsp(res.headers['content-security-policy']), {
+          'sandbox': [],
+          'script-src': []
+        })
 
         done()
       })
-  })
-
-  it('can generate dynamic values', function (done) {
-    var app = use({
-      defaultSrc: function (req) {
-        return req.originalUrl
-      },
-      scriptSrc: [
-        "'self'",
-        function (req) {
-          return 'bar'
-        }
-      ]
-    })
-
-    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
-      .end(function (err, res) {
-        if (err) { return done(err) }
-
-        var header = res.headers['content-security-policy']
-        var split = header.split(';').map(function (str) { return str.trim() }).sort()
-
-        assert.equal(split[0], 'default-src /')
-        assert.equal(split[1], "script-src 'self' bar")
-        done()
-      })
-  })
-
-  it('throws an error when directives need quotes', function () {
-    assert.throws(function () {
-      csp({ 'default-src': ['none'] })
-    }, Error)
-    assert.throws(function () {
-      csp({ 'default-src': ['self'] })
-    }, Error)
-    assert.throws(function () {
-      csp({ 'script-src': ['unsafe-inline'] })
-    }, Error)
-    assert.throws(function () {
-      csp({ scriptSrc: 'unsafe-eval' })
-    }, Error)
-    assert.throws(function () {
-      csp({ 'style-src': ['unsafe-inline'] })
-    }, Error)
-    assert.throws(function () {
-      csp({ styleSrc: 'unsafe-eval' })
-    }, Error)
-    assert.throws(function () {
-      csp({ 'default-src': 'self' })
-    }, Error)
-    assert.throws(function () {
-      csp({ defaultSrc: 'self unsafe-inline' })
-    }, Error)
   })
 
   it('throws an error reportOnly is true and there is no report-uri', function () {
@@ -177,111 +150,18 @@ describe('csp middleware', function () {
     }, Error)
   })
 
-  _.each(AGENTS, function (agent, name) {
-    if (agent.special) { return }
-
-    it('sets the header properly for ' + name, function (done) {
-      var app = use(POLICY)
-      var header = agent.header
-      request(app).get('/').set('User-Agent', agent.string)
-        .expect(header, EXPECTED_POLICY)
-        .end(done)
-    })
-  })
-
-  it('sets the header properly for Firefox 22', function (done) {
-    var app = use(POLICY)
-    var header = 'X-Content-Security-Policy'
-    request(app).get('/').set('User-Agent', AGENTS['Firefox 22'].string)
-      .expect(header, /default-src 'self'/)
-      .expect(header, /xhr-src connect.com/)
-      .end(done)
-  })
-
-  ;[
-    'Safari 4.1',
-    'Safari 5.1 on OS X',
-    'Safari 5.1 on Windows Server 2008'
-  ].forEach(function (browser) {
-    it("doesn't set the property for " + browser + ' by default', function (done) {
-      var app = use(POLICY)
-      request(app).get('/').set('User-Agent', AGENTS[browser].string)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-          assert.equal(res.header['x-webkit-csp'], undefined)
-          assert.equal(res.header['content-security-policy'], undefined)
-          assert.equal(res.header['x-content-security-policy'], undefined)
-          done()
-        })
-    })
-  })
-
-  it('sets the header for Safari 4.1 if you force it', function (done) {
-    var app = use({
-      safari5: true,
-      'default-src': 'a.com'
-    })
-    request(app).get('/').set('User-Agent', AGENTS['Safari 4.1'].string)
-      .expect('X-WebKit-CSP', 'default-src a.com', done)
-  })
-
-  it('sets the header for Safari 5.1 if you force it', function (done) {
-    var app = use({
-      safari5: true,
-      'default-src': 'a.com'
-    })
-    request(app).get('/').set('User-Agent', AGENTS['Safari 5.1 on OS X'].string)
-      .expect('X-WebKit-CSP', 'default-src a.com', done)
-  })
-
-  it('lets you disable Android', function (done) {
-    var app = use({
-      disableAndroid: true,
-      defaultSrc: 'a.com'
-    })
-    request(app).get('/').set('User-Agent', AGENTS['Android 4.4.3'].string)
-      .end(function (err, res) {
-        if (err) { return done(err) }
-        assert.equal(res.header['x-webkit-csp'], undefined)
-        assert.equal(res.header['content-security-policy'], undefined)
-        assert.equal(res.header['x-content-security-policy'], undefined)
-        done()
-      })
-  })
-
-  it("appends connect-src 'self' in iOS Chrome when connect-src is already defined", function (done) {
-    var app = use(POLICY)
-    var iosChrome = AGENTS['iOS Chrome 40']
-    request(app).get('/').set('User-Agent', iosChrome.string)
-      .expect(iosChrome.header, /connect-src (?:'self' connect.com)|(?:connect.com 'self')/)
-      .end(done)
-  })
-
-  it("adds connect-src 'self' in iOS Chrome when connect-src is undefined", function (done) {
-    var app = use({ styleSrc: ["'self'"] })
-    var iosChrome = AGENTS['iOS Chrome 40']
-    request(app).get('/').set('User-Agent', iosChrome.string)
-      .expect(iosChrome.header, /connect-src 'self'/)
-      .end(done)
-  })
-
-  it("does nothing in iOS Chrome if connect-src 'self' is defined", function (done) {
-    var app = use({ connectSrc: ['somedomain.com', "'self'"] })
-    var iosChrome = AGENTS['iOS Chrome 40']
-    request(app).get('/').set('User-Agent', iosChrome.string)
-      .expect(iosChrome.header, "connect-src somedomain.com 'self'")
-      .end(done)
-  })
-
   it("doesn't splice the original array", function (done) {
     var app = use({
-      'style-src': [
-        "'self'",
-        "'unsafe-inline'"
-      ]
+      directives: {
+        'style-src': [
+          "'self'",
+          "'unsafe-inline'"
+        ]
+      }
     })
     var chrome = AGENTS['Chrome 27']
     var ff = AGENTS['Firefox 22']
+
     request(app).get('/').set('User-Agent', chrome.string)
       .expect(chrome.header, /style-src 'self' 'unsafe-inline'/)
       .end(function () {
@@ -298,5 +178,134 @@ describe('csp middleware', function () {
   it('names its function and middleware', function () {
     assert.equal(csp.name, 'csp')
     assert.equal(csp().name, 'csp')
+  })
+
+  describe('normal browsers', function () {
+    _.each(AGENTS, function (agent, name) {
+      if (agent.special) { return }
+
+      it('sets the header properly for ' + name, function (done) {
+        var app = use({ directives: POLICY })
+
+        request(app).get('/').set('User-Agent', agent.string)
+        .end(function (err, res) {
+          if (err) { return done(err) }
+
+          var header = agent.header.toLowerCase()
+          assert.deepEqual(parseCsp(res.headers[header]), EXPECTED_POLICY)
+
+          done()
+        })
+      })
+    })
+  })
+
+  describe('special browsers', function () {
+    it('sets the header properly for Firefox 22', function (done) {
+      var app = use({
+        directives: {
+          defaultSrc: ["'self'"],
+          connectSrc: ['connect.com']
+        }
+      })
+
+      request(app).get('/').set('User-Agent', AGENTS['Firefox 22'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), {
+          'default-src': ["'self'"],
+          'xhr-src': ['connect.com']
+        })
+
+        done()
+      })
+    })
+
+    ;[
+      'Safari 4.1',
+      'Safari 5.1 on OS X',
+      'Safari 5.1 on Windows Server 2008'
+    ].forEach(function (browser) {
+      it("doesn't set the property for " + browser, function (done) {
+        var app = use({ directives: POLICY })
+
+        request(app).get('/').set('User-Agent', AGENTS[browser].string)
+        .end(function (err, res) {
+          if (err) { return done(err) }
+
+          assert.equal(res.header['x-webkit-csp'], undefined)
+          assert.equal(res.header['content-security-policy'], undefined)
+          assert.equal(res.header['x-content-security-policy'], undefined)
+
+          done()
+        })
+      })
+    })
+
+    it('lets you disable Android', function (done) {
+      var app = use({
+        disableAndroid: true,
+        directives: {
+          defaultSrc: 'a.com'
+        }
+      })
+
+      request(app).get('/').set('User-Agent', AGENTS['Android 4.4.3'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        assert.equal(res.header['x-webkit-csp'], undefined)
+        assert.equal(res.header['content-security-policy'], undefined)
+        assert.equal(res.header['x-content-security-policy'], undefined)
+
+        done()
+      })
+    })
+
+    it("appends connect-src 'self' in iOS Chrome when connect-src is already defined", function (done) {
+      var app = use({
+        directives: {
+          connectSrc: ['connect.com']
+        }
+      })
+      var iosChrome = AGENTS['iOS Chrome 40']
+
+      request(app).get('/').set('User-Agent', iosChrome.string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var header = iosChrome.header.toLowerCase()
+        var connectSrc = parseCsp(res.headers[header])['connect-src'].sort()
+        assert.deepEqual(connectSrc, ["'self'", 'connect.com'])
+
+        done()
+      })
+    })
+
+    it("adds connect-src 'self' in iOS Chrome when connect-src is undefined", function (done) {
+      var app = use({
+        directives: {
+          styleSrc: ["'self'"]
+        }
+      })
+      var iosChrome = AGENTS['iOS Chrome 40']
+
+      request(app).get('/').set('User-Agent', iosChrome.string)
+      .expect(iosChrome.header, /connect-src 'self'/)
+      .end(done)
+    })
+
+    it("does nothing in iOS Chrome if connect-src 'self' is defined", function (done) {
+      var app = use({
+        directives: {
+          connectSrc: ['somedomain.com', "'self'"]
+        }
+      })
+      var iosChrome = AGENTS['iOS Chrome 40']
+      request(app).get('/').set('User-Agent', iosChrome.string)
+      .expect(iosChrome.header, "connect-src somedomain.com 'self'")
+      .end(done)
+    })
   })
 })
