@@ -2,7 +2,7 @@ var csp = require('..')
 
 var _ = require('lodash')
 var parseCsp = require('content-security-policy-parser')
-var connect = require('connect')
+var express = require('express')
 var request = require('supertest')
 var assert = require('assert')
 var AGENTS = require('./browser-data')
@@ -10,8 +10,8 @@ var AGENTS = require('./browser-data')
 var POLICY = {
   defaultSrc: ["'self'"],
   'script-src': ['scripts.biz'],
-  styleSrc: ['styles.biz', function (req) {
-    return req.nonce
+  styleSrc: ['styles.biz', function (req, res) {
+    return res.locals.nonce
   }],
   objectSrc: [],
   imgSrc: 'data:'
@@ -27,9 +27,9 @@ var EXPECTED_POLICY = {
 
 describe('csp middleware', function () {
   function use (options) {
-    var result = connect()
+    var result = express()
     result.use(function (req, res, next) {
-      req.nonce = 'abc123'
+      res.locals.nonce = 'abc123'
       next()
     })
     result.use(csp(options))
