@@ -42,7 +42,7 @@ module.exports = function csp (options) {
     var directives = transformDirectivesForBrowser(browser, originalDirectives)
 
     if (directivesAreDynamic) {
-      directives = parseDynamicDirectives(directives, [req])
+      directives = parseDynamicDirectives(directives, [req, res])
     }
 
     var policyString = cspBuilder({ directives: directives })
