@@ -211,6 +211,26 @@ describe('csp middleware', function () {
           done()
         })
       })
+
+      it('does not set other headers for ' + name, function (done) {
+        var app = use({ directives: POLICY })
+
+        request(app).get('/').set('User-Agent', agent.string)
+        .end(function (err, res) {
+          if (err) { return done(err) }
+
+          [
+            'content-security-policy',
+            'x-content-security-policy',
+            'x-webkit-csp'
+          ].forEach(function (header) {
+            if (header === agent.header.toLowerCase()) { return }
+            assert.equal(res.headers[header], undefined)
+          })
+
+          done()
+        })
+      })
     })
   })
 
