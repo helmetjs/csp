@@ -1,6 +1,7 @@
 var csp = require('..')
 
 var _ = require('lodash')
+var pickBy = require('lodash.pickby')
 var parseCsp = require('content-security-policy-parser')
 var express = require('express')
 var request = require('supertest')
@@ -340,6 +341,42 @@ describe('csp middleware', function () {
       request(app).get('/').set('User-Agent', iosChrome.string)
       .expect(iosChrome.header, "connect-src somedomain.com 'self'")
       .end(done)
+    })
+  })
+
+  describe('setLegacyHeaders: false', function () {
+    var app
+
+    before(function () {
+      app = use({
+        setLegacyHeaders: false,
+        directives: {
+          'default-src': ["'self'", 'domain.com']
+        }
+      })
+    })
+
+    var specialAgents = pickBy(AGENTS, function (agent) {
+      return agent.header !== 'Content-Security-Policy'
+    })
+    _.each(specialAgents, function (agent, name) {
+      it('omits legacy headers if told to for ' + name, function (done) {
+        request(app).get('/').set('User-Agent', agent.string)
+          .expect('Content-Security-Policy', "default-src 'self' domain.com")
+          .end(done)
+      })
+    })
+
+    it('throws an error with conflicting options', function () {
+      assert.throws(function () {
+        csp({
+          setAllHeaders: true,
+          setLegacyHeaders: false,
+          directives: {
+            defaultSrc: ["'self'", 'domain.com']
+          }
+        })
+      }, Error)
     })
   })
 })

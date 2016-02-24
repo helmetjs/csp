@@ -32,6 +32,9 @@ app.use(csp({
   // X-WebKit-CSP, and X-Content-Security-Policy.
   setAllHeaders: false,
 
+  // Set to false to never set X- headers regardless of user agent
+  setLegacyHeaders: true,
+
   // Set to true if you want to disable CSP on Android where it can be buggy.
   disableAndroid: false
 }))
@@ -92,3 +95,21 @@ app.use(function (req, res) {
   res.end('<script nonce="' + res.locals.nonce + '">alert(1 + 1);</script>')
 })
 ```
+
+Using CSP with a CDN
+--------------------
+
+The default behavior of CSP is generate headers tailored for the browser that's requesting your page. If you have a CDN in front of your application, the CDN may cache the wrong headers, rendering your CSP useless.
+
+Legacy headers are set on the following browsers:
+
+| Name    | Version | Released |
+|---------|---------|----------|
+| IE      | < 12    | 2015     |
+| Firefox | < 23    | 2013     |
+| Chrome  | < 25    | 2013     |
+| Safari  | < 7     | 2013     |
+
+If you want your CSP to support these browsers, use the `setAllHeaders: true` option. If you don't care about older browsers and want to save some bits over the wire and cycles on your servers, use the `setLegacyHeaders: false` option.
+
+
