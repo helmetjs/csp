@@ -1,11 +1,9 @@
 var camelize = require('camelize')
 var cspBuilder = require('content-security-policy-builder')
-var platform = require('platform')
 var containsFunction = require('./lib/contains-function')
-var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
-var transformDirectivesForBrowser = require('./lib/transform-directives-for-browser')
 var parseDynamicDirectives = require('./lib/parse-dynamic-directives')
-var ALL_HEADERS = require('./lib/all-headers')
+var getUABasedBrowser = require('./lib/get-ua-based-browser')
+var getStandardBrowser = require('./lib/get-standard-browser')
 
 module.exports = function csp (options) {
   options = options || {}
@@ -17,29 +15,35 @@ module.exports = function csp (options) {
     throw new Error('Please remove reportOnly or add a report-uri.')
   }
 
+  var setLegacyHeaders
+  if (options.hasOwnProperty('setLegacyHeaders')) {
+    setLegacyHeaders = options.setLegacyHeaders
+  } else {
+    setLegacyHeaders = true
+  }
+
+  if (options.setAllHeaders && !setLegacyHeaders) {
+    throw new Error('setAllHeaders cannot be true if setLegacyHeaders is false')
+  }
+
+  var getBrowser
+  if (setLegacyHeaders) {
+    getBrowser = getUABasedBrowser
+  } else {
+    getBrowser = getStandardBrowser
+  }
+
   return function csp (req, res, next) {
     var userAgent = req.headers['user-agent']
 
-    var browser
-    if (userAgent) {
-      browser = platform.parse(userAgent)
-    } else {
-      browser = {}
-    }
-
-    var headerKeys
-    if (options.setAllHeaders || !userAgent) {
-      headerKeys = ALL_HEADERS
-    } else {
-      headerKeys = getHeaderKeysForBrowser(browser, options)
-    }
-
-    if (headerKeys.length === 0) {
+    var browser = getBrowser(userAgent, originalDirectives, options)
+    if (browser.headerKeys.length === 0) {
       next()
       return
     }
 
-    var directives = transformDirectivesForBrowser(browser, originalDirectives)
+    var headerKeys = browser.headerKeys
+    var directives = browser.directives
 
     if (directivesAreDynamic) {
       directives = parseDynamicDirectives(directives, [req, res])
