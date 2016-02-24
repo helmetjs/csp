@@ -1,7 +1,7 @@
 var csp = require('..')
 
 var _ = require('lodash')
-var pickBy = require('lodash.pickBy')
+var pickBy = require('lodash.pickby')
 var parseCsp = require('content-security-policy-parser')
 var express = require('express')
 var request = require('supertest')
