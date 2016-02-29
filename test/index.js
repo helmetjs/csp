@@ -342,4 +342,76 @@ describe('csp middleware', function () {
       .end(done)
     })
   })
+
+  describe('without browser sniffing', function () {
+    it('lets you disable all user-agent parsing for normal headers', function (finalDone) {
+      var done = _.after(Object.keys(AGENTS).length, finalDone)
+
+      _.each(AGENTS, function (agent, name) {
+        var app = use({
+          directives: POLICY,
+          browserSniff: false
+        })
+
+        request(app).get('/').set('User-Agent', agent.string)
+        .end(function (err, res) {
+          if (err) { return done(err) }
+
+          assert.deepEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
+          assert.equal(res.headers['x-content-security-policy'], undefined)
+          assert.equal(res.header['x-webkit-csp'], undefined)
+
+          done()
+        })
+      })
+    })
+
+    it('lets you disable all user-agent parsing for report-only headers', function (finalDone) {
+      var done = _.after(Object.keys(AGENTS).length, finalDone)
+      var policy = _.extend({ reportUri: '/' }, POLICY)
+      var expectedPolicy = _.extend({ 'report-uri': ['/'] }, EXPECTED_POLICY)
+
+      _.each(AGENTS, function (agent, name) {
+        var app = use({
+          directives: policy,
+          reportOnly: true,
+          browserSniff: false
+        })
+
+        request(app).get('/').set('User-Agent', agent.string)
+        .end(function (err, res) {
+          if (err) { return done(err) }
+
+          assert.deepEqual(parseCsp(res.headers['content-security-policy-report-only']), expectedPolicy)
+          assert.equal(res.headers['x-content-security-policy-report-only'], undefined)
+          assert.equal(res.header['x-webkit-csp-report-only'], undefined)
+
+          done()
+        })
+      })
+    })
+
+    it('lets you set all headers', function (finalDone) {
+      var done = _.after(Object.keys(AGENTS).length, finalDone)
+
+      _.each(AGENTS, function (agent, name) {
+        var app = use({
+          directives: POLICY,
+          browserSniff: false,
+          setAllHeaders: true
+        })
+
+        request(app).get('/').set('User-Agent', agent.string)
+        .end(function (err, res) {
+          if (err) { return done(err) }
+
+          assert.deepEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
+          assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), EXPECTED_POLICY)
+          assert.deepEqual(parseCsp(res.headers['x-webkit-csp']), EXPECTED_POLICY)
+
+          done()
+        })
+      })
+    })
+  })
 })
