@@ -97,3 +97,8 @@ app.use(function (req, res) {
   res.end('<script nonce="' + res.locals.nonce + '">alert(1 + 1);</script>')
 })
 ```
+
+Using CSP with a CDN
+--------------------
+
+The default behavior of CSP is generate headers tailored for the browser that's requesting your page. If you have a CDN in front of your application, the CDN may cache the wrong headers, rendering your CSP useless. Make sure to eschew a CDN when using this module or set the `browserSniff` option to `false`.
