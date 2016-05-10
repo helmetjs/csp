@@ -1,12 +1,12 @@
 var camelize = require('camelize')
 var cspBuilder = require('content-security-policy-builder')
+var isFunction = require('lodash.isfunction')
 var platform = require('platform')
 var containsFunction = require('./lib/contains-function')
 var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
 var transformDirectivesForBrowser = require('./lib/transform-directives-for-browser')
 var parseDynamicDirectives = require('./lib/parse-dynamic-directives')
 var ALL_HEADERS = require('./lib/all-headers')
-var isFunction = require('lodash.isFunction')
 
 module.exports = function csp (options) {
   options = options || {}
