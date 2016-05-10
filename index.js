@@ -6,6 +6,7 @@ var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
 var transformDirectivesForBrowser = require('./lib/transform-directives-for-browser')
 var parseDynamicDirectives = require('./lib/parse-dynamic-directives')
 var ALL_HEADERS = require('./lib/all-headers')
+var isFunction = require('lodash.isFunction')
 
 module.exports = function csp (options) {
   options = options || {}
@@ -14,7 +15,7 @@ module.exports = function csp (options) {
   var directivesAreDynamic = containsFunction(originalDirectives)
   var shouldBrowserSniff = options.browserSniff !== false
 
-  if (options.reportOnly && !originalDirectives.reportUri) {
+  if (!isFunction(options.reportOnly) && options.reportOnly && !originalDirectives.reportUri) {
     throw new Error('Please remove reportOnly or add a report-uri.')
   }
 
@@ -50,8 +51,14 @@ module.exports = function csp (options) {
       var policyString = cspBuilder({ directives: directives })
 
       headerKeys.forEach(function (headerKey) {
-        if (options.reportOnly) {
-          headerKey += '-Report-Only'
+        if (isFunction(options.reportOnly)) {
+          if (options.reportOnly(req, res)) {
+            headerKey += '-Report-Only'
+          }
+        } else {
+          if (options.reportOnly) {
+            headerKey += '-Report-Only'
+          }
         }
         res.setHeader(headerKey, policyString)
       })
@@ -66,15 +73,23 @@ module.exports = function csp (options) {
       headerKeys = ['Content-Security-Policy']
     }
 
-    if (options.reportOnly) {
-      headerKeys = headerKeys.map(function (headerKey) {
-        return headerKey + '-Report-Only'
-      })
-    }
-
     return function csp (req, res, next) {
       var directives = parseDynamicDirectives(originalDirectives, [req, res])
       var policyString = cspBuilder({ directives: directives })
+
+      if (isFunction(options.reportOnly)) {
+        if (options.reportOnly(req, res)) {
+          headerKeys = headerKeys.map(function (headerKey) {
+            return headerKey + '-Report-Only'
+          })
+        }
+      } else {
+        if (options.reportOnly) {
+          headerKeys = headerKeys.map(function (headerKey) {
+            return headerKey + '-Report-Only'
+          })
+        }
+      }
 
       headerKeys.forEach(function (headerKey) {
         res.setHeader(headerKey, policyString)
