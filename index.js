@@ -1,5 +1,6 @@
 var camelize = require('camelize')
 var cspBuilder = require('content-security-policy-builder')
+var isFunction = require('lodash.isfunction')
 var platform = require('platform')
 var containsFunction = require('./lib/contains-function')
 var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
@@ -13,8 +14,9 @@ module.exports = function csp (options) {
   var originalDirectives = camelize(options.directives || {})
   var directivesAreDynamic = containsFunction(originalDirectives)
   var shouldBrowserSniff = options.browserSniff !== false
+  var reportOnlyIsFunction = isFunction(options.reportOnly)
 
-  if (options.reportOnly && !originalDirectives.reportUri) {
+  if (!reportOnlyIsFunction && options.reportOnly && !originalDirectives.reportUri) {
     throw new Error('Please remove reportOnly or add a report-uri.')
   }
 
@@ -50,7 +52,8 @@ module.exports = function csp (options) {
       var policyString = cspBuilder({ directives: directives })
 
       headerKeys.forEach(function (headerKey) {
-        if (options.reportOnly) {
+        if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
+            (!reportOnlyIsFunction && options.reportOnly)) {
           headerKey += '-Report-Only'
         }
         res.setHeader(headerKey, policyString)
@@ -66,15 +69,16 @@ module.exports = function csp (options) {
       headerKeys = ['Content-Security-Policy']
     }
 
-    if (options.reportOnly) {
-      headerKeys = headerKeys.map(function (headerKey) {
-        return headerKey + '-Report-Only'
-      })
-    }
-
     return function csp (req, res, next) {
       var directives = parseDynamicDirectives(originalDirectives, [req, res])
       var policyString = cspBuilder({ directives: directives })
+
+      if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
+          (!reportOnlyIsFunction && options.reportOnly)) {
+        headerKeys = headerKeys.map(function (headerKey) {
+          return headerKey + '-Report-Only'
+        })
+      }
 
       headerKeys.forEach(function (headerKey) {
         res.setHeader(headerKey, policyString)

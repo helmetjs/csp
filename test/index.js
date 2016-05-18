@@ -137,6 +137,72 @@ describe('csp middleware', function () {
       })
   })
 
+  it('can use a function to set the report-only headers to true', function (done) {
+    var app = use({
+      reportOnly: function (req, res) {
+        return true
+      },
+      setAllHeaders: true,
+      directives: {
+        'default-src': ["'self'"],
+        'report-uri': '/reporter'
+      }
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var expected = {
+          'default-src': ["'self'"],
+          'report-uri': ['/reporter']
+        }
+
+        assert.equal(res.headers['content-security-policy'], undefined)
+        assert.equal(res.headers['x-content-security-policy'], undefined)
+        assert.equal(res.headers['x-webkit-csp'], undefined)
+
+        assert.deepEqual(parseCsp(res.headers['content-security-policy-report-only']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-content-security-policy-report-only']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-webkit-csp-report-only']), expected)
+
+        done()
+      })
+  })
+
+  it('can use a function to set the report-only headers to false', function (done) {
+    var app = use({
+      reportOnly: function (req, res) {
+        return false
+      },
+      setAllHeaders: true,
+      directives: {
+        'default-src': ["'self'"],
+        'report-uri': '/reporter'
+      }
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var expected = {
+          'default-src': ["'self'"],
+          'report-uri': ['/reporter']
+        }
+
+        assert.equal(res.headers['content-security-policy-report-only'], undefined)
+        assert.equal(res.headers['x-content-security-policy-report-only'], undefined)
+        assert.equal(res.headers['x-webkit-csp-report-only'], undefined)
+
+        assert.deepEqual(parseCsp(res.headers['content-security-policy']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-webkit-csp']), expected)
+
+        done()
+      })
+  })
+
   it('can set empty directives', function (done) {
     var app = use({
       directives: {
@@ -158,10 +224,16 @@ describe('csp middleware', function () {
       })
   })
 
-  it('throws an error reportOnly is true and there is no report-uri', function () {
+  it('throws an error when reportOnly is true and there is no report-uri', function () {
     assert.throws(function () {
       csp({ reportOnly: true })
     }, Error)
+  })
+
+  it('does not throw an error when reportOnly is a function and there is no report-uri', function () {
+    assert.doesNotThrow(function () {
+      csp({ reportOnly: function (req, res) { return true } })
+    })
   })
 
   it("doesn't splice the original array", function (done) {
