@@ -14,8 +14,9 @@ module.exports = function csp (options) {
   var originalDirectives = camelize(options.directives || {})
   var directivesAreDynamic = containsFunction(originalDirectives)
   var shouldBrowserSniff = options.browserSniff !== false
+  var reportOnlyIsFunction = isFunction(options.reportOnly)
 
-  if (!isFunction(options.reportOnly) && options.reportOnly && !originalDirectives.reportUri) {
+  if (!reportOnlyIsFunction && options.reportOnly && !originalDirectives.reportUri) {
     throw new Error('Please remove reportOnly or add a report-uri.')
   }
 
@@ -51,14 +52,9 @@ module.exports = function csp (options) {
       var policyString = cspBuilder({ directives: directives })
 
       headerKeys.forEach(function (headerKey) {
-        if (isFunction(options.reportOnly)) {
-          if (options.reportOnly(req, res)) {
-            headerKey += '-Report-Only'
-          }
-        } else {
-          if (options.reportOnly) {
-            headerKey += '-Report-Only'
-          }
+        if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
+            (!reportOnlyIsFunction && options.reportOnly)) {
+          headerKey += '-Report-Only'
         }
         res.setHeader(headerKey, policyString)
       })
@@ -77,18 +73,11 @@ module.exports = function csp (options) {
       var directives = parseDynamicDirectives(originalDirectives, [req, res])
       var policyString = cspBuilder({ directives: directives })
 
-      if (isFunction(options.reportOnly)) {
-        if (options.reportOnly(req, res)) {
-          headerKeys = headerKeys.map(function (headerKey) {
-            return headerKey + '-Report-Only'
-          })
-        }
-      } else {
-        if (options.reportOnly) {
-          headerKeys = headerKeys.map(function (headerKey) {
-            return headerKey + '-Report-Only'
-          })
-        }
+      if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
+          (!reportOnlyIsFunction && options.reportOnly)) {
+        headerKeys = headerKeys.map(function (headerKey) {
+          return headerKey + '-Report-Only'
+        })
       }
 
       headerKeys.forEach(function (headerKey) {
