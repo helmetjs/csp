@@ -1,6 +1,6 @@
 var camelize = require('camelize')
 var cspBuilder = require('content-security-policy-builder')
-var isFunction = require('lodash.isfunction')
+var isFunction = require('./lib/is-function')
 var platform = require('platform')
 var containsFunction = require('./lib/contains-function')
 var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
