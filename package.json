@@ -25,7 +25,8 @@
   },
   "bugs": "https://github.com/helmetjs/csp/issues",
   "scripts": {
-    "test": "standard && mocha"
+    "pretest": "standard",
+    "test": "mocha"
   },
   "dependencies": {
     "camelize": "1.0.0",
