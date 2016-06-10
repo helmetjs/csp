@@ -40,8 +40,8 @@
   "devDependencies": {
     "content-security-policy-parser": "^0.1.0",
     "express": "^4.13.4",
-    "lodash": "^4.5.1",
-    "mocha": "^2.4.5",
+    "lodash": "^4.13.1",
+    "mocha": "^2.5.3",
     "standard": "^7.1.0",
     "supertest": "^1.2.0"
   },
