@@ -24,4 +24,18 @@ describe('assign', function () {
     assert.deepEqual(actual, expected)
     assert.deepEqual(a, expected)
   })
+
+  it("doesn't take inherited properties", function () {
+    function Person (first, last) {
+      this.first = first
+      this.last = last
+      this.name = first + ' ' + last
+    }
+
+    Person.prototype.species = 'human'
+
+    var coolPerson = new Person('Kimberly', 'Bryant')
+
+    assert(!assign({}, coolPerson).hasOwnProperty('species'))
+  })
 })
