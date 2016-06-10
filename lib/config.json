@@ -1,7 +1,22 @@
 {
   "directives": {
-    "default-src": {
-      "type": "sourceList"
+    "base-uri": { "type": "sourceList" },
+    "child-src": { "type": "sourceList" },
+    "connect-src": { "type": "sourceList" },
+    "default-src": { "type": "sourceList" },
+    "font-src": { "type": "sourceList" },
+    "form-action": { "type": "sourceList" },
+    "frame-ancestors": { "type": "sourceList" },
+    "img-src": { "type": "sourceList" },
+    "media-src": { "type": "sourceList" },
+    "object-src": { "type": "sourceList" },
+    "script-src": {
+      "type": "sourceList",
+      "hasUnsafes": true
+    },
+    "style-src": {
+      "type": "sourceList",
+      "hasUnsafes": true
     }
   }
 }

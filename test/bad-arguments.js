@@ -1,5 +1,7 @@
 var csp = require('..')
 
+var config = require('../lib/config')
+var camelize = require('camelize')
 var assert = require('assert')
 
 describe('with bad arguments', function () {
@@ -37,60 +39,60 @@ describe('with bad arguments', function () {
     })
   })
 
-  describe('default-src', function () {
-    it('errors with an empty array', function () {
-      throwTest([{
-        directives: { defaultSrc: [] }
-      }], 'default-src must have at least one value. To block everything, set default-src to ["\'none\'"].')
-    })
+  Object.keys(config.directives).forEach(function (directiveKey) {
+    var directiveInfo = config.directives[directiveKey]
+    var camelizedKey = camelize(directiveKey)
 
-    it('errors when called with an array that contains non-strings', function () {
-      throwTest([{
-        directives: {
-          defaultSrc: ['http://example.com', 69, 'https://example.com']
+    ;[directiveKey, camelizedKey].forEach(function (key) {
+      function set (value) {
+        var directives = {}
+        directives[key] = value
+        return [{ directives: directives }]
+      }
+
+      describe(key + ' directive', function () {
+        it('errors with an empty array', function () {
+          throwTest(set([]), directiveKey + ' must have at least one value. To block everything, set ' + directiveKey + ' to ["\'none\'"].')
+        })
+
+        it('errors when called with an array that contains non-strings', function () {
+          throwTest(set(['http://example.com', 69, 'https://example.com']), '"69" is not a valid source expression. Only non-empty strings are allowed.')
+        })
+
+        it('errors when called with non-array values', function () {
+          [
+            null,
+            undefined,
+            true,
+            {},
+            ''
+          ].forEach(function (value) {
+            throwTest(set(value), '"' + value + '" is not a valid value for ' + directiveKey + '. Use an array of strings.')
+          })
+        })
+
+        it('errors with unquoted "self"', function () {
+          throwTest(set(['self']), '"self" must be quoted in ' + directiveKey + '. Change it to "\'self\'" in your source list. Force this by enabling loose mode.')
+        })
+
+        it('errors with unquoted "none"', function () {
+          throwTest(set(['none']), '"none" must be quoted in ' + directiveKey + '. Change it to "\'none\'" in your source list. Force this by enabling loose mode.')
+        })
+
+        if (directiveInfo.hasUnsafes) {
+          it('errors when called with unquoted "unsafe-inline" or "unsafe-eval"', function () {
+            throwTest(set(['unsafe-inline']), '"unsafe-inline" must be quoted in ' + directiveKey + '. Change it to "\'unsafe-inline\'" in your source list. Force this by enabling loose mode.')
+            throwTest(set(['unsafe-eval']), '"unsafe-eval" must be quoted in ' + directiveKey + '. Change it to "\'unsafe-eval\'" in your source list. Force this by enabling loose mode.')
+          })
+        } else {
+          it('errors when called with unsafe-inline or unsafe-eval', function () {
+            throwTest(set(['unsafe-inline']), '"unsafe-inline" does not make sense in ' + directiveKey + '. Remove it.')
+            throwTest(set(['unsafe-eval']), '"unsafe-eval" does not make sense in ' + directiveKey + '. Remove it.')
+            throwTest(set(["'unsafe-inline'"]), '"\'unsafe-inline\'" does not make sense in ' + directiveKey + '. Remove it.')
+            throwTest(set(["'unsafe-eval'"]), '"\'unsafe-eval\'" does not make sense in ' + directiveKey + '. Remove it.')
+          })
         }
-      }], '"69" is not a valid source expression. Only non-empty strings are allowed.')
-    })
-
-    it('errors when called with non-array values', function () {
-      [
-        null,
-        undefined,
-        true,
-        {},
-        ''
-      ].forEach(function (value) {
-        throwTest([{
-          directives: { defaultSrc: value }
-        }], '"' + value + '" is not a valid value for default-src. Use an array of strings.')
       })
-    })
-
-    it('errors when called with unquoted "self"', function () {
-      throwTest([{
-        directives: { defaultSrc: ['self'] }
-      }], '"self" must be quoted in default-src. Change it to "\'self\'" in your source list. Force this by enabling loose mode.')
-    })
-
-    it('errors when called with unquoted "none"', function () {
-      throwTest([{
-        directives: { defaultSrc: ['none'] }
-      }], '"none" must be quoted in default-src. Change it to "\'none\'" in your source list. Force this by enabling loose mode.')
-    })
-
-    it('errors when called with unsafe-inline or unsafe-eval', function () {
-      throwTest([{
-        directives: { defaultSrc: ['unsafe-inline'] }
-      }], '"unsafe-inline" does not make sense in default-src. Remove it.')
-      throwTest([{
-        directives: { defaultSrc: ['unsafe-eval'] }
-      }], '"unsafe-eval" does not make sense in default-src. Remove it.')
-      throwTest([{
-        directives: { defaultSrc: ["'unsafe-inline'"] }
-      }], '"\'unsafe-inline\'" does not make sense in default-src. Remove it.')
-      throwTest([{
-        directives: { defaultSrc: ["'unsafe-eval'"] }
-      }], '"\'unsafe-eval\'" does not make sense in default-src. Remove it.')
     })
   })
 })
