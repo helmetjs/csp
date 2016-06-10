@@ -1,0 +1,7 @@
+{
+  "directives": {
+    "default-src": {
+      "type": "sourceList"
+    }
+  }
+}

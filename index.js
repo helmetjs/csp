@@ -2,6 +2,7 @@ var camelize = require('camelize')
 var cspBuilder = require('content-security-policy-builder')
 var isFunction = require('./lib/is-function')
 var platform = require('platform')
+var checkOptions = require('./lib/check-options')
 var containsFunction = require('./lib/contains-function')
 var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
 var transformDirectivesForBrowser = require('./lib/transform-directives-for-browser')
@@ -9,7 +10,7 @@ var parseDynamicDirectives = require('./lib/parse-dynamic-directives')
 var ALL_HEADERS = require('./lib/all-headers')
 
 module.exports = function csp (options) {
-  options = options || {}
+  checkOptions(options)
 
   var originalDirectives = camelize(options.directives || {})
   var directivesAreDynamic = containsFunction(originalDirectives)
