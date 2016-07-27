@@ -17,6 +17,9 @@
     "style-src": {
       "type": "sourceList",
       "hasUnsafes": true
-    }
+    },
+    "plugin-types": { "type": "pluginTypes" },
+    "sandbox": { "type": "sandbox" },
+    "report-uri": { "type": "report-uri" }
   }
 }

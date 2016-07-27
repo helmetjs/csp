@@ -51,45 +51,73 @@ describe('with bad arguments', function () {
       }
 
       describe(key + ' directive', function () {
-        it('errors with an empty array', function () {
-          throwTest(set([]), directiveKey + ' must have at least one value. To block everything, set ' + directiveKey + ' to ["\'none\'"].')
-        })
-
-        it('errors when called with an array that contains non-strings', function () {
-          throwTest(set(['http://example.com', 69, 'https://example.com']), '"69" is not a valid source expression. Only non-empty strings are allowed.')
-        })
-
-        it('errors when called with non-array values', function () {
-          [
-            null,
-            undefined,
-            true,
-            {},
-            ''
-          ].forEach(function (value) {
-            throwTest(set(value), '"' + value + '" is not a valid value for ' + directiveKey + '. Use an array of strings.')
+        if (directiveInfo.type === 'sourceList') {
+          it('errors with an empty array', function () {
+            throwTest(set([]), directiveKey + ' must have at least one value. To block everything, set ' + directiveKey + ' to ["\'none\'"].')
           })
-        })
 
-        it('errors with unquoted "self"', function () {
-          throwTest(set(['self']), '"self" must be quoted in ' + directiveKey + '. Change it to "\'self\'" in your source list. Force this by enabling loose mode.')
-        })
-
-        it('errors with unquoted "none"', function () {
-          throwTest(set(['none']), '"none" must be quoted in ' + directiveKey + '. Change it to "\'none\'" in your source list. Force this by enabling loose mode.')
-        })
-
-        if (directiveInfo.hasUnsafes) {
-          it('errors when called with unquoted "unsafe-inline" or "unsafe-eval"', function () {
-            throwTest(set(['unsafe-inline']), '"unsafe-inline" must be quoted in ' + directiveKey + '. Change it to "\'unsafe-inline\'" in your source list. Force this by enabling loose mode.')
-            throwTest(set(['unsafe-eval']), '"unsafe-eval" must be quoted in ' + directiveKey + '. Change it to "\'unsafe-eval\'" in your source list. Force this by enabling loose mode.')
+          it('errors when called with an array that contains non-strings', function () {
+            throwTest(set(['http://example.com', 69, 'https://example.com']), '"69" is not a valid source expression. Only non-empty strings are allowed.')
           })
-        } else {
-          it('errors when called with unsafe-inline or unsafe-eval', function () {
-            throwTest(set(['unsafe-inline']), '"unsafe-inline" does not make sense in ' + directiveKey + '. Remove it.')
-            throwTest(set(['unsafe-eval']), '"unsafe-eval" does not make sense in ' + directiveKey + '. Remove it.')
-            throwTest(set(["'unsafe-inline'"]), '"\'unsafe-inline\'" does not make sense in ' + directiveKey + '. Remove it.')
-            throwTest(set(["'unsafe-eval'"]), '"\'unsafe-eval\'" does not make sense in ' + directiveKey + '. Remove it.')
+
+          it('errors when called with non-array values', function () {
+            [
+              null,
+              undefined,
+              true,
+              {},
+              '',
+              function () {}
+            ].forEach(function (value) {
+              throwTest(set(value), '"' + value + '" is not a valid value for ' + directiveKey + '. Use an array of strings.')
+            })
+          })
+
+          it('errors with unquoted "self"', function () {
+            throwTest(set(['self']), '"self" must be quoted in ' + directiveKey + '. Change it to "\'self\'" in your source list. Force this by enabling loose mode.')
+          })
+
+          it('errors with unquoted "none"', function () {
+            throwTest(set(['none']), '"none" must be quoted in ' + directiveKey + '. Change it to "\'none\'" in your source list. Force this by enabling loose mode.')
+          })
+
+          if (directiveInfo.hasUnsafes) {
+            it('errors when called with unquoted "unsafe-inline" or "unsafe-eval"', function () {
+              throwTest(set(['unsafe-inline']), '"unsafe-inline" must be quoted in ' + directiveKey + '. Change it to "\'unsafe-inline\'" in your source list. Force this by enabling loose mode.')
+              throwTest(set(['unsafe-eval']), '"unsafe-eval" must be quoted in ' + directiveKey + '. Change it to "\'unsafe-eval\'" in your source list. Force this by enabling loose mode.')
+            })
+          } else {
+            it('errors when called with unsafe-inline or unsafe-eval', function () {
+              throwTest(set(['unsafe-inline']), '"unsafe-inline" does not make sense in ' + directiveKey + '. Remove it.')
+              throwTest(set(['unsafe-eval']), '"unsafe-eval" does not make sense in ' + directiveKey + '. Remove it.')
+              throwTest(set(["'unsafe-inline'"]), '"\'unsafe-inline\'" does not make sense in ' + directiveKey + '. Remove it.')
+              throwTest(set(["'unsafe-eval'"]), '"\'unsafe-eval\'" does not make sense in ' + directiveKey + '. Remove it.')
+            })
+          }
+        } else if (directiveKey === 'plugin-types') {
+          it('errors with an empty array', function () {
+            throwTest(set([]), 'plugin-types must have at least one value. To block everything, set plugin-types to ["\'none\'"].')
+          })
+
+          it('errors when called with an array that contains non-strings', function () {
+            throwTest(set(['application/x-shockwave-flash', 420]), '"420" is not a valid source expression. Only non-empty strings are allowed.')
+          })
+
+          it('errors when called with non-array values', function () {
+            [
+              null,
+              undefined,
+              true,
+              {},
+              '',
+              function () {}
+            ].forEach(function (value) {
+              throwTest(set(value), '"' + value + '" is not a valid value for plugin-types. Use an array of strings.')
+            })
+          })
+        } else if (directiveKey === 'sandbox') {
+          it('errors with an empty array', function () {
+            throwTest(set([]), 'sandbox must have at least one value. To block everything, set sandbox to `true`.')
           })
         }
       })
