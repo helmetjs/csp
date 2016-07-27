@@ -307,24 +307,30 @@ describe('csp middleware', function () {
   })
 
   describe('special browsers', function () {
-    it('sets the header properly for Firefox 22', function (done) {
-      var app = use({
-        directives: {
-          defaultSrc: ["'self'"],
-          connectSrc: ['connect.com']
-        }
-      })
-
-      request(app).get('/').set('User-Agent', AGENTS['Firefox 22'].string)
-      .end(function (err, res) {
-        if (err) { return done(err) }
-
-        assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), {
-          'default-src': ["'self'"],
-          'xhr-src': ['connect.com']
+    [
+      'Firefox 22',
+      'Firefox OS 1.4',
+      'Firefox for Android 24'
+    ].forEach(function (browser) {
+      it('sets the header properly for ' + browser, function (done) {
+        var app = use({
+          directives: {
+            defaultSrc: ["'self'"],
+            connectSrc: ['connect.com']
+          }
         })
 
-        done()
+        request(app).get('/').set('User-Agent', AGENTS[browser].string)
+        .end(function (err, res) {
+          if (err) { return done(err) }
+
+          assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), {
+            'default-src': ["'self'"],
+            'xhr-src': ['connect.com']
+          })
+
+          done()
+        })
       })
     })
 
