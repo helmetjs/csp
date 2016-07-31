@@ -21,7 +21,8 @@
     "plugin-types": { "type": "pluginTypes" },
     "sandbox": { "type": "sandbox" },
     "report-uri": { "type": "reportUri" },
-    "upgrade-insecure-requests": { "type": "boolean" }
+    "upgrade-insecure-requests": { "type": "boolean" },
+    "block-all-mixed-content": { "type": "boolean" }
   },
   "allHeaders": [
     "Content-Security-Policy",
