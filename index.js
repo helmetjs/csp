@@ -7,7 +7,7 @@ var containsFunction = require('./lib/contains-function')
 var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
 var transformDirectivesForBrowser = require('./lib/transform-directives-for-browser')
 var parseDynamicDirectives = require('./lib/parse-dynamic-directives')
-var ALL_HEADERS = require('./lib/all-headers')
+var config = require('./lib/config')
 
 module.exports = function csp (options) {
   checkOptions(options)
@@ -30,7 +30,7 @@ module.exports = function csp (options) {
 
       var headerKeys
       if (options.setAllHeaders || !userAgent) {
-        headerKeys = ALL_HEADERS
+        headerKeys = config.allHeaders
       } else {
         headerKeys = getHeaderKeysForBrowser(browser, options)
       }
@@ -61,7 +61,7 @@ module.exports = function csp (options) {
   } else {
     var headerKeys
     if (options.setAllHeaders) {
-      headerKeys = ALL_HEADERS
+      headerKeys = config.allHeaders
     } else {
       headerKeys = ['Content-Security-Policy']
     }
@@ -72,14 +72,15 @@ module.exports = function csp (options) {
 
       if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
           (!reportOnlyIsFunction && options.reportOnly)) {
-        headerKeys = headerKeys.map(function (headerKey) {
-          return headerKey + '-Report-Only'
+        headerKeys.forEach(function (headerKey) {
+          res.setHeader(headerKey + '-Report-Only', policyString)
+        })
+      } else {
+        headerKeys.forEach(function (headerKey) {
+          res.setHeader(headerKey, policyString)
         })
       }
 
-      headerKeys.forEach(function (headerKey) {
-        res.setHeader(headerKey, policyString)
-      })
       next()
     }
   }
