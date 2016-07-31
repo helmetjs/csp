@@ -20,6 +20,9 @@
     },
     "plugin-types": { "type": "pluginTypes" },
     "sandbox": { "type": "sandbox" },
-    "report-uri": { "type": "report-uri" }
-  }
+    "report-uri": { "type": "reportUri" }
+  },
+  "mustQuote": ["none", "self", "unsafe-inline", "unsafe-eval"],
+  "unsafes": ["'unsafe-inline'", "unsafe-inline", "'unsafe-eval'", "unsafe-eval"],
+  "sandboxDirectives": ["allow-popups", "allow-top-navigation", "allow-same-origin", "allow-forms", "allow-pointer-lock", "allow-scripts"]
 }

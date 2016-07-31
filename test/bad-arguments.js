@@ -94,13 +94,29 @@ describe('with bad arguments', function () {
               throwTest(set(["'unsafe-eval'"]), '"\'unsafe-eval\'" does not make sense in ' + directiveKey + '. Remove it.')
             })
           }
-        } else if (directiveKey === 'plugin-types') {
+        } else if (directiveInfo.type === 'pluginTypes') {
           it('errors with an empty array', function () {
             throwTest(set([]), 'plugin-types must have at least one value. To block everything, set plugin-types to ["\'none\'"].')
           })
 
           it('errors when called with an array that contains non-strings', function () {
-            throwTest(set(['application/x-shockwave-flash', 420]), '"420" is not a valid source expression. Only non-empty strings are allowed.')
+            throwTest(set(['application/x-shockwave-flash', 420]), '"420" is not a valid plugin type. Only non-empty strings are allowed.')
+          })
+
+          it('errors with unquoted "none"', function () {
+            throwTest(set(['none']), '"none" must be quoted in plugin-types. Change it to "\'none\'" in your source list. Force this by enabling loose mode.')
+          })
+
+          it("errors when called with 'self'", function () {
+            throwTest(set(['self']), '"self" does not make sense in plugin-types. Remove it.')
+            throwTest(set(["'self'"]), '"\'self\'" does not make sense in plugin-types. Remove it.')
+          })
+
+          it('errors when called with unsafe-inline or unsafe-eval', function () {
+            throwTest(set(['unsafe-inline']), '"unsafe-inline" does not make sense in ' + directiveKey + '. Remove it.')
+            throwTest(set(['unsafe-eval']), '"unsafe-eval" does not make sense in ' + directiveKey + '. Remove it.')
+            throwTest(set(["'unsafe-inline'"]), '"\'unsafe-inline\'" does not make sense in ' + directiveKey + '. Remove it.')
+            throwTest(set(["'unsafe-eval'"]), '"\'unsafe-eval\'" does not make sense in ' + directiveKey + '. Remove it.')
           })
 
           it('errors when called with non-array values', function () {
@@ -115,9 +131,49 @@ describe('with bad arguments', function () {
               throwTest(set(value), '"' + value + '" is not a valid value for plugin-types. Use an array of strings.')
             })
           })
-        } else if (directiveKey === 'sandbox') {
+        } else if (directiveInfo.type === 'sandbox') {
           it('errors with an empty array', function () {
             throwTest(set([]), 'sandbox must have at least one value. To block everything, set sandbox to `true`.')
+          })
+
+          it('errors when called with non-array values', function () {
+            [
+              null,
+              undefined,
+              {},
+              '',
+              function () {}
+            ].forEach(function (value) {
+              throwTest(set(value), '"' + value + '" is not a valid value for sandbox. Use an array of strings or `true`.')
+            })
+          })
+
+          it('errors when called with unsupported directives', function () {
+            throwTest(set(['allow-forms', undefined]), '"undefined" is not a valid sandbox directive. Remove it.')
+            throwTest(set(['allow-forms', 123]), '"123" is not a valid sandbox directive. Remove it.')
+            throwTest(set(['allow-foo']), '"allow-foo" is not a valid sandbox directive. Remove it.')
+            throwTest(set(['self']), '"self" is not a valid sandbox directive. Remove it.')
+            throwTest(set(["'self'"]), '"\'self\'" is not a valid sandbox directive. Remove it.')
+            throwTest(set(['none']), '"none" is not a valid sandbox directive. Remove it.')
+            throwTest(set(["'none'"]), '"\'none\'" is not a valid sandbox directive. Remove it.')
+          })
+        } else if (directiveInfo.type === 'reportUri') {
+          it('errors when called with non-string values', function () {
+            [
+              null,
+              undefined,
+              {},
+              { length: 0 },
+              { length: 2 },
+              [],
+              ['example.com'],
+              123,
+              true,
+              '',
+              function () {}
+            ].forEach(function (value) {
+              throwTest(set(value), '"' + value + '" is not a valid value for report-uri. Use a non-empty string.')
+            })
           })
         }
       })
