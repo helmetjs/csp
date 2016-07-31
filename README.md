@@ -25,6 +25,10 @@ app.use(csp({
     upgradeInsecureRequests: true
   },
 
+  // This module will detect common mistakes in your directives and throw errors
+  // if it finds any. To disable this, enable "loose mode".
+  loose: false,
+
   // Set to true if you only want browsers to report errors, not block them.
   // You may also set this to a function(req, res) in order to decide dynamically
   // whether to use reportOnly mode, e.g., to allow for a dynamic kill switch.
