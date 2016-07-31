@@ -108,3 +108,9 @@ Using CSP with a CDN
 --------------------
 
 The default behavior of CSP is generate headers tailored for the browser that's requesting your page. If you have a CDN in front of your application, the CDN may cache the wrong headers, rendering your CSP useless. Make sure to eschew a CDN when using this module or set the `browserSniff` option to `false`.
+
+See also
+--------
+
+* [GitHub's CSP journey](http://githubengineering.com/githubs-csp-journey/)
+* [Content Security Policy for Single Page Web Apps](https://corner.squareup.com/2016/05/content-security-policy-single-page-app.html)
