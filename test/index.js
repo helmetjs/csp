@@ -1,6 +1,5 @@
 var csp = require('..')
 
-var _ = require('lodash')
 var parseCsp = require('content-security-policy-parser')
 var express = require('express')
 var request = require('supertest')
@@ -15,14 +14,6 @@ var POLICY = {
   }],
   objectSrc: ["'none'"],
   imgSrc: ['data:']
-}
-
-var EXPECTED_POLICY = {
-  'default-src': ["'self'"],
-  'script-src': ['scripts.biz'],
-  'style-src': ['styles.biz', 'abc123'],
-  'object-src': ["'none'"],
-  'img-src': ['data:']
 }
 
 describe('csp middleware', function () {
@@ -209,46 +200,6 @@ describe('csp middleware', function () {
     assert.equal(csp({ directives: POLICY }).name, 'csp')
   })
 
-  describe('normal browsers', function () {
-    _.each(AGENTS, function (agent, name) {
-      if (agent.special) { return }
-
-      it('sets the header properly for ' + name, function (done) {
-        var app = use({ directives: POLICY })
-
-        request(app).get('/').set('User-Agent', agent.string)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-
-          var header = agent.header.toLowerCase()
-          assert.deepEqual(parseCsp(res.headers[header]), EXPECTED_POLICY)
-
-          done()
-        })
-      })
-
-      it('does not set other headers for ' + name, function (done) {
-        var app = use({ directives: POLICY })
-
-        request(app).get('/').set('User-Agent', agent.string)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-
-          [
-            'content-security-policy',
-            'x-content-security-policy',
-            'x-webkit-csp'
-          ].forEach(function (header) {
-            if (header === agent.header.toLowerCase()) { return }
-            assert.equal(res.headers[header], undefined)
-          })
-
-          done()
-        })
-      })
-    })
-  })
-
   describe('special browsers', function () {
     it('sets the header properly for Firefox 22', function (done) {
       var app = use({
@@ -355,78 +306,6 @@ describe('csp middleware', function () {
       request(app).get('/').set('User-Agent', iosChrome.string)
       .expect(iosChrome.header, "connect-src somedomain.com 'self'")
       .end(done)
-    })
-  })
-
-  describe('without browser sniffing', function () {
-    it('lets you disable all user-agent parsing for normal headers', function (finalDone) {
-      var done = _.after(Object.keys(AGENTS).length, finalDone)
-
-      _.each(AGENTS, function (agent, name) {
-        var app = use({
-          directives: POLICY,
-          browserSniff: false
-        })
-
-        request(app).get('/').set('User-Agent', agent.string)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-
-          assert.deepEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
-          assert.equal(res.headers['x-content-security-policy'], undefined)
-          assert.equal(res.header['x-webkit-csp'], undefined)
-
-          done()
-        })
-      })
-    })
-
-    it('lets you disable all user-agent parsing for report-only headers', function (finalDone) {
-      var done = _.after(Object.keys(AGENTS).length, finalDone)
-      var policy = _.extend({ reportUri: '/' }, POLICY)
-      var expectedPolicy = _.extend({ 'report-uri': ['/'] }, EXPECTED_POLICY)
-
-      _.each(AGENTS, function (agent, name) {
-        var app = use({
-          directives: policy,
-          reportOnly: true,
-          browserSniff: false
-        })
-
-        request(app).get('/').set('User-Agent', agent.string)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-
-          assert.deepEqual(parseCsp(res.headers['content-security-policy-report-only']), expectedPolicy)
-          assert.equal(res.headers['x-content-security-policy-report-only'], undefined)
-          assert.equal(res.header['x-webkit-csp-report-only'], undefined)
-
-          done()
-        })
-      })
-    })
-
-    it('lets you set all headers', function (finalDone) {
-      var done = _.after(Object.keys(AGENTS).length, finalDone)
-
-      _.each(AGENTS, function (agent, name) {
-        var app = use({
-          directives: POLICY,
-          browserSniff: false,
-          setAllHeaders: true
-        })
-
-        request(app).get('/').set('User-Agent', agent.string)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-
-          assert.deepEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
-          assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), EXPECTED_POLICY)
-          assert.deepEqual(parseCsp(res.headers['x-webkit-csp']), EXPECTED_POLICY)
-
-          done()
-        })
-      })
     })
   })
 })
