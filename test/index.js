@@ -13,19 +13,19 @@ var POLICY = {
   styleSrc: ['styles.biz', function (req, res) {
     return res.locals.nonce
   }],
-  objectSrc: [],
-  imgSrc: 'data:'
+  objectSrc: ["'none'"],
+  imgSrc: ['data:']
 }
 
 var EXPECTED_POLICY = {
   'default-src': ["'self'"],
   'script-src': ['scripts.biz'],
   'style-src': ['styles.biz', 'abc123'],
-  'object-src': [],
+  'object-src': ["'none'"],
   'img-src': ['data:']
 }
 
-describe.skip('csp middleware', function () {
+describe('csp middleware', function () {
   function use (options) {
     var result = express()
     result.use(function (req, res, next) {
@@ -38,30 +38,6 @@ describe.skip('csp middleware', function () {
     })
     return result
   }
-
-  it('sets an empty header when passed no arguments', function (done) {
-    var app = use()
-
-    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
-      .expect('Content-Security-Policy', '')
-      .end(done)
-  })
-
-  it('sets an empty header when passed an empty object', function (done) {
-    var app = use({})
-
-    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
-      .expect('Content-Security-Policy', '')
-      .end(done)
-  })
-
-  it('sets an empty header when passed no directives', function (done) {
-    var app = use({ directives: {} })
-
-    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
-      .expect('Content-Security-Policy', '')
-      .end(done)
-  })
 
   it('sets all the headers if you tell it to', function (done) {
     var app = use({
@@ -111,8 +87,7 @@ describe.skip('csp middleware', function () {
       reportOnly: true,
       setAllHeaders: true,
       directives: {
-        'default-src': ["'self'"],
-        'report-uri': '/reporter'
+        'default-src': ["'self'"]
       }
     })
 
@@ -120,18 +95,13 @@ describe.skip('csp middleware', function () {
       .end(function (err, res) {
         if (err) { return done(err) }
 
-        var expected = {
-          'default-src': ["'self'"],
-          'report-uri': ['/reporter']
-        }
-
         assert.equal(res.headers['content-security-policy'], undefined)
         assert.equal(res.headers['x-content-security-policy'], undefined)
         assert.equal(res.headers['x-webkit-csp'], undefined)
 
-        assert.deepEqual(parseCsp(res.headers['content-security-policy-report-only']), expected)
-        assert.deepEqual(parseCsp(res.headers['x-content-security-policy-report-only']), expected)
-        assert.deepEqual(parseCsp(res.headers['x-webkit-csp-report-only']), expected)
+        assert.equal(res.headers['content-security-policy-report-only'], "default-src 'self'")
+        assert.equal(res.headers['x-content-security-policy-report-only'], "default-src 'self'")
+        assert.equal(res.headers['x-webkit-csp-report-only'], "default-src 'self'")
 
         done()
       })
@@ -203,37 +173,10 @@ describe.skip('csp middleware', function () {
       })
   })
 
-  it('can set empty directives', function (done) {
-    var app = use({
-      directives: {
-        scriptSrc: [],
-        sandbox: ['']
-      }
-    })
-
-    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
-      .end(function (err, res) {
-        if (err) { return done(err) }
-
-        assert.deepEqual(parseCsp(res.headers['content-security-policy']), {
-          'sandbox': [],
-          'script-src': []
-        })
-
-        done()
-      })
-  })
-
   it('throws an error when reportOnly is true and there is no report-uri', function () {
     assert.throws(function () {
       csp({ reportOnly: true })
     }, Error)
-  })
-
-  it('does not throw an error when reportOnly is a function and there is no report-uri', function () {
-    assert.doesNotThrow(function () {
-      csp({ reportOnly: function (req, res) { return true } })
-    })
   })
 
   it("doesn't splice the original array", function (done) {
@@ -263,7 +206,7 @@ describe.skip('csp middleware', function () {
 
   it('names its function and middleware', function () {
     assert.equal(csp.name, 'csp')
-    assert.equal(csp().name, 'csp')
+    assert.equal(csp({ directives: POLICY }).name, 'csp')
   })
 
   describe('normal browsers', function () {
@@ -353,7 +296,7 @@ describe.skip('csp middleware', function () {
       var app = use({
         disableAndroid: true,
         directives: {
-          defaultSrc: 'a.com'
+          defaultSrc: ['a.com']
         }
       })
 

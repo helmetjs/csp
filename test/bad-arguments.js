@@ -125,8 +125,7 @@ describe('with bad arguments', function () {
               undefined,
               true,
               {},
-              '',
-              function () {}
+              ''
             ].forEach(function (value) {
               throwTest(set(value), '"' + value + '" is not a valid value for plugin-types. Use an array of strings.')
             })
@@ -141,8 +140,7 @@ describe('with bad arguments', function () {
               null,
               undefined,
               {},
-              '',
-              function () {}
+              ''
             ].forEach(function (value) {
               throwTest(set(value), '"' + value + '" is not a valid value for sandbox. Use an array of strings or `true`.')
             })
@@ -169,11 +167,14 @@ describe('with bad arguments', function () {
               ['example.com'],
               123,
               true,
-              '',
-              function () {}
+              ''
             ].forEach(function (value) {
               throwTest(set(value), '"' + value + '" is not a valid value for report-uri. Use a non-empty string.')
             })
+          })
+        } else {
+          it('should never run this!', function () {
+            assert(false, directiveInfo.type + ' directive type is untested!')
           })
         }
       })

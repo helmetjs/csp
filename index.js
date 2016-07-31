@@ -17,10 +17,6 @@ module.exports = function csp (options) {
   var shouldBrowserSniff = options.browserSniff !== false
   var reportOnlyIsFunction = isFunction(options.reportOnly)
 
-  if (!reportOnlyIsFunction && options.reportOnly && !originalDirectives.reportUri) {
-    throw new Error('Please remove reportOnly or add a report-uri.')
-  }
-
   if (shouldBrowserSniff) {
     return function csp (req, res, next) {
       var userAgent = req.headers['user-agent']
