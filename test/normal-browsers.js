@@ -15,6 +15,7 @@ var POLICY = {
   }],
   objectSrc: ["'none'"],
   imgSrc: ['data:'],
+  mediaSrc: false,
   upgradeInsecureRequests: true
 }
 
