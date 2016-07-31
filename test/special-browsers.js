@@ -19,26 +19,32 @@ function makeApp (options) {
 }
 
 describe('special browsers', function () {
-  describe('Firefox 22', function () {
-    it('sets the header properly', function (done) {
-      var app = makeApp({
-        directives: {
-          defaultSrc: ["'self'"],
-          connectSrc: ['connect.com']
-        }
-      })
-
-      request(app).get('/').set('User-Agent', AGENTS['Firefox 22'].string)
-        .end(function (err, res) {
-          if (err) { return done(err) }
-
-          assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), {
-            'default-src': ["'self'"],
-            'xhr-src': ['connect.com']
-          })
-
-          done()
+  [
+    'Firefox 22',
+    'Firefox OS 1.4',
+    'Firefox for Android 24'
+  ].forEach(function (browser) {
+    describe(browser, function () {
+      it('sets the header properly', function (done) {
+        var app = makeApp({
+          directives: {
+            defaultSrc: ["'self'"],
+            connectSrc: ['connect.com']
+          }
         })
+
+        request(app).get('/').set('User-Agent', AGENTS['Firefox 22'].string)
+          .end(function (err, res) {
+            if (err) { return done(err) }
+
+            assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), {
+              'default-src': ["'self'"],
+              'xhr-src': ['connect.com']
+            })
+
+            done()
+          })
+      })
     })
   })
 

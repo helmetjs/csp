@@ -7,6 +7,26 @@
     "string": "Mozilla/5.0 (Windows NT 6.2; rv:22.0) Gecko/20130405 Firefox/23.0",
     "header": "Content-Security-Policy"
   },
+  "Firefox OS 1.4": {
+    "string": "Mozilla/5.0 (Mobile; rv:30.0) Gecko/30.0 Firefox/30.0",
+    "special": true
+  },
+  "Firefox OS 2.0": {
+    "string": "Mozilla/5.0 (Mobile; rv:32.0) Gecko/32.0 Firefox/32.0",
+    "header": "Content-Security-Policy"
+  },
+  "Firefox for Android 24": {
+    "string": "Mozilla/5.0 (Android; Mobile; rv:24.0) Gecko/24.0 Firefox/24.0'))",
+    "special": true
+  },
+  "Firefox for Android 25": {
+    "string": "Mozilla/5.0 (Android; Mobile; rv:25.0) Gecko/25.0 Firefox/25.0'))",
+    "header": "Content-Security-Policy"
+  },
+  "Firefox for iOS 1.0": {
+    "string": "Mozilla/5.0 (iPod touch; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4",
+    "header": "Content-Security-Policy"
+  },
   "Chrome 24": {
     "string": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.60 Safari/537.17",
     "header": "X-WebKit-CSP"
