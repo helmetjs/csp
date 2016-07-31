@@ -16,22 +16,26 @@ var POLICY = {
   imgSrc: ['data:']
 }
 
-describe('csp middleware', function () {
-  function use (options) {
-    var result = express()
-    result.use(function (req, res, next) {
-      res.locals.nonce = 'abc123'
-      next()
-    })
-    result.use(csp(options))
-    result.use(function (req, res) {
-      res.end('Hello world!')
-    })
-    return result
-  }
+function makeApp (options) {
+  var result = express()
 
+  result.use(function (req, res, next) {
+    res.locals.nonce = 'abc123'
+    next()
+  })
+
+  result.use(csp(options))
+
+  result.use(function (req, res) {
+    res.end('Hello world!')
+  })
+
+  return result
+}
+
+describe('csp middleware', function () {
   it('can set all headers', function (done) {
-    var app = use({
+    var app = makeApp({
       setAllHeaders: true,
       directives: {
         defaultSrc: ["'self'", 'domain.com']
@@ -46,7 +50,7 @@ describe('csp middleware', function () {
   })
 
   it('sets all the headers if you provide an unknown user-agent', function (done) {
-    var app = use({
+    var app = makeApp({
       directives: {
         defaultSrc: ["'self'", 'domain.com']
       }
@@ -60,7 +64,7 @@ describe('csp middleware', function () {
   })
 
   it('sets all the headers if there is no user-agent', function (done) {
-    var app = use({
+    var app = makeApp({
       directives: {
         defaultSrc: ["'self'", 'domain.com']
       }
@@ -74,7 +78,7 @@ describe('csp middleware', function () {
   })
 
   it('can set the report-only headers', function (done) {
-    var app = use({
+    var app = makeApp({
       reportOnly: true,
       setAllHeaders: true,
       directives: {
@@ -98,7 +102,7 @@ describe('csp middleware', function () {
   })
 
   it('can use a function to set the report-only headers to true', function (done) {
-    var app = use({
+    var app = makeApp({
       reportOnly: function (req, res) {
         return true
       },
@@ -131,7 +135,7 @@ describe('csp middleware', function () {
   })
 
   it('can use a function to set the report-only headers to false', function (done) {
-    var app = use({
+    var app = makeApp({
       reportOnly: function (req, res) {
         return false
       },
@@ -157,7 +161,7 @@ describe('csp middleware', function () {
   })
 
   it("doesn't splice the original array", function (done) {
-    var app = use({
+    var app = makeApp({
       directives: {
         'style-src': [
           "'self'",
