@@ -172,6 +172,23 @@ describe('with bad arguments', function () {
               throwTest(set(value), '"' + value + '" is not a valid value for report-uri. Use a non-empty string.')
             })
           })
+        } else if (directiveInfo.type === 'boolean') {
+          it('errors when called with non-boolean values', function () {
+            [
+              null,
+              undefined,
+              {},
+              [],
+              ['example.com'],
+              123,
+              '',
+              'true',
+              'false',
+              [true]
+            ].forEach(function (value) {
+              throwTest(set(value), '"' + value + '" is not a valid value for ' + directiveKey + '. Use `true` or `false`.')
+            })
+          })
         } else {
           it('should never run this!', function () {
             assert(false, directiveInfo.type + ' directive type is untested!')

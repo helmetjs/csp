@@ -14,7 +14,8 @@ var POLICY = {
     return res.locals.nonce
   }],
   objectSrc: ["'none'"],
-  imgSrc: ['data:']
+  imgSrc: ['data:'],
+  upgradeInsecureRequests: true
 }
 
 var EXPECTED_POLICY = {
@@ -22,7 +23,8 @@ var EXPECTED_POLICY = {
   'script-src': ['scripts.biz'],
   'style-src': ['styles.biz', 'abc123'],
   'object-src': ["'none'"],
-  'img-src': ['data:']
+  'img-src': ['data:'],
+  'upgrade-insecure-requests': []
 }
 
 describe('normal browsers', function () {
