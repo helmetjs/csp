@@ -30,7 +30,7 @@ describe('csp middleware', function () {
     return result
   }
 
-  it('sets all the headers if you tell it to', function (done) {
+  it('can set all headers', function (done) {
     var app = use({
       setAllHeaders: true,
       directives: {
@@ -78,21 +78,20 @@ describe('csp middleware', function () {
       reportOnly: true,
       setAllHeaders: true,
       directives: {
-        'default-src': ["'self'"]
+        'default-src': ["'self' domain.com"]
       }
     })
 
     request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .expect('X-Content-Security-Policy-Report-Only', "default-src 'self' domain.com")
+      .expect('Content-Security-Policy-Report-Only', "default-src 'self' domain.com")
+      .expect('X-WebKit-CSP-Report-Only', "default-src 'self' domain.com")
       .end(function (err, res) {
         if (err) { return done(err) }
 
         assert.equal(res.headers['content-security-policy'], undefined)
         assert.equal(res.headers['x-content-security-policy'], undefined)
         assert.equal(res.headers['x-webkit-csp'], undefined)
-
-        assert.equal(res.headers['content-security-policy-report-only'], "default-src 'self'")
-        assert.equal(res.headers['x-content-security-policy-report-only'], "default-src 'self'")
-        assert.equal(res.headers['x-webkit-csp-report-only'], "default-src 'self'")
 
         done()
       })
@@ -138,36 +137,23 @@ describe('csp middleware', function () {
       },
       setAllHeaders: true,
       directives: {
-        'default-src': ["'self'"],
-        'report-uri': '/reporter'
+        'default-src': ["'self' domain.com"]
       }
     })
 
     request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .expect('X-Content-Security-Policy', "default-src 'self' domain.com")
+      .expect('Content-Security-Policy', "default-src 'self' domain.com")
+      .expect('X-WebKit-CSP', "default-src 'self' domain.com")
       .end(function (err, res) {
         if (err) { return done(err) }
-
-        var expected = {
-          'default-src': ["'self'"],
-          'report-uri': ['/reporter']
-        }
 
         assert.equal(res.headers['content-security-policy-report-only'], undefined)
         assert.equal(res.headers['x-content-security-policy-report-only'], undefined)
         assert.equal(res.headers['x-webkit-csp-report-only'], undefined)
 
-        assert.deepEqual(parseCsp(res.headers['content-security-policy']), expected)
-        assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), expected)
-        assert.deepEqual(parseCsp(res.headers['x-webkit-csp']), expected)
-
         done()
       })
-  })
-
-  it('throws an error when reportOnly is true and there is no report-uri', function () {
-    assert.throws(function () {
-      csp({ reportOnly: true })
-    }, Error)
   })
 
   it("doesn't splice the original array", function (done) {
