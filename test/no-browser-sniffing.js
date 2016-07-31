@@ -25,24 +25,24 @@ var EXPECTED_POLICY = {
   'img-src': ['data:']
 }
 
+function makeApp (options) {
+  var result = express()
+
+  result.use(function (req, res, next) {
+    res.locals.nonce = 'abc123'
+    next()
+  })
+
+  result.use(csp(options))
+
+  result.use(function (req, res) {
+    res.end('Hello world!')
+  })
+
+  return result
+}
+
 describe('with browser sniffing disabled', function () {
-  function makeApp (options) {
-    var result = express()
-
-    result.use(function (req, res, next) {
-      res.locals.nonce = 'abc123'
-      next()
-    })
-
-    result.use(csp(options))
-
-    result.use(function (req, res) {
-      res.end('Hello world!')
-    })
-
-    return result
-  }
-
   each(AGENTS, function (agent, name) {
     it('sets the header for ' + name, function (done) {
       var app = makeApp({
