@@ -15,6 +15,10 @@
     "string": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/27.0.1453.93 Safari/537.36",
     "header": "Content-Security-Policy"
   },
+  "Chrome 51": {
+    "string": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36",
+    "header": "Content-Security-Policy"
+  },
   "Opera 15": {
     "string": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.117 Safari/537.36 OPR/15.0.1387.64",
     "header": "Content-Security-Policy"
