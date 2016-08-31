@@ -18,6 +18,7 @@ app.use(csp({
     defaultSrc: ["'self'", 'default.com'],
     scriptSrc: ["'self'", "'unsafe-inline'"],
     styleSrc: ['style.com'],
+    fontSrc: ["'self'", 'fonts.com'],
     imgSrc: ['img.com', 'data:'],
     sandbox: ['allow-forms', 'allow-scripts'],
     reportUri: '/report-violation',
