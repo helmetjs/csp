@@ -51,12 +51,13 @@ module.exports = function csp (options) {
 
       var policyString = cspBuilder({ directives: directives })
 
+      var headerKeySuffix = '';
+      if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
+          (!reportOnlyIsFunction && options.reportOnly)) {
+        headerKeySuffix = '-Report-Only';
+      }
       headerKeys.forEach(function (headerKey) {
-        if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
-            (!reportOnlyIsFunction && options.reportOnly)) {
-          headerKey += '-Report-Only'
-        }
-        res.setHeader(headerKey, policyString)
+        res.setHeader(headerKey + headerKeySuffix, policyString)
       })
 
       next()
@@ -73,15 +74,13 @@ module.exports = function csp (options) {
       var directives = parseDynamicDirectives(originalDirectives, [req, res])
       var policyString = cspBuilder({ directives: directives })
 
+      var headerKeySuffix = '';
       if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
           (!reportOnlyIsFunction && options.reportOnly)) {
-        headerKeys = headerKeys.map(function (headerKey) {
-          return headerKey + '-Report-Only'
-        })
+        headerKeySuffix = '-Report-Only';
       }
-
       headerKeys.forEach(function (headerKey) {
-        res.setHeader(headerKey, policyString)
+        res.setHeader(headerKey + headerKeySuffix, policyString)
       })
       next()
     }
