@@ -38,6 +38,7 @@
   "devDependencies": {
     "content-security-policy-parser": "^0.1.0",
     "express": "^4.13.4",
+    "lodash": "^4.16.4",
     "mocha": "^3.1.2",
     "standard": "^8.5.0",
     "supertest": "^2.0.1"
