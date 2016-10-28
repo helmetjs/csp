@@ -5,7 +5,7 @@ Content Security Policy middleware
 
 [_Looking for a changelog?_](https://github.com/helmetjs/helmet/blob/master/HISTORY.md)
 
-Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate XSS vulnerabilities, unintended frames, malicious frames, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/). This module helps set Content Security Policies.
+Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate cross-site scripting (XSS) vulnerabilities, malicious frames, unwanted trackers, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/). This module helps set Content Security Policies.
 
 Usage:
 
@@ -22,9 +22,13 @@ app.use(csp({
     imgSrc: ['img.com', 'data:'],
     sandbox: ['allow-forms', 'allow-scripts'],
     reportUri: '/report-violation',
-
-    objectSrc: [], // An empty array allows nothing through
+    objectSrc: ["'none'"],
+    upgradeInsecureRequests: true
   },
+
+  // This module will detect common mistakes in your directives and throw errors
+  // if it finds any. To disable this, enable "loose mode".
+  loose: false,
 
   // Set to true if you only want browsers to report errors, not block them.
   // You may also set this to a function(req, res) in order to decide dynamically
@@ -45,7 +49,7 @@ app.use(csp({
 }))
 ```
 
-There are a lot of inconsistencies in how browsers implement CSP. Helmet sniffs the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 2.0 spec.
+There are a lot of inconsistencies in how browsers implement CSP. Helmet looks at the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 2.0 spec.
 
 Handling CSP violations
 -----------------------
@@ -105,3 +109,9 @@ Using CSP with a CDN
 --------------------
 
 The default behavior of CSP is generate headers tailored for the browser that's requesting your page. If you have a CDN in front of your application, the CDN may cache the wrong headers, rendering your CSP useless. Make sure to eschew a CDN when using this module or set the `browserSniff` option to `false`.
+
+See also
+--------
+
+* [GitHub's CSP journey](http://githubengineering.com/githubs-csp-journey/)
+* [Content Security Policy for Single Page Web Apps](https://corner.squareup.com/2016/05/content-security-policy-single-page-app.html)

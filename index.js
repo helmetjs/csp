@@ -2,23 +2,20 @@ var camelize = require('camelize')
 var cspBuilder = require('content-security-policy-builder')
 var isFunction = require('./lib/is-function')
 var platform = require('platform')
+var checkOptions = require('./lib/check-options')
 var containsFunction = require('./lib/contains-function')
 var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
 var transformDirectivesForBrowser = require('./lib/transform-directives-for-browser')
 var parseDynamicDirectives = require('./lib/parse-dynamic-directives')
-var ALL_HEADERS = require('./lib/all-headers')
+var config = require('./lib/config')
 
 module.exports = function csp (options) {
-  options = options || {}
+  checkOptions(options)
 
   var originalDirectives = camelize(options.directives || {})
   var directivesAreDynamic = containsFunction(originalDirectives)
   var shouldBrowserSniff = options.browserSniff !== false
   var reportOnlyIsFunction = isFunction(options.reportOnly)
-
-  if (!reportOnlyIsFunction && options.reportOnly && !originalDirectives.reportUri) {
-    throw new Error('Please remove reportOnly or add a report-uri.')
-  }
 
   if (shouldBrowserSniff) {
     return function csp (req, res, next) {
@@ -33,7 +30,7 @@ module.exports = function csp (options) {
 
       var headerKeys
       if (options.setAllHeaders || !userAgent) {
-        headerKeys = ALL_HEADERS
+        headerKeys = config.allHeaders
       } else {
         headerKeys = getHeaderKeysForBrowser(browser, options)
       }
@@ -64,7 +61,7 @@ module.exports = function csp (options) {
   } else {
     var headerKeys
     if (options.setAllHeaders) {
-      headerKeys = ALL_HEADERS
+      headerKeys = config.allHeaders
     } else {
       headerKeys = ['Content-Security-Policy']
     }
@@ -75,14 +72,15 @@ module.exports = function csp (options) {
 
       if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||
           (!reportOnlyIsFunction && options.reportOnly)) {
-        headerKeys = headerKeys.map(function (headerKey) {
-          return headerKey + '-Report-Only'
+        headerKeys.forEach(function (headerKey) {
+          res.setHeader(headerKey + '-Report-Only', policyString)
+        })
+      } else {
+        headerKeys.forEach(function (headerKey) {
+          res.setHeader(headerKey, policyString)
         })
       }
 
-      headerKeys.forEach(function (headerKey) {
-        res.setHeader(headerKey, policyString)
-      })
       next()
     }
   }
