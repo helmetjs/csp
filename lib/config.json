@@ -7,6 +7,7 @@
     "font-src": { "type": "sourceList" },
     "form-action": { "type": "sourceList" },
     "frame-ancestors": { "type": "sourceList" },
+    "frame-src": { "type": "sourceList" },
     "img-src": { "type": "sourceList" },
     "media-src": { "type": "sourceList" },
     "object-src": { "type": "sourceList" },
