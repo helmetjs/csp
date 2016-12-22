@@ -9,6 +9,7 @@
     "frame-ancestors": { "type": "sourceList" },
     "frame-src": { "type": "sourceList" },
     "img-src": { "type": "sourceList" },
+    "manifest-src": { "type": "sourceList" },
     "media-src": { "type": "sourceList" },
     "object-src": { "type": "sourceList" },
     "script-src": {
