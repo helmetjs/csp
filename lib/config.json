@@ -33,5 +33,9 @@
   ],
   "mustQuote": ["none", "self", "unsafe-inline", "unsafe-eval"],
   "unsafes": ["'unsafe-inline'", "unsafe-inline", "'unsafe-eval'", "unsafe-eval"],
-  "sandboxDirectives": ["allow-popups", "allow-top-navigation", "allow-same-origin", "allow-forms", "allow-pointer-lock", "allow-scripts"]
+  "sandboxDirectives": [
+    "allow-popups", "allow-modals", "allow-orientation-lock", 
+    "allow-popups-to-escape-sandbox", "allow-top-navigation", "allow-presentation", 
+    "allow-same-origin", "allow-forms", "allow-pointer-lock", "allow-scripts"
+  ]
 }
