@@ -24,7 +24,11 @@
     "header": "Content-Security-Policy"
   },
   "Firefox for iOS 1.0": {
-    "string": "Mozilla/5.0 (iPod touch; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4",
+    "string": "Mozilla/5.0 (iPhone; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/1.0 Mobile/12F69 Safari/600.1.4",
+    "header": "Content-Security-Policy"
+  },
+  "Firefox for iOS 4.0": {
+    "string": "Mozilla/5.0 (iPad; CPU iPhone OS 8_3 like Mac OS X) AppleWebKit/600.1.4 (KHTML, like Gecko) FxiOS/4.0 Mobile/12F69 Safari/600.1.4",
     "header": "Content-Security-Policy"
   },
   "Chrome 24": {
