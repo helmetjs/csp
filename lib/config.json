@@ -1,6 +1,7 @@
 {
   "directives": {
     "base-uri": { "type": "sourceList" },
+    "block-all-mixed-content": { "type": "boolean" },
     "child-src": { "type": "sourceList" },
     "connect-src": { "type": "sourceList" },
     "default-src": { "type": "sourceList" },
@@ -24,7 +25,10 @@
     "sandbox": { "type": "sandbox" },
     "report-uri": { "type": "reportUri" },
     "upgrade-insecure-requests": { "type": "boolean" },
-    "block-all-mixed-content": { "type": "boolean" }
+    "worker-src": {
+      "type": "sourceList",
+      "hasUnsafes": true
+    }
   },
   "allHeaders": [
     "Content-Security-Policy",
