@@ -2,7 +2,7 @@
   "name": "helmet-csp",
   "author": "Adam Baldwin <baldwin@andyet.net> (http://andyet.net/team/baldwin)",
   "contributors": [
-    "Evan Hahn <me@evanhahn.com> (http://evanhahn.com)",
+    "Evan Hahn <me@evanhahn.com> (https://evanhahn.com)",
     "Ryan Cannon <ryan@ryancannon.com> (https://ryancannon.com)"
   ],
   "description": "Content Security Policy middleware.",
