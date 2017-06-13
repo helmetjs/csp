@@ -160,6 +160,29 @@ describe('csp middleware', function () {
       })
   })
 
+  it('overrides existing headers', function (done) {
+    var app = express()
+
+    app.use(function (req, res, next) {
+      res.setHeader('Content-Security-Policy', 'overridden')
+      next()
+    })
+
+    app.use(csp({
+      directives: {
+        defaultSrc: ["'self'"]
+      }
+    }))
+
+    app.use(function (req, res) {
+      res.end('Hello world!')
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 53'].string)
+      .expect('Content-Security-Policy', "default-src 'self'")
+      .end(done)
+  })
+
   it("doesn't splice the original array", function (done) {
     var app = makeApp({
       directives: {

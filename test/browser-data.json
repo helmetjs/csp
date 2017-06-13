@@ -7,6 +7,10 @@
     "string": "Mozilla/5.0 (Windows NT 6.2; rv:22.0) Gecko/20130405 Firefox/23.0",
     "header": "Content-Security-Policy"
   },
+  "Firefox 53": {
+    "string": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:53.0) Gecko/20100101 Firefox/53.0",
+    "header": "Content-Security-Policy"
+  },
   "Firefox OS 1.4": {
     "string": "Mozilla/5.0 (Mobile; rv:30.0) Gecko/30.0 Firefox/30.0",
     "special": true
