@@ -23,4 +23,3 @@ describe('isBoolean', function () {
     assert(!isBoolean({}))
   })
 })
-

@@ -22,4 +22,3 @@ describe('isString', function () {
     assert(!isString({}))
   })
 })
-
