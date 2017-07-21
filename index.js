@@ -7,6 +7,7 @@ var containsFunction = require('./lib/contains-function')
 var getHeaderKeysForBrowser = require('./lib/get-header-keys-for-browser')
 var transformDirectivesForBrowser = require('./lib/transform-directives-for-browser')
 var parseDynamicDirectives = require('./lib/parse-dynamic-directives')
+var addReportDirective = require('./lib/add-report-directive')
 var config = require('./lib/config')
 
 module.exports = function csp (options) {
@@ -46,6 +47,8 @@ module.exports = function csp (options) {
         directives = parseDynamicDirectives(directives, [req, res])
       }
 
+      directives = addReportDirective(directives)
+
       var policyString = cspBuilder({ directives: directives })
 
       headerKeys.forEach(function (headerKey) {
@@ -67,7 +70,7 @@ module.exports = function csp (options) {
     }
 
     return function csp (req, res, next) {
-      var directives = parseDynamicDirectives(originalDirectives, [req, res])
+      var directives = addReportDirective(parseDynamicDirectives(originalDirectives, [req, res]))
       var policyString = cspBuilder({ directives: directives })
 
       if ((reportOnlyIsFunction && options.reportOnly(req, res)) ||

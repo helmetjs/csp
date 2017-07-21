@@ -23,6 +23,7 @@
     },
     "plugin-types": { "type": "pluginTypes" },
     "sandbox": { "type": "sandbox" },
+    "report-to": { "type": "reportUri" },
     "report-uri": { "type": "reportUri" },
     "upgrade-insecure-requests": { "type": "boolean" },
     "worker-src": {

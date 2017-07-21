@@ -101,6 +101,106 @@ describe('csp middleware', function () {
       })
   })
 
+  it('sets report-to when report-uri is set', function (done) {
+    var app = makeApp({
+      directives: {
+        'default-src': ["'self'"],
+        'report-uri': '/reporter'
+      }
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var expected = {
+          'default-src': ["'self'"],
+          'report-uri': ['/reporter'],
+          'report-to': ['/reporter']
+        }
+
+        assert.deepEqual(parseCsp(res.headers['content-security-policy']), expected)
+
+        done()
+      })
+  })
+
+  it('sets report-uri when report-to is set', function (done) {
+    var app = makeApp({
+      directives: {
+        'default-src': ["'self'"],
+        'report-to': '/reporter'
+      }
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var expected = {
+          'default-src': ["'self'"],
+          'report-uri': ['/reporter'],
+          'report-to': ['/reporter']
+        }
+
+        assert.deepEqual(parseCsp(res.headers['content-security-policy']), expected)
+
+        done()
+      })
+  })
+
+  it('sets report-to when report-uri is set when setting all headers', function (done) {
+    var app = makeApp({
+      setAllHeaders: true,
+      directives: {
+        'default-src': ["'self'"],
+        'report-uri': '/reporter'
+      }
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var expected = {
+          'default-src': ["'self'"],
+          'report-uri': ['/reporter'],
+          'report-to': ['/reporter']
+        }
+
+        assert.deepEqual(parseCsp(res.headers['content-security-policy']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), expected)
+        assert.deepEqual(parseCsp(res.headers['x-webkit-csp']), expected)
+
+        done()
+      })
+  })
+
+  it('sets report-to when report-uri is set in loose mode', function (done) {
+    var app = makeApp({
+      loose: true,
+      directives: {
+        'default-src': ["'self'"],
+        'report-uri': '/reporter'
+      }
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .end(function (err, res) {
+        if (err) { return done(err) }
+
+        var expected = {
+          'default-src': ["'self'"],
+          'report-uri': ['/reporter'],
+          'report-to': ['/reporter']
+        }
+
+        assert.deepEqual(parseCsp(res.headers['content-security-policy']), expected)
+
+        done()
+      })
+  })
+
   it('can use a function to set the report-only headers to true', function (done) {
     var app = makeApp({
       reportOnly: function (req, res) {
@@ -119,7 +219,8 @@ describe('csp middleware', function () {
 
         var expected = {
           'default-src': ["'self'"],
-          'report-uri': ['/reporter']
+          'report-uri': ['/reporter'],
+          'report-to': ['/reporter']
         }
 
         assert.equal(res.headers['content-security-policy'], undefined)
