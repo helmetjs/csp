@@ -197,29 +197,4 @@ describe('with bad arguments', function () {
       })
     })
   })
-
-  describe('report-uri and report-to', function () {
-    it('errors when using both report-uri and report-to directives', function () {
-      throwTest([{
-        directives: {
-          'report-uri': '/report',
-          'report-to': '/report'
-        }
-      }], 'report-uri and report-to cannot both be set.')
-
-      throwTest([{
-        directives: {
-          reportUri: '/report',
-          'report-to': '/report'
-        }
-      }], 'report-uri and report-to cannot both be set.')
-
-      throwTest([{
-        directives: {
-          'report-uri': '/report',
-          reportTo: '/report'
-        }
-      }], 'report-uri and report-to cannot both be set.')
-    })
-  })
 })

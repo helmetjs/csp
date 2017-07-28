@@ -16,6 +16,7 @@ var POLICY = {
   objectSrc: ["'none'"],
   imgSrc: ['data:'],
   mediaSrc: false,
+  reportTo: '/report',
   upgradeInsecureRequests: true
 }
 
@@ -25,6 +26,7 @@ var EXPECTED_POLICY = {
   'style-src': ['styles.biz', 'abc123'],
   'object-src': ["'none'"],
   'img-src': ['data:'],
+  'report-to': ['/report'],
   'upgrade-insecure-requests': []
 }
 
