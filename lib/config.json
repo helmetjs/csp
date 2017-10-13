@@ -4,7 +4,10 @@
     "block-all-mixed-content": { "type": "boolean" },
     "child-src": { "type": "sourceList" },
     "connect-src": { "type": "sourceList" },
-    "default-src": { "type": "sourceList" },
+    "default-src": {
+      "type": "sourceList",
+      "hasStrictDynamic": true
+    },
     "font-src": { "type": "sourceList" },
     "form-action": { "type": "sourceList" },
     "frame-ancestors": { "type": "sourceList" },
@@ -15,7 +18,8 @@
     "object-src": { "type": "sourceList" },
     "script-src": {
       "type": "sourceList",
-      "hasUnsafes": true
+      "hasUnsafes": true,
+      "hasStrictDynamic": true
     },
     "style-src": {
       "type": "sourceList",
@@ -36,8 +40,9 @@
     "X-Content-Security-Policy",
     "X-WebKit-CSP"
   ],
-  "mustQuote": ["none", "self", "unsafe-inline", "unsafe-eval"],
+  "mustQuote": ["none", "self", "unsafe-inline", "unsafe-eval", "strict-dynamic"],
   "unsafes": ["'unsafe-inline'", "unsafe-inline", "'unsafe-eval'", "unsafe-eval"],
+  "strictDynamics": ["'strict-dynamic'", "strict-dynamic"],
   "sandboxDirectives": [
     "allow-forms",
     "allow-modals",

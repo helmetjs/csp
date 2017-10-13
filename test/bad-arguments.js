@@ -11,6 +11,7 @@ var SOURCELIST_DIRECTIVES = [
   'worker-src'
 ]
 var SOURCELISTS_WITH_UNSAFES = ['script-src', 'style-src', 'worker-src']
+var SOURCELISTS_WITH_STRICT_DYNAMIC = ['default-src', 'script-src']
 var BOOLEAN_DIRECTIVES = ['block-all-mixed-content', 'upgrade-insecure-requests']
 var PLUGINTYPE_DIRECTIVES = ['plugin-types']
 var URI_DIRECTIVES = ['report-to', 'report-uri']
@@ -93,6 +94,9 @@ describe('with bad arguments', function () {
             assertThrowsWithDirective(key, ['unsafe-inline'], '"unsafe-inline" must be quoted in ' + directive + '. Change it to "\'unsafe-inline\'" in your source list. Force this by enabling loose mode.')
             assertThrowsWithDirective(key, ['unsafe-eval'], '"unsafe-eval" must be quoted in ' + directive + '. Change it to "\'unsafe-eval\'" in your source list. Force this by enabling loose mode.')
           }
+          if (SOURCELISTS_WITH_STRICT_DYNAMIC.indexOf(directive) !== -1) {
+            assertThrowsWithDirective(key, ['strict-dynamic'], '"strict-dynamic" must be quoted in ' + directive + '. Change it to "\'strict-dynamic\'" in your source list. Force this by enabling loose mode.')
+          }
         })
 
         if (SOURCELISTS_WITH_UNSAFES.indexOf(directive) === -1) {
@@ -101,6 +105,13 @@ describe('with bad arguments', function () {
             assertThrowsWithDirective(key, ['unsafe-eval'], '"unsafe-eval" does not make sense in ' + directive + '. Remove it.')
             assertThrowsWithDirective(key, ["'unsafe-inline'"], '"\'unsafe-inline\'" does not make sense in ' + directive + '. Remove it.')
             assertThrowsWithDirective(key, ["'unsafe-eval'"], '"\'unsafe-eval\'" does not make sense in ' + directive + '. Remove it.')
+          })
+        }
+
+        if (SOURCELISTS_WITH_STRICT_DYNAMIC.indexOf(directive) === -1) {
+          it('errors when called with strict-dynamic', function () {
+            assertThrowsWithDirective(key, ['strict-dynamic'], '"strict-dynamic" does not make sense in ' + directive + '. Remove it.')
+            assertThrowsWithDirective(key, ["'strict-dynamic'"], '"\'strict-dynamic\'" does not make sense in ' + directive + '. Remove it.')
           })
         }
       })
