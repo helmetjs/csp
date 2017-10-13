@@ -17,6 +17,7 @@ var POLICY = {
   imgSrc: ['data:'],
   mediaSrc: false,
   reportTo: '/report',
+  requireSriFor: ['script'],
   upgradeInsecureRequests: true
 }
 
@@ -27,6 +28,7 @@ var EXPECTED_POLICY = {
   'object-src': ["'none'"],
   'img-src': ['data:'],
   'report-to': ['/report'],
+  'require-sri-for': ['script'],
   'upgrade-insecure-requests': []
 }
 

@@ -29,6 +29,7 @@
     "sandbox": { "type": "sandbox" },
     "report-to": { "type": "reportUri" },
     "report-uri": { "type": "reportUri" },
+    "require-sri-for": { "type": "requireSriFor" },
     "upgrade-insecure-requests": { "type": "boolean" },
     "worker-src": {
       "type": "sourceList",
@@ -43,6 +44,7 @@
   "mustQuote": ["none", "self", "unsafe-inline", "unsafe-eval", "strict-dynamic"],
   "unsafes": ["'unsafe-inline'", "unsafe-inline", "'unsafe-eval'", "unsafe-eval"],
   "strictDynamics": ["'strict-dynamic'", "strict-dynamic"],
+  "requireSriForValues": ["script", "style"],
   "sandboxDirectives": [
     "allow-forms",
     "allow-modals",

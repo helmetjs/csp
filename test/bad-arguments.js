@@ -15,6 +15,7 @@ var SOURCELISTS_WITH_STRICT_DYNAMIC = ['default-src', 'script-src']
 var BOOLEAN_DIRECTIVES = ['block-all-mixed-content', 'upgrade-insecure-requests']
 var PLUGINTYPE_DIRECTIVES = ['plugin-types']
 var URI_DIRECTIVES = ['report-to', 'report-uri']
+var REQUIRESRIFOR_DIRECTIVES = ['require-sri-for']
 var SANDBOX_DIRECTIVES = ['sandbox']
 
 describe('with bad arguments', function () {
@@ -58,7 +59,7 @@ describe('with bad arguments', function () {
 
   it('tests all directives', function () {
     var actualDirectives = Object.keys(config.directives)
-    var expectedDirectives = SOURCELIST_DIRECTIVES.concat(BOOLEAN_DIRECTIVES, PLUGINTYPE_DIRECTIVES, URI_DIRECTIVES, SANDBOX_DIRECTIVES)
+    var expectedDirectives = SOURCELIST_DIRECTIVES.concat(BOOLEAN_DIRECTIVES, PLUGINTYPE_DIRECTIVES, URI_DIRECTIVES, REQUIRESRIFOR_DIRECTIVES, SANDBOX_DIRECTIVES)
     assert.deepEqual(actualDirectives.sort(), expectedDirectives.sort())
   })
 
@@ -205,8 +206,44 @@ describe('with bad arguments', function () {
     })
   })
 
+  assert.deepEqual(REQUIRESRIFOR_DIRECTIVES, ['require-sri-for'])
+
+  REQUIRESRIFOR_DIRECTIVES.forEach(function (directive) {
+    [directive, camelize(directive)].forEach(function (key) {
+      describe(key + ' directive, a require-sri-for', function () {
+        it('errors with an empty array', function () {
+          assertThrowsWithDirective(key, [], 'require-sri-for must have at least one value. To require nothing, omit the directive.')
+        })
+
+        it('errors with a non-array', function () {
+          [
+            null,
+            undefined,
+            true,
+          {},
+            '',
+            'script',
+            function () {}
+          ].forEach(function (value) {
+            assertThrowsWithDirective(key, value, '"' + value + '" is not a valid value for require-sri-for. Use an array of strings.')
+          })
+        })
+
+        it('errors when called with unsupported directives', function () {
+          assertThrowsWithDirective(key, [undefined], '"undefined" is not a valid require-sri-for value. Remove it.')
+          assertThrowsWithDirective(key, ['script', undefined], '"undefined" is not a valid require-sri-for value. Remove it.')
+          assertThrowsWithDirective(key, ['style', 123], '"123" is not a valid require-sri-for value. Remove it.')
+          assertThrowsWithDirective(key, ['style', 'self'], '"self" is not a valid require-sri-for value. Remove it.')
+          assertThrowsWithDirective(key, ["'none'", 'script'], '"\'none\'" is not a valid require-sri-for value. Remove it.')
+        })
+      })
+    })
+  })
+
   describe('sandbox directive', function () {
-    assert.deepEqual(SANDBOX_DIRECTIVES, ['sandbox'])
+    it('is the only directive of its type', function () {
+      assert.deepEqual(SANDBOX_DIRECTIVES, ['sandbox'])
+    })
 
     it('errors with an empty array', function () {
       assertThrowsWithDirective('sandbox', [], 'sandbox must have at least one value. To block everything, set sandbox to `true`.')
