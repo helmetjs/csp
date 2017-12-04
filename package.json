@@ -26,7 +26,8 @@
   "bugs": "https://github.com/helmetjs/csp/issues",
   "scripts": {
     "pretest": "standard --fix",
-    "test": "mocha"
+    "test": "mocha",
+    "generate-supported-directives-docs": "./scripts/generate_supported_directives_docs"
   },
   "dependencies": {
     "camelize": "1.0.0",

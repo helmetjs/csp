@@ -51,6 +51,36 @@ app.use(csp({
 
 There are a lot of inconsistencies in how browsers implement CSP. Helmet looks at the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 2.0 spec.
 
+Supported directives
+--------------------
+
+Directives can be kebab-cased (like `script-src`) or camel-cased (like `scriptSrc`); they are equivalent.
+
+The following directives are supported:
+
+* `base-uri` or `baseUri`
+* `block-all-mixed-content` or `blockAllMixedContent`
+* `child-src` or `childSrc`
+* `connect-src` or `connectSrc`
+* `default-src` or `defaultSrc`
+* `font-src` or `fontSrc`
+* `form-action` or `formAction`
+* `frame-ancestors` or `frameAncestors`
+* `frame-src` or `frameSrc`
+* `img-src` or `imgSrc`
+* `manifest-src` or `manifestSrc`
+* `media-src` or `mediaSrc`
+* `object-src` or `objectSrc`
+* `plugin-types` or `pluginTypes`
+* `report-to` or `reportTo`
+* `report-uri` or `reportUri`
+* `require-sri-for` or `requireSriFor`
+* `sandbox` or `sandbox`
+* `script-src` or `scriptSrc`
+* `style-src` or `styleSrc`
+* `upgrade-insecure-requests` or `upgradeInsecureRequests`
+* `worker-src` or `workerSrc`
+
 Handling CSP violations
 -----------------------
 
