@@ -16,6 +16,7 @@ var POLICY = {
   objectSrc: ["'none'"],
   imgSrc: ['data:'],
   mediaSrc: false,
+  prefetchSrc: ['prefetch.example.com'],
   reportTo: '/report',
   requireSriFor: ['script'],
   upgradeInsecureRequests: true
@@ -27,6 +28,7 @@ var EXPECTED_POLICY = {
   'style-src': ['styles.biz', 'abc123'],
   'object-src': ["'none'"],
   'img-src': ['data:'],
+  'prefetch-src': ['prefetch.example.com'],
   'report-to': ['/report'],
   'require-sri-for': ['script'],
   'upgrade-insecure-requests': []

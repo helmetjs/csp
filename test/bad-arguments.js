@@ -7,8 +7,8 @@ var assert = require('assert')
 var SOURCELIST_DIRECTIVES = [
   'base-uri', 'child-src', 'connect-src', 'default-src', 'font-src',
   'form-action', 'frame-ancestors', 'frame-src', 'img-src',
-  'manifest-src', 'media-src', 'object-src', 'script-src', 'style-src',
-  'worker-src'
+  'manifest-src', 'media-src', 'object-src', 'prefetch-src', 'script-src',
+  'style-src', 'worker-src'
 ]
 var SOURCELISTS_WITH_UNSAFES = ['script-src', 'style-src', 'worker-src']
 var SOURCELISTS_WITH_STRICT_DYNAMIC = ['default-src', 'script-src']

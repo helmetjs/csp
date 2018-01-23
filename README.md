@@ -73,6 +73,7 @@ The following directives are supported:
 * `media-src` or `mediaSrc`
 * `object-src` or `objectSrc`
 * `plugin-types` or `pluginTypes`
+* `prefetch-src` or `prefetchSrc`
 * `report-to` or `reportTo`
 * `report-uri` or `reportUri`
 * `require-sri-for` or `requireSriFor`
