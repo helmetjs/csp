@@ -37,11 +37,11 @@
     "platform": "1.3.4"
   },
   "devDependencies": {
-    "content-security-policy-parser": "^0.1.0",
-    "express": "^4.15.3",
+    "content-security-policy-parser": "^0.1.1",
+    "express": "^4.16.2",
     "lodash": "^4.16.4",
-    "mocha": "^3.4.2",
-    "standard": "^10.0.2",
+    "mocha": "^5.0.0",
+    "standard": "^10.0.3",
     "supertest": "^3.0.0"
   },
   "standard": {
