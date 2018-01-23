@@ -23,7 +23,8 @@ app.use(csp({
     sandbox: ['allow-forms', 'allow-scripts'],
     reportUri: '/report-violation',
     objectSrc: ["'none'"],
-    upgradeInsecureRequests: true
+    upgradeInsecureRequests: true,
+    workerSrc: false  // This is not set.
   },
 
   // This module will detect common mistakes in your directives and throw errors

@@ -208,6 +208,19 @@ describe('csp middleware', function () {
       })
   })
 
+  it('allows you to disable directives with a false value', function (done) {
+    var app = makeApp({
+      directives: {
+        'style-src': ['example.com'],
+        'script-src': false
+      }
+    })
+
+    request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
+      .expect('Content-Security-Policy', 'style-src example.com')
+      .end(done)
+  })
+
   it('names its function and middleware', function () {
     assert.equal(csp.name, 'csp')
     assert.equal(csp({ directives: POLICY }).name, 'csp')
