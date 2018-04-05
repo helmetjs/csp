@@ -114,10 +114,10 @@ Generating nonces
 You can dynamically generate nonces to allow inline `<script>` tags to be safely evaluated. Here's a simple example:
 
 ```js
-var uuid = require('node-uuid')
+var uuidv4 = require('uuid/v4')
 
 app.use(function (req, res, next) {
-  res.locals.nonce = uuid.v4()
+  res.locals.nonce = uuidv4()
   next()
 })
 
