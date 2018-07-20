@@ -220,7 +220,7 @@ describe('with bad arguments', function () {
             null,
             undefined,
             true,
-          {},
+            {},
             '',
             'script',
             function () {}
