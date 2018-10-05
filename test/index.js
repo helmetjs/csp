@@ -93,9 +93,9 @@ describe('csp middleware', function () {
       .end(function (err, res) {
         if (err) { return done(err) }
 
-        assert.equal(res.headers['content-security-policy'], undefined)
-        assert.equal(res.headers['x-content-security-policy'], undefined)
-        assert.equal(res.headers['x-webkit-csp'], undefined)
+        assert.strictEqual(res.headers['content-security-policy'], undefined)
+        assert.strictEqual(res.headers['x-content-security-policy'], undefined)
+        assert.strictEqual(res.headers['x-webkit-csp'], undefined)
 
         done()
       })
@@ -122,13 +122,13 @@ describe('csp middleware', function () {
           'report-uri': ['/reporter']
         }
 
-        assert.equal(res.headers['content-security-policy'], undefined)
-        assert.equal(res.headers['x-content-security-policy'], undefined)
-        assert.equal(res.headers['x-webkit-csp'], undefined)
+        assert.strictEqual(res.headers['content-security-policy'], undefined)
+        assert.strictEqual(res.headers['x-content-security-policy'], undefined)
+        assert.strictEqual(res.headers['x-webkit-csp'], undefined)
 
-        assert.deepEqual(parseCsp(res.headers['content-security-policy-report-only']), expected)
-        assert.deepEqual(parseCsp(res.headers['x-content-security-policy-report-only']), expected)
-        assert.deepEqual(parseCsp(res.headers['x-webkit-csp-report-only']), expected)
+        assert.deepStrictEqual(parseCsp(res.headers['content-security-policy-report-only']), expected)
+        assert.deepStrictEqual(parseCsp(res.headers['x-content-security-policy-report-only']), expected)
+        assert.deepStrictEqual(parseCsp(res.headers['x-webkit-csp-report-only']), expected)
 
         done()
       })
@@ -152,9 +152,9 @@ describe('csp middleware', function () {
       .end(function (err, res) {
         if (err) { return done(err) }
 
-        assert.equal(res.headers['content-security-policy-report-only'], undefined)
-        assert.equal(res.headers['x-content-security-policy-report-only'], undefined)
-        assert.equal(res.headers['x-webkit-csp-report-only'], undefined)
+        assert.strictEqual(res.headers['content-security-policy-report-only'], undefined)
+        assert.strictEqual(res.headers['x-content-security-policy-report-only'], undefined)
+        assert.strictEqual(res.headers['x-webkit-csp-report-only'], undefined)
 
         done()
       })
@@ -222,7 +222,7 @@ describe('csp middleware', function () {
   })
 
   it('names its function and middleware', function () {
-    assert.equal(csp.name, 'csp')
-    assert.equal(csp({ directives: POLICY }).name, 'csp')
+    assert.strictEqual(csp.name, 'csp')
+    assert.strictEqual(csp({ directives: POLICY }).name, 'csp')
   })
 })

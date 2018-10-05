@@ -59,7 +59,7 @@ describe('normal browsers', function () {
           if (err) { return done(err) }
 
           var header = agent.header.toLowerCase()
-          assert.deepEqual(parseCsp(res.headers[header]), EXPECTED_POLICY)
+          assert.deepStrictEqual(parseCsp(res.headers[header]), EXPECTED_POLICY)
 
           done()
         })
@@ -76,7 +76,7 @@ describe('normal browsers', function () {
             'x-webkit-csp'
           ].forEach(function (header) {
             if (header === agent.header.toLowerCase()) { return }
-            assert.equal(res.headers[header], undefined)
+            assert.strictEqual(res.headers[header], undefined)
           })
 
           done()

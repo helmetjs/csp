@@ -54,9 +54,9 @@ describe('with browser sniffing disabled', function () {
         .end(function (err, res) {
           if (err) { return done(err) }
 
-          assert.deepEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
-          assert.equal(res.headers['x-content-security-policy'], undefined)
-          assert.equal(res.headers['x-webkit-csp'], undefined)
+          assert.deepStrictEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
+          assert.strictEqual(res.headers['x-content-security-policy'], undefined)
+          assert.strictEqual(res.headers['x-webkit-csp'], undefined)
 
           done()
         })
@@ -74,9 +74,9 @@ describe('with browser sniffing disabled', function () {
       .end(function (err, res) {
         if (err) { return done(err) }
 
-        assert.deepEqual(parseCsp(res.headers['content-security-policy-report-only']), EXPECTED_POLICY)
-        assert.equal(res.headers['x-content-security-policy'], undefined)
-        assert.equal(res.headers['x-webkit-csp'], undefined)
+        assert.deepStrictEqual(parseCsp(res.headers['content-security-policy-report-only']), EXPECTED_POLICY)
+        assert.strictEqual(res.headers['x-content-security-policy'], undefined)
+        assert.strictEqual(res.headers['x-webkit-csp'], undefined)
 
         done()
       })
@@ -93,9 +93,9 @@ describe('with browser sniffing disabled', function () {
       .end(function (err, res) {
         if (err) { return done(err) }
 
-        assert.deepEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
-        assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), EXPECTED_POLICY)
-        assert.deepEqual(parseCsp(res.headers['x-webkit-csp']), EXPECTED_POLICY)
+        assert.deepStrictEqual(parseCsp(res.headers['content-security-policy']), EXPECTED_POLICY)
+        assert.deepStrictEqual(parseCsp(res.headers['x-content-security-policy']), EXPECTED_POLICY)
+        assert.deepStrictEqual(parseCsp(res.headers['x-webkit-csp']), EXPECTED_POLICY)
 
         done()
       })

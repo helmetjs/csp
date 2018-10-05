@@ -37,7 +37,7 @@ describe('special browsers', function () {
           .end(function (err, res) {
             if (err) { return done(err) }
 
-            assert.deepEqual(parseCsp(res.headers['x-content-security-policy']), {
+            assert.deepStrictEqual(parseCsp(res.headers['x-content-security-policy']), {
               'default-src': ["'self'"],
               'xhr-src': ['connect.com']
             })
@@ -65,9 +65,9 @@ describe('special browsers', function () {
           .end(function (err, res) {
             if (err) { return done(err) }
 
-            assert.equal(res.header['x-webkit-csp'], undefined)
-            assert.equal(res.header['content-security-policy'], undefined)
-            assert.equal(res.header['x-content-security-policy'], undefined)
+            assert.strictEqual(res.header['x-webkit-csp'], undefined)
+            assert.strictEqual(res.header['content-security-policy'], undefined)
+            assert.strictEqual(res.header['x-content-security-policy'], undefined)
 
             done()
           })
@@ -88,9 +88,9 @@ describe('special browsers', function () {
         .end(function (err, res) {
           if (err) { return done(err) }
 
-          assert.equal(res.header['x-webkit-csp'], undefined)
-          assert.equal(res.header['content-security-policy'], undefined)
-          assert.equal(res.header['x-content-security-policy'], undefined)
+          assert.strictEqual(res.header['x-webkit-csp'], undefined)
+          assert.strictEqual(res.header['content-security-policy'], undefined)
+          assert.strictEqual(res.header['x-content-security-policy'], undefined)
 
           done()
         })

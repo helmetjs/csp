@@ -60,7 +60,7 @@ describe('with bad arguments', function () {
   it('tests all directives', function () {
     var actualDirectives = Object.keys(config.directives)
     var expectedDirectives = SOURCELIST_DIRECTIVES.concat(BOOLEAN_DIRECTIVES, PLUGINTYPE_DIRECTIVES, URI_DIRECTIVES, REQUIRESRIFOR_DIRECTIVES, SANDBOX_DIRECTIVES)
-    assert.deepEqual(actualDirectives.sort(), expectedDirectives.sort())
+    assert.deepStrictEqual(actualDirectives.sort(), expectedDirectives.sort())
   })
 
   SOURCELIST_DIRECTIVES.forEach(function (directive) {
@@ -206,7 +206,7 @@ describe('with bad arguments', function () {
     })
   })
 
-  assert.deepEqual(REQUIRESRIFOR_DIRECTIVES, ['require-sri-for'])
+  assert.deepStrictEqual(REQUIRESRIFOR_DIRECTIVES, ['require-sri-for'])
 
   REQUIRESRIFOR_DIRECTIVES.forEach(function (directive) {
     [directive, camelize(directive)].forEach(function (key) {
@@ -242,7 +242,7 @@ describe('with bad arguments', function () {
 
   describe('sandbox directive', function () {
     it('is the only directive of its type', function () {
-      assert.deepEqual(SANDBOX_DIRECTIVES, ['sandbox'])
+      assert.deepStrictEqual(SANDBOX_DIRECTIVES, ['sandbox'])
     })
 
     it('errors with an empty array', function () {
