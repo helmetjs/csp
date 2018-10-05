@@ -10,7 +10,7 @@ Content Security Policy helps prevent unwanted content being injected into your 
 Usage:
 
 ```javascript
-var csp = require('helmet-csp')
+const csp = require('helmet-csp')
 
 app.use(csp({
   // Specify directives as normal.
@@ -94,7 +94,7 @@ app.use(bodyParser.json({
   type: ['json', 'application/csp-report']
 }))
 
-app.post('/report-violation', function (req, res) {
+app.post('/report-violation', (req, res) => {
   if (req.body) {
     console.log('CSP Violation: ', req.body)
   } else {
@@ -114,7 +114,7 @@ Generating nonces
 You can dynamically generate nonces to allow inline `<script>` tags to be safely evaluated. Here's a simple example:
 
 ```js
-var uuidv4 = require('uuid/v4')
+const uuidv4 = require('uuid/v4')
 
 app.use(function (req, res, next) {
   res.locals.nonce = uuidv4()
@@ -125,15 +125,13 @@ app.use(csp({
   directives: {
     scriptSrc: [
       "'self'",
-      function (req, res) {
-        return "'nonce-" + res.locals.nonce + "'"  // 'nonce-614d9122-d5b0-4760-aecf-3a5d17cf0ac9'
-      }
+      (req, res) => `'nonce-${res.locals.nonce}'`  // 'nonce-614d9122-d5b0-4760-aecf-3a5d17cf0ac9'
     ]
   }
 }))
 
-app.use(function (req, res) {
-  res.end('<script nonce="' + res.locals.nonce + '">alert(1 + 1);</script>')
+app.use((req, res) => {
+  res.end(`<script nonce="${res.locals.nonce}">alert(1 + 1);</script>`)
 })
 ```
 
