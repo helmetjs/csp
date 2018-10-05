@@ -1,1 +1,1 @@
---recursive
+--recursive --check-leaks --exit --throw-deprecation --forbid-only --forbid-pending
