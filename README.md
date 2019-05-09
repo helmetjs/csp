@@ -52,6 +52,9 @@ app.use(csp({
 
 There are a lot of inconsistencies in how browsers implement CSP. Helmet looks at the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 2.0 spec.
 
+When Finished, Validate
+https://csp-evaluator.withgoogle.com/
+
 Supported directives
 --------------------
 
