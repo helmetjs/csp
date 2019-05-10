@@ -24,6 +24,9 @@
     "url": "git://github.com/helmetjs/csp.git"
   },
   "bugs": "https://github.com/helmetjs/csp/issues",
+  "engines": {
+    "node": ">=4.0.0"
+  },
   "scripts": {
     "pretest": "standard --fix",
     "test": "mocha",
