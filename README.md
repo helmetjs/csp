@@ -114,10 +114,10 @@ Generating nonces
 You can dynamically generate nonces to allow inline `<script>` tags to be safely evaluated. Here's a simple example:
 
 ```js
-const uuidv4 = require('uuid/v4')
+const crypto = require('crypto')
 
 app.use(function (req, res, next) {
-  res.locals.nonce = uuidv4()
+  res.locals.nonce = crypto.randomBytes(16).toString('hex')
   next()
 })
 
@@ -125,7 +125,7 @@ app.use(csp({
   directives: {
     scriptSrc: [
       "'self'",
-      (req, res) => `'nonce-${res.locals.nonce}'`  // 'nonce-614d9122-d5b0-4760-aecf-3a5d17cf0ac9'
+      (req, res) => `'nonce-${res.locals.nonce}'`  // 'nonce-348c18b14aaf3e00938d8bdd613f1149'
     ]
   }
 }))
