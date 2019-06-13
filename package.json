@@ -27,9 +27,21 @@
   "engines": {
     "node": ">=4.0.0"
   },
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "dist/index.js",
+    "dist/index.d.ts"
+  ],
   "scripts": {
-    "pretest": "standard --fix",
-    "test": "mocha",
+    "pretest": "npm run lint",
+    "prepublishOnly": "npm run build",
+    "lint": "eslint --fix '**/*.ts'",
+    "test": "jest --config test/jest-config.json",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc",
     "generate-supported-directives-docs": "./scripts/generate_supported_directives_docs"
   },
   "dependencies": {
@@ -39,18 +51,17 @@
     "platform": "1.3.5"
   },
   "devDependencies": {
-    "content-security-policy-parser": "^0.1.1",
-    "express": "^4.16.4",
-    "lodash": "^4.17.11",
-    "mocha": "^6.1.4",
-    "standard": "^12.0.1",
-    "supertest": "^4.0.2"
-  },
-  "standard": {
-    "globals": [
-      "describe",
-      "beforeEach",
-      "it"
-    ]
+    "@types/connect": "^3.4.32",
+    "@types/jest": "^24.0.13",
+    "@types/supertest": "^2.0.7",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
+    "connect": "^3.7.0",
+    "eslint": "^5.16.0",
+    "eslint-config-helmet": "^0.2.0",
+    "jest": "^24.8.0",
+    "supertest": "^4.0.2",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.1"
   }
 }
