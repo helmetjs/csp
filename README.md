@@ -2,8 +2,6 @@ Content Security Policy middleware
 ==================================
 [![Build Status](https://travis-ci.org/helmetjs/csp.svg?branch=master)](https://travis-ci.org/helmetjs/csp)
 
-[_Looking for a changelog?_](https://github.com/helmetjs/helmet/blob/master/HISTORY.md)
-
 Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate cross-site scripting (XSS) vulnerabilities, malicious frames, unwanted trackers, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/). This module helps set Content Security Policies.
 
 Usage:
