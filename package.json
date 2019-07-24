@@ -27,6 +27,13 @@
   "engines": {
     "node": ">=4.0.0"
   },
+  "files": [
+    "CHANGELOG.md",
+    "LICENSE",
+    "README.md",
+    "index.js",
+    "lib/"
+  ],
   "scripts": {
     "pretest": "standard --fix",
     "test": "mocha",
