@@ -27,6 +27,7 @@
     "url": "https://github.com/helmetjs/csp/issues",
     "email": "me@evanhahn.com"
   },
+  "homepage": "https://helmetjs.github.io/docs/csp/",
   "engines": {
     "node": ">=4.0.0"
   },
