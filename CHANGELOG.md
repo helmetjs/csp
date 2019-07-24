@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.8.0 - 2019-07-24
 ### Added
 - Created a changelog
 - Added some package metadata
