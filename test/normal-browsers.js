@@ -1,7 +1,6 @@
 var csp = require('..')
 
 var assert = require('assert')
-var each = require('lodash/each')
 var express = require('express')
 var parseCsp = require('content-security-policy-parser')
 var request = require('supertest')
@@ -50,7 +49,9 @@ describe('normal browsers', function () {
     })
   })
 
-  each(AGENTS, function (agent, name) {
+  Object.keys(AGENTS).forEach(function (name) {
+    var agent = AGENTS[name]
+
     if (agent.special) { return }
 
     it('sets the header properly for ' + name, function (done) {
