@@ -2,6 +2,7 @@
 
 ## 2.8.0 - 2019-07-24
 ### Added
+- Added a new `sandbox` directive, `allow-downloads-without-user-activation` (see [#85](https://github.com/helmetjs/csp/pull/85))
 - Created a changelog
 - Added some package metadata
 
