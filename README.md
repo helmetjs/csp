@@ -140,5 +140,6 @@ The default behavior of CSP is generate headers tailored for the browser that's 
 See also
 --------
 
+* [Google's CSP Evaluator tool](https://csp-evaluator.withgoogle.com/)
 * [GitHub's CSP journey](http://githubengineering.com/githubs-csp-journey/)
 * [Content Security Policy for Single Page Web Apps](https://corner.squareup.com/2016/05/content-security-policy-single-page-app.html)
