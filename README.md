@@ -52,12 +52,6 @@ app.use(csp({
 
 There are a lot of inconsistencies in how browsers implement CSP. Helmet looks at the user-agent of the browser and sets the appropriate header and value for that browser. If no user-agent is matched, it will set _all_ the headers with the 2.0 spec.
 
-CSP Evaluator
---------------------
-CSP Evaluator allows developers and security experts to check if a Content Security Policy (CSP) serves as a strong mitigation against cross-site scripting attacks. It assists with the process of reviewing CSP policies, which is usually a manual task, and helps identify subtle CSP bypasses which undermine the value of a policy. CSP Evaluator checks are based on a large-scale study and are aimed to help developers to harden their CSP and improve the security of their applications.
-
-https://csp-evaluator.withgoogle.com/
-
 Supported directives
 --------------------
 
@@ -149,5 +143,6 @@ The default behavior of CSP is generate headers tailored for the browser that's 
 See also
 --------
 
+* [Google's CSP Evaluator tool](https://csp-evaluator.withgoogle.com/)
 * [GitHub's CSP journey](http://githubengineering.com/githubs-csp-journey/)
 * [Content Security Policy for Single Page Web Apps](https://corner.squareup.com/2016/05/content-security-policy-single-page-app.html)
