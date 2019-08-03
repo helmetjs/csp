@@ -1,4 +1,4 @@
-import { CamelCaseDirectives as Directives } from './types';
+import { CamelCaseDirectives as Directives, SourceListDirective } from './types';
 
 function createFirefoxPreCSP10Directives (directives: Directives, basePolicy: any) {
   const result = Object.assign({}, basePolicy);
@@ -47,7 +47,7 @@ const handlers: Handlers = {
     const version = parseFloat(browser.version!);
 
     if (version >= 4 && version < 23) {
-      const basePolicy: { allow?: string[]; defaultSrc?: string[] } = {};
+      const basePolicy: { allow?: SourceListDirective; defaultSrc?: SourceListDirective } = {};
       if (version < 5) {
         basePolicy.allow = ['*'];
 

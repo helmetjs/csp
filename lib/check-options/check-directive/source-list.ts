@@ -1,9 +1,13 @@
 import config from '../../config';
 import isFunction from '../../is-function';
 
-export = function sourceListCheck (key: string, value: unknown) {
-  const directiveInfo = config.directives[key as keyof typeof config.directives];
+interface SourceListConfig {
+  type: 'sourceList';
+  hasStrictDynamic?: true;
+  hasUnsafes?: true;
+}
 
+export = function sourceListCheck (key: string, value: unknown) {
   if (value === false) { return; }
 
   if (!Array.isArray(value)) {
@@ -26,6 +30,8 @@ export = function sourceListCheck (key: string, value: unknown) {
     if (typeof sourceExpression !== 'string' || sourceExpression.length === 0) {
       throw new Error(`"${sourceExpression}" is not a valid source expression. Only non-empty strings are allowed.`);
     }
+
+    const directiveInfo: SourceListConfig = config.directives[key as keyof typeof config.directives] as any;
 
     if (!directiveInfo.hasUnsafes && config.unsafes.indexOf(sourceExpression) !== -1 ||
       !directiveInfo.hasStrictDynamic && config.strictDynamics.indexOf(sourceExpression) !== -1) {

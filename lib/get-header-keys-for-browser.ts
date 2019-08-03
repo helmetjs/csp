@@ -9,9 +9,11 @@ interface Handlers {
   [browser: string]: (platform: Platform, options: CSPOptions) => string[];
 }
 
+// This is easier than converting `browser` to have non-undefined fields for now.
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 const handlers: Handlers = {
   'Android Browser' (browser, options) {
-    if (parseFloat(browser.os.version) < 4.4 || options.disableAndroid) {
+    if (parseFloat(browser.os!.version!) < 4.4 || options.disableAndroid) {
       return [];
     } else {
       return ['Content-Security-Policy'];
@@ -19,7 +21,7 @@ const handlers: Handlers = {
   },
 
   Chrome (browser) {
-    const version = parseFloat(browser.version);
+    const version = parseFloat(browser.version!);
 
     if (version >= 14 && version < 25) {
       return ['X-WebKit-CSP'];
@@ -31,7 +33,7 @@ const handlers: Handlers = {
   },
 
   'Chrome Mobile' (browser, options) {
-    if (browser.os.family === 'iOS') {
+    if (browser.os!.family === 'iOS') {
       return ['Content-Security-Policy'];
     } else {
       return handlers['Android Browser'].apply(this, [browser, options]);
@@ -39,7 +41,7 @@ const handlers: Handlers = {
   },
 
   Firefox (browser) {
-    const version = parseFloat(browser.version);
+    const version = parseFloat(browser.version!);
 
     if (version >= 23) {
       return ['Content-Security-Policy'];
@@ -52,8 +54,8 @@ const handlers: Handlers = {
 
   'Firefox Mobile' (browser) {
     // Handles both Firefox for Android and Firefox OS
-    const { family } = browser.os;
-    const version = parseFloat(browser.version);
+    const { family } = browser.os!;
+    const version = parseFloat(browser.version!);
 
     if (family === 'Firefox OS') {
       if (version >= 32) {
@@ -75,7 +77,7 @@ const handlers: Handlers = {
   'Firefox for iOS': goodBrowser,
 
   IE (browser) {
-    const version = parseFloat(browser.version);
+    const version = parseFloat(browser.version!);
     const header = version < 12 ? 'X-Content-Security-Policy' : 'Content-Security-Policy';
 
     return [header];
@@ -86,7 +88,7 @@ const handlers: Handlers = {
   'Microsoft Edge Mobile': goodBrowser,
 
   Opera (browser) {
-    if (parseFloat(browser.version) >= 15) {
+    if (parseFloat(browser.version!) >= 15) {
       return ['Content-Security-Policy'];
     } else {
       return [];
@@ -94,7 +96,7 @@ const handlers: Handlers = {
   },
 
   Safari (browser) {
-    const version = parseFloat(browser.version);
+    const version = parseFloat(browser.version!);
 
     if (version >= 7) {
       return ['Content-Security-Policy'];
