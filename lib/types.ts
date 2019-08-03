@@ -1,21 +1,73 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import config from './config';
 
-export type Directives = {
-  [D in keyof typeof config.directives]?:
-  | (string | ((req: IncomingMessage, res: ServerResponse) => string))[]
-  | ((req: IncomingMessage, res: ServerResponse) => string)
-  | string
-  | boolean
+export type SourceListDirective = false | (string | ((req: IncomingMessage, res: ServerResponse) => string))[];
+export type PluginTypesDirective = false | (string | ((req: IncomingMessage, res: ServerResponse) => string))[];
+export type SandboxDirective = false | (string | ((req: IncomingMessage, res: ServerResponse) => string))[];
+export type ReportUriDirective = false | (string | ((req: IncomingMessage, res: ServerResponse) => string));
+export type RequireSriForDirective = false | (string | ((req: IncomingMessage, res: ServerResponse) => string))[];
+
+export interface KebabCaseDirectives {
+  'base-uri'?: SourceListDirective;
+  'block-all-mixed-content'?: boolean;
+  'child-src'?: SourceListDirective;
+  'connect-src'?: SourceListDirective;
+  'default-src'?: SourceListDirective;
+  'font-src'?: SourceListDirective;
+  'form-action'?: SourceListDirective;
+  'frame-ancestors'?: SourceListDirective;
+  'frame-src'?: SourceListDirective;
+  'img-src'?: SourceListDirective;
+  'manifest-src'?: SourceListDirective;
+  'media-src'?: SourceListDirective;
+  'object-src'?: SourceListDirective;
+  'sandbox'?: SandboxDirective;
+  'script-src'?: SourceListDirective;
+  'style-src'?: SourceListDirective;
+  'prefetch-src'?: SourceListDirective;
+  'plugin-types'?: PluginTypesDirective;
+  'report-to'?: ReportUriDirective;
+  'report-uri'?: ReportUriDirective;
+  'require-sri-for'?: RequireSriForDirective;
+  'upgrade-insecure-requests'?: boolean;
+  'worker-src'?: SourceListDirective;
 }
 
-export type ParsedDirectives = {
-  [D in keyof typeof config.directives]?: string[] | string | boolean
+export interface CamelCaseDirectives {
+  baseUri?: SourceListDirective;
+  blockAllMixedContent?: boolean;
+  childSrc?: SourceListDirective;
+  connectSrc?: SourceListDirective;
+  defaultSrc?: SourceListDirective;
+  fontSrc?: SourceListDirective;
+  formAction?: SourceListDirective;
+  frameAncestors?: SourceListDirective;
+  frameSrc?: SourceListDirective;
+  imgSrc?: SourceListDirective;
+  manifestSrc?: SourceListDirective;
+  mediaSrc?: SourceListDirective;
+  objectSrc?: SourceListDirective;
+  scriptSrc?: SourceListDirective;
+  styleSrc?: SourceListDirective;
+  prefetchSrc?: SourceListDirective;
+  pluginTypes?: PluginTypesDirective;
+  sandbox?: SandboxDirective;
+  reportTo?: ReportUriDirective;
+  reportUri?: ReportUriDirective;
+  requireSriFor?: RequireSriForDirective;
+  upgradeInsecureRequests?: boolean;
+  workerSrc?: SourceListDirective;
+}
+
+export type AllDirectives = CamelCaseDirectives & KebabCaseDirectives;
+
+// `CamelCaseDirectives` without the functions
+export interface ParsedDirectives {
+  [key: string]: string[] | string | boolean;
 }
 
 export interface CSPOptions {
   browserSniff?: boolean;
-  directives?: Directives;
+  directives?: AllDirectives;
   disableAndroid?: boolean;
   loose?: boolean;
   reportOnly?: boolean | ((req: IncomingMessage, res: ServerResponse) => boolean);

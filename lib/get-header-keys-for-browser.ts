@@ -30,11 +30,11 @@ const handlers: Handlers = {
     }
   },
 
-  'Chrome Mobile' (browser) {
+  'Chrome Mobile' (browser, options) {
     if (browser.os.family === 'iOS') {
       return ['Content-Security-Policy'];
     } else {
-      return handlers['Android Browser'].apply(this, arguments);
+      return handlers['Android Browser'].apply(this, [browser, options]);
     }
   },
 
@@ -108,8 +108,8 @@ const handlers: Handlers = {
 
 handlers['IE Mobile'] = handlers.IE;
 
-export = function getHeaderKeysForBrowser (browser: Platform, options: CSPOptions) {
-  if (!browser.name) {
+export = function getHeaderKeysForBrowser (browser: Platform | undefined, options: CSPOptions) {
+  if (!browser || !browser.name) {
     return config.allHeaders;
   }
 

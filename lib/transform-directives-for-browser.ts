@@ -1,32 +1,37 @@
-import { Directives } from './types';
+import { CamelCaseDirectives as Directives } from './types';
 
 function createFirefoxPreCSP10Directives (directives: Directives, basePolicy: any) {
   const result = Object.assign({}, basePolicy);
 
+  // Copy `connectSrc` to `xhrSrc`
+  const { connectSrc } = directives;
+  if (connectSrc) {
+    result.xhrSrc = connectSrc;
+  }
+
+  // Copy everything else
   Object.keys(directives).forEach((key) => {
-    const value = directives[key as keyof Directives];
-
-    if (key === 'connectSrc') {
-      result.xhrSrc = value;
-    } else {
-      result[key] = value;
-    }
-
-    if (key === 'scriptSrc') {
-      const optionsValues = [];
-
-      if (value.indexOf("'unsafe-inline'") !== -1) {
-        optionsValues.push('inline-script');
-      }
-      if (value.indexOf("'unsafe-eval'") !== -1) {
-        optionsValues.push('eval-script');
-      }
-
-      if (optionsValues.length !== 0) {
-        result.options = optionsValues;
-      }
+    if (key !== 'connectSrc') {
+      result[key] = directives[key as keyof Directives];
     }
   });
+
+  // Rename `scriptSrc` values `unsafe-inline` and `unsafe-eval`
+  const { scriptSrc } = directives;
+  if (scriptSrc) {
+    const optionsValues = [];
+
+    if (scriptSrc.indexOf("'unsafe-inline'") !== -1) {
+      optionsValues.push('inline-script');
+    }
+    if (scriptSrc.indexOf("'unsafe-eval'") !== -1) {
+      optionsValues.push('eval-script');
+    }
+
+    if (optionsValues.length !== 0) {
+      result.options = optionsValues;
+    }
+  }
 
   return result;
 }
@@ -35,9 +40,11 @@ interface Handlers {
   [browser: string]: (platform: Platform, directives: Directives) => Directives;
 }
 
+// This is easier than converting `browser` to have non-undefined fields for now.
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 const handlers: Handlers = {
   Firefox (browser, directives) {
-    const version = parseFloat(browser.version);
+    const version = parseFloat(browser.version!);
 
     if (version >= 4 && version < 23) {
       const basePolicy: { allow?: string[]; defaultSrc?: string[] } = {};
@@ -60,8 +67,8 @@ const handlers: Handlers = {
 
   'Firefox Mobile' (browser, directives) {
     // Handles both Firefox for Android and Firefox OS
-    const { family } = browser.os;
-    const version = parseFloat(browser.version);
+    const { family } = browser.os!;
+    const version = parseFloat(browser.version!);
 
     if (family === 'Firefox OS' && version < 32 || family === 'Android' && version < 25) {
       return createFirefoxPreCSP10Directives(directives, { defaultSrc: ['*'] });
@@ -71,8 +78,8 @@ const handlers: Handlers = {
   },
 };
 
-export = function transformDirectivesForBrowser (browser: Platform, directives: Directives) {
-  if (!browser.name) {
+export = function transformDirectivesForBrowser (browser: Platform | undefined, directives: Directives) {
+  if (!browser || !browser.name) {
     return directives;
   }
 

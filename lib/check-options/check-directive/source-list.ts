@@ -11,7 +11,7 @@ export = function sourceListCheck (key: string, value: unknown) {
   }
 
   if (value.length === 0) {
-    throw new Error(`${key } must have at least one value. To block everything, set ${key} to ["'none'"].`);
+    throw new Error(`${key} must have at least one value. To block everything, set ${key} to ["'none'"].`);
   }
 
   value.forEach((sourceExpression) => {

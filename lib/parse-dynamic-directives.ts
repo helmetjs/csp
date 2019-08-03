@@ -1,13 +1,14 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
 import isFunction from './is-function';
-import { Directives, ParsedDirectives } from './types';
+import isString from './is-string';
+import { ParsedDirectives, CamelCaseDirectives } from './types';
 
-export = function parseDynamicDirectives (directives: Directives, functionArgs: [IncomingMessage, ServerResponse]) {
+export = function parseDynamicDirectives (directives: CamelCaseDirectives, functionArgs: [IncomingMessage, ServerResponse]) {
   const result: ParsedDirectives = {};
 
   Object.keys(directives).forEach((key) => {
-    const typedKey = key as keyof ParsedDirectives;
+    const typedKey = key as keyof CamelCaseDirectives;
     const value = directives[typedKey];
 
     if (Array.isArray(value)) {
@@ -20,7 +21,7 @@ export = function parseDynamicDirectives (directives: Directives, functionArgs: 
       });
     } else if (isFunction(value)) {
       result[typedKey] = value.apply(null, functionArgs);
-    } else if (value !== false) {
+    } else if (value !== false && isString(value)) {
       result[typedKey] = value;
     }
   });

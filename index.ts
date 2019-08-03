@@ -10,15 +10,14 @@ import getHeaderKeysForBrowser from './lib/get-header-keys-for-browser';
 import transformDirectivesForBrowser from './lib/transform-directives-for-browser';
 import parseDynamicDirectives from './lib/parse-dynamic-directives';
 import config from './lib/config';
-import { CSPOptions } from './lib/types';
+import { CSPOptions, CamelCaseDirectives, ParsedDirectives } from './lib/types';
 
 export = function csp (options: CSPOptions = {}) {
   checkOptions(options);
 
-  const originalDirectives = camelize(options.directives || {});
+  const originalDirectives: CamelCaseDirectives = camelize(options.directives || {});
   const directivesAreDynamic = containsFunction(originalDirectives);
   const shouldBrowserSniff = options.browserSniff !== false;
-  const reportOnlyIsFunction = isFunction(options.reportOnly);
 
   if (shouldBrowserSniff) {
     return function csp (req: IncomingMessage, res: ServerResponse, next: () => void) {
@@ -28,7 +27,7 @@ export = function csp (options: CSPOptions = {}) {
       if (userAgent) {
         browser = platform.parse(userAgent);
       } else {
-        browser = {};
+        browser = undefined;
       }
 
       let headerKeys;
@@ -49,11 +48,11 @@ export = function csp (options: CSPOptions = {}) {
         directives = parseDynamicDirectives(directives, [req, res]);
       }
 
-      const policyString = cspBuilder({ directives });
+      const policyString = cspBuilder({ directives: directives as ParsedDirectives });
 
       headerKeys.forEach((headerKey) => {
-        if (reportOnlyIsFunction && options.reportOnly(req, res) ||
-            !reportOnlyIsFunction && options.reportOnly) {
+        if (isFunction(options.reportOnly) && options.reportOnly(req, res) ||
+            !isFunction(options.reportOnly) && options.reportOnly) {
           headerKey += '-Report-Only';
         }
         res.setHeader(headerKey, policyString);
@@ -73,8 +72,8 @@ export = function csp (options: CSPOptions = {}) {
       const directives = parseDynamicDirectives(originalDirectives, [req, res]);
       const policyString = cspBuilder({ directives });
 
-      if (reportOnlyIsFunction && options.reportOnly(req, res) ||
-          !reportOnlyIsFunction && options.reportOnly) {
+      if (isFunction(options.reportOnly) && options.reportOnly(req, res) ||
+          !isFunction(options.reportOnly) && options.reportOnly) {
         headerKeys.forEach((headerKey) => {
           res.setHeader(`${headerKey}-Report-Only`, policyString);
         });

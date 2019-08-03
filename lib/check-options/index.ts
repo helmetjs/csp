@@ -1,9 +1,9 @@
 import dasherize from 'dasherize';
 
 import checkDirective from './check-directive';
-import { CSPOptions } from '../types';
+import { CSPOptions, AllDirectives } from '../types';
 
-function isObject (value: unknown) {
+function isObject (value: unknown): value is object {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
 
@@ -14,12 +14,12 @@ export = function (options: CSPOptions) {
 
   const { directives } = options;
 
-  const directivesExist = isObject(directives);
-  if (!directivesExist || Object.keys(directives).length === 0) {
+  if (!isObject(directives) || Object.keys(directives).length === 0) {
     throw new Error('csp must have at least one directive under the "directives" key. See the documentation.');
   }
 
   Object.keys(directives).forEach((directiveKey) => {
-    checkDirective(dasherize(directiveKey), directives[directiveKey], options);
+    const typedKey = directiveKey as keyof AllDirectives;
+    checkDirective(dasherize(directiveKey), directives[typedKey], options);
   });
 };
