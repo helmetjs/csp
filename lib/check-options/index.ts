@@ -1,13 +1,13 @@
 import dasherize from 'dasherize';
 
 import checkDirective from './check-directive';
+import { CSPOptions } from '../types';
 
 function isObject (value: unknown) {
   return Object.prototype.toString.call(value) === '[object Object]';
 }
 
-// TODO: type `options`
-export = function (options: any) {
+export = function (options: CSPOptions) {
   if (!isObject(options)) {
     throw new Error('csp must be called with an object argument. See the documentation.');
   }

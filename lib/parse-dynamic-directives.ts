@@ -1,13 +1,17 @@
-import isFunction from './is-function';
+import { IncomingMessage, ServerResponse } from 'http';
 
-export = function parseDynamicDirectives (directives, functionArgs) {
-  const result: {[directive: string]: any} = {};
+import isFunction from './is-function';
+import { Directives, ParsedDirectives } from './types';
+
+export = function parseDynamicDirectives (directives: Directives, functionArgs: [IncomingMessage, ServerResponse]) {
+  const result: ParsedDirectives = {};
 
   Object.keys(directives).forEach((key) => {
-    const value = directives[key];
+    const typedKey = key as keyof ParsedDirectives;
+    const value = directives[typedKey];
 
     if (Array.isArray(value)) {
-      result[key] = value.map((element) => {
+      result[typedKey] = value.map((element) => {
         if (isFunction(element)) {
           return element.apply(null, functionArgs);
         } else {
@@ -15,9 +19,9 @@ export = function parseDynamicDirectives (directives, functionArgs) {
         }
       });
     } else if (isFunction(value)) {
-      result[key] = value.apply(null, functionArgs);
+      result[typedKey] = value.apply(null, functionArgs);
     } else if (value !== false) {
-      result[key] = value;
+      result[typedKey] = value;
     }
   });
 

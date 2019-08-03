@@ -1,13 +1,12 @@
 import isFunction from './is-function';
 
-// TODO: Type this `obj`.
-export = function containsFunction (obj: any) {
+export = function containsFunction (obj: object) {
   for (const key in obj) {
     if (!Object.prototype.hasOwnProperty.call(obj, key)) {
       continue;
     }
 
-    let value = obj[key];
+    let value = (obj as any)[key];
 
     if (!Array.isArray(value)) {
       value = [value];

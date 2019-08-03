@@ -1,10 +1,15 @@
 import config from './config';
+import { CSPOptions } from './types';
 
 function goodBrowser () {
   return ['Content-Security-Policy'];
 }
 
-const handlers = {
+interface Handlers {
+  [browser: string]: (platform: Platform, options: CSPOptions) => string[];
+}
+
+const handlers: Handlers = {
   'Android Browser' (browser, options) {
     if (parseFloat(browser.os.version) < 4.4 || options.disableAndroid) {
       return [];
@@ -103,7 +108,11 @@ const handlers = {
 
 handlers['IE Mobile'] = handlers.IE;
 
-export = function getHeaderKeysForBrowser (browser, options) {
+export = function getHeaderKeysForBrowser (browser: Platform, options: CSPOptions) {
+  if (!browser.name) {
+    return config.allHeaders;
+  }
+
   const handler = handlers[browser.name];
 
   if (handler) {

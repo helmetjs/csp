@@ -1,8 +1,10 @@
-function createFirefoxPreCSP10Directives (directives, basePolicy) {
+import { Directives } from './types';
+
+function createFirefoxPreCSP10Directives (directives: Directives, basePolicy: any) {
   const result = Object.assign({}, basePolicy);
 
   Object.keys(directives).forEach((key) => {
-    const value = directives[key];
+    const value = directives[key as keyof Directives];
 
     if (key === 'connectSrc') {
       result.xhrSrc = value;
@@ -29,12 +31,16 @@ function createFirefoxPreCSP10Directives (directives, basePolicy) {
   return result;
 }
 
-const handlers = {
+interface Handlers {
+  [browser: string]: (platform: Platform, directives: Directives) => Directives;
+}
+
+const handlers: Handlers = {
   Firefox (browser, directives) {
     const version = parseFloat(browser.version);
 
     if (version >= 4 && version < 23) {
-      const basePolicy = {};
+      const basePolicy: { allow?: string[]; defaultSrc?: string[] } = {};
       if (version < 5) {
         basePolicy.allow = ['*'];
 
@@ -65,7 +71,11 @@ const handlers = {
   },
 };
 
-export = function transformDirectivesForBrowser (browser, directives) {
+export = function transformDirectivesForBrowser (browser: Platform, directives: Directives) {
+  if (!browser.name) {
+    return directives;
+  }
+
   const handler = handlers[browser.name];
 
   if (handler) {

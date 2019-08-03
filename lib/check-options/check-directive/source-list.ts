@@ -1,9 +1,8 @@
 import config from '../../config';
 import isFunction from '../../is-function';
 
-// TODO: type `value`
-export = function sourceListCheck (key: string, value: any) {
-  const directiveInfo = config.directives[key];
+export = function sourceListCheck (key: string, value: unknown) {
+  const directiveInfo = config.directives[key as keyof typeof config.directives];
 
   if (value === false) { return; }
 

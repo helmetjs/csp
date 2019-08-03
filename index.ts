@@ -10,13 +10,7 @@ import getHeaderKeysForBrowser from './lib/get-header-keys-for-browser';
 import transformDirectivesForBrowser from './lib/transform-directives-for-browser';
 import parseDynamicDirectives from './lib/parse-dynamic-directives';
 import config from './lib/config';
-
-interface CSPOptions {
-  browserSniff?: boolean;
-  directives?: any;
-  reportOnly?: any;
-  setAllHeaders?: boolean;
-}
+import { CSPOptions } from './lib/types';
 
 export = function csp (options: CSPOptions = {}) {
   checkOptions(options);

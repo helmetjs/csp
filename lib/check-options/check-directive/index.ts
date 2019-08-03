@@ -7,7 +7,13 @@ import requireSriFor from './require-sri-for';
 import sandbox from './sandbox';
 import sourceList from './source-list';
 
-const checkers = {
+import { CSPOptions } from '../../types';
+
+interface Checkers {
+  [directiveType: string]: (key: string, value: unknown) => void;
+}
+
+const checkers: Checkers = {
   boolean,
   pluginTypes,
   reportUri,
@@ -16,14 +22,14 @@ const checkers = {
   sourceList,
 };
 
-// TODO: Type `options`.
-export = function (key: string, value: unknown, options: any) {
+export = function checkDirective (key: string, value: unknown, options: CSPOptions) {
   if (options.loose) { return; }
 
   if (!Object.prototype.hasOwnProperty.call(config.directives, key)) {
     throw new Error(`"${key}" is an invalid directive. See the documentation for the supported list. Force this by enabling loose mode.`);
   }
 
-  const directiveType = config.directives[key].type;
-  checkers[directiveType](key, value, options);
+  // This cast is safe thanks to the above check.
+  const directiveType = config.directives[key as keyof typeof config.directives].type;
+  checkers[directiveType](key, value);
 };
