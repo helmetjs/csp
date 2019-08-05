@@ -21,7 +21,7 @@ export = function parseDynamicDirectives (directives: CamelCaseDirectives, funct
       });
     } else if (isFunction(value)) {
       result[typedKey] = value.apply(null, functionArgs);
-    } else if (value !== false && isString(value)) {
+    } else if (value === true || isString(value)) {
       result[typedKey] = value;
     }
   });

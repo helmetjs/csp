@@ -42,7 +42,7 @@ function makeApp (middleware: ReturnType<typeof csp>) {
 }
 
 describe('with browser sniffing disabled', () => {
-  Object.entries(AGENTS).map(([name, agent]) => {
+  Object.entries(AGENTS).forEach(([name, agent]) => {
     it(`sets the header for ${name}`, (done) => {
       const app = makeApp(csp({
         browserSniff: false,
