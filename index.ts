@@ -12,7 +12,7 @@ import parseDynamicDirectives from './lib/parse-dynamic-directives';
 import config from './lib/config';
 import { CSPOptions, CamelCaseDirectives, ParsedDirectives } from './lib/types';
 
-export = function csp (options: CSPOptions = {}) {
+export = function csp (options: CSPOptions) {
   checkOptions(options);
 
   const originalDirectives: CamelCaseDirectives = camelize(options.directives || {});
