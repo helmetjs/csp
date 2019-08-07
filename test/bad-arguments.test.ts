@@ -34,6 +34,7 @@ const SANDBOX_DIRECTIVES = ['sandbox'];
 function assertThrowsWithArg (arg: 'NO_ARGUMENTS' | CSPOptions, expectedMessage: string) {
   expect(() => {
     if (arg === 'NO_ARGUMENTS') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (csp as any)();
     } else {
       csp(arg);
@@ -41,6 +42,7 @@ function assertThrowsWithArg (arg: 'NO_ARGUMENTS' | CSPOptions, expectedMessage:
   }).toThrow(expectedMessage);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function assertThrowsWithDirective (directiveKey: string, directiveValue: any, expectedMessage: string) {
   const arg = {
     directives: {
@@ -69,6 +71,7 @@ describe('with bad arguments', () => {
         [],
         [{ directives: {} }],
       ].forEach((arg) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         assertThrowsWithArg(arg as any, 'csp must be called with an object argument. See the documentation.');
       });
     });
@@ -85,13 +88,20 @@ describe('with bad arguments', () => {
     it('errors with an invalid directive type', () => {
       assertThrowsWithArg({
         directives: { 'invalid-directive': ['http://example.com'] },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any, '"invalid-directive" is an invalid directive. See the documentation for the supported list. Force this by enabling loose mode.');
     });
   });
 
   it('tests all directives', () => {
     const actualDirectives = Object.keys(config.directives);
-    const expectedDirectives = SOURCELIST_DIRECTIVES.concat(BOOLEAN_DIRECTIVES, PLUGINTYPE_DIRECTIVES, URI_DIRECTIVES, REQUIRESRIFOR_DIRECTIVES, SANDBOX_DIRECTIVES);
+    const expectedDirectives = SOURCELIST_DIRECTIVES.concat(
+      BOOLEAN_DIRECTIVES,
+      PLUGINTYPE_DIRECTIVES,
+      URI_DIRECTIVES,
+      REQUIRESRIFOR_DIRECTIVES,
+      SANDBOX_DIRECTIVES
+    );
     expect(actualDirectives.sort()).toStrictEqual(expectedDirectives.sort());
   });
 
@@ -99,7 +109,7 @@ describe('with bad arguments', () => {
     [directive, camelize(directive)].forEach((key) => {
       describe(`${key } directive, a source list`, () => {
         it('errors with an empty array', () => {
-          assertThrowsWithDirective(key, [], `${directive } must have at least one value. To block everything, set ${ directive } to ["'none'"].`);
+          assertThrowsWithDirective(key, [], `${directive} must have at least one value. To block everything, set ${ directive } to ["'none'"].`);
         });
 
         it('errors with a non-array', () => {
@@ -112,7 +122,7 @@ describe('with bad arguments', () => {
             'https://example.com',
             function () {},
           ].forEach((value) => {
-            assertThrowsWithDirective(key, value, `"${ value }" is not a valid value for ${ directive }. Use an array of strings.`);
+            assertThrowsWithDirective(key, value, `"${value}" is not a valid value for ${directive}. Use an array of strings.`);
           });
         });
 
@@ -121,30 +131,30 @@ describe('with bad arguments', () => {
         });
 
         it('errors with unquoted values', () => {
-          assertThrowsWithDirective(key, ['self'], `"self" must be quoted in ${ directive }. Change it to "'self'" in your source list. Force this by enabling loose mode.`);
-          assertThrowsWithDirective(key, ['none'], `"none" must be quoted in ${ directive }. Change it to "'none'" in your source list. Force this by enabling loose mode.`);
+          assertThrowsWithDirective(key, ['self'], `"self" must be quoted in ${directive}. Change it to "'self'" in your source list. Force this by enabling loose mode.`);
+          assertThrowsWithDirective(key, ['none'], `"none" must be quoted in ${directive}. Change it to "'none'" in your source list. Force this by enabling loose mode.`);
           if (SOURCELISTS_WITH_UNSAFES.indexOf(directive) !== -1) {
-            assertThrowsWithDirective(key, ['unsafe-inline'], `"unsafe-inline" must be quoted in ${ directive }. Change it to "'unsafe-inline'" in your source list. Force this by enabling loose mode.`);
-            assertThrowsWithDirective(key, ['unsafe-eval'], `"unsafe-eval" must be quoted in ${ directive }. Change it to "'unsafe-eval'" in your source list. Force this by enabling loose mode.`);
+            assertThrowsWithDirective(key, ['unsafe-inline'], `"unsafe-inline" must be quoted in ${directive}. Change it to "'unsafe-inline'" in your source list. Force this by enabling loose mode.`);
+            assertThrowsWithDirective(key, ['unsafe-eval'], `"unsafe-eval" must be quoted in ${directive}. Change it to "'unsafe-eval'" in your source list. Force this by enabling loose mode.`);
           }
           if (SOURCELISTS_WITH_STRICT_DYNAMIC.indexOf(directive) !== -1) {
-            assertThrowsWithDirective(key, ['strict-dynamic'], `"strict-dynamic" must be quoted in ${ directive }. Change it to "'strict-dynamic'" in your source list. Force this by enabling loose mode.`);
+            assertThrowsWithDirective(key, ['strict-dynamic'], `"strict-dynamic" must be quoted in ${directive}. Change it to "'strict-dynamic'" in your source list. Force this by enabling loose mode.`);
           }
         });
 
         if (SOURCELISTS_WITH_UNSAFES.indexOf(directive) === -1) {
           it('errors when called with unsafe-inline or unsafe-eval', () => {
-            assertThrowsWithDirective(key, ['unsafe-inline'], `"unsafe-inline" does not make sense in ${ directive }. Remove it.`);
-            assertThrowsWithDirective(key, ['unsafe-eval'], `"unsafe-eval" does not make sense in ${ directive }. Remove it.`);
-            assertThrowsWithDirective(key, ["'unsafe-inline'"], `"'unsafe-inline'" does not make sense in ${ directive }. Remove it.`);
-            assertThrowsWithDirective(key, ["'unsafe-eval'"], `"'unsafe-eval'" does not make sense in ${ directive }. Remove it.`);
+            assertThrowsWithDirective(key, ['unsafe-inline'], `"unsafe-inline" does not make sense in ${directive}. Remove it.`);
+            assertThrowsWithDirective(key, ['unsafe-eval'], `"unsafe-eval" does not make sense in ${directive}. Remove it.`);
+            assertThrowsWithDirective(key, ["'unsafe-inline'"], `"'unsafe-inline'" does not make sense in ${directive}. Remove it.`);
+            assertThrowsWithDirective(key, ["'unsafe-eval'"], `"'unsafe-eval'" does not make sense in ${directive}. Remove it.`);
           });
         }
 
         if (SOURCELISTS_WITH_STRICT_DYNAMIC.indexOf(directive) === -1) {
           it('errors when called with strict-dynamic', () => {
-            assertThrowsWithDirective(key, ['strict-dynamic'], `"strict-dynamic" does not make sense in ${ directive }. Remove it.`);
-            assertThrowsWithDirective(key, ["'strict-dynamic'"], `"'strict-dynamic'" does not make sense in ${ directive }. Remove it.`);
+            assertThrowsWithDirective(key, ['strict-dynamic'], `"strict-dynamic" does not make sense in ${directive}. Remove it.`);
+            assertThrowsWithDirective(key, ["'strict-dynamic'"], `"'strict-dynamic'" does not make sense in ${directive}. Remove it.`);
           });
         }
       });
@@ -167,7 +177,7 @@ describe('with bad arguments', () => {
             'false',
             [true],
           ].forEach((value) => {
-            assertThrowsWithDirective(key, value, `"${ value }" is not a valid value for ${ directive }. Use \`true\` or \`false\`.`);
+            assertThrowsWithDirective(key, value, `"${value}" is not a valid value for ${directive}. Use \`true\` or \`false\`.`);
           });
         });
       });
@@ -178,7 +188,7 @@ describe('with bad arguments', () => {
     [directive, camelize(directive)].forEach((key) => {
       describe(`${key } directive`, () => {
         it('errors with an empty array', () => {
-          assertThrowsWithDirective(key, [], `${directive } must have at least one value. To block everything, set ${ directive } to ["'none'"].`);
+          assertThrowsWithDirective(key, [], `${directive} must have at least one value. To block everything, set ${directive} to ["'none'"].`);
         });
 
         it('errors with a non-array', () => {
@@ -191,7 +201,7 @@ describe('with bad arguments', () => {
             'https://example.com',
             function () {},
           ].forEach((value) => {
-            assertThrowsWithDirective(key, value, `"${ value }" is not a valid value for ${ directive }. Use an array of strings.`);
+            assertThrowsWithDirective(key, value, `"${value}" is not a valid value for ${directive}. Use an array of strings.`);
           });
         });
 
@@ -200,16 +210,16 @@ describe('with bad arguments', () => {
         });
 
         it('errors with unquoted values', () => {
-          assertThrowsWithDirective(key, ['none'], `"none" must be quoted in ${ directive }. Change it to "'none'" in your source list. Force this by enabling loose mode.`);
+          assertThrowsWithDirective(key, ['none'], `"none" must be quoted in ${directive}. Change it to "'none'" in your source list. Force this by enabling loose mode.`);
         });
 
         it("errors when called with values that don't make sense, like 'self', 'unsafe-inline', and 'unsafe-eval'", () => {
-          assertThrowsWithDirective(key, ['self'], `"self" does not make sense in ${ directive }. Remove it.`);
-          assertThrowsWithDirective(key, ['unsafe-inline'], `"unsafe-inline" does not make sense in ${ directive }. Remove it.`);
-          assertThrowsWithDirective(key, ['unsafe-eval'], `"unsafe-eval" does not make sense in ${ directive }. Remove it.`);
-          assertThrowsWithDirective(key, ["'self'"], `"'self'" does not make sense in ${ directive }. Remove it.`);
-          assertThrowsWithDirective(key, ["'unsafe-inline'"], `"'unsafe-inline'" does not make sense in ${ directive }. Remove it.`);
-          assertThrowsWithDirective(key, ["'unsafe-eval'"], `"'unsafe-eval'" does not make sense in ${ directive }. Remove it.`);
+          assertThrowsWithDirective(key, ['self'], `"self" does not make sense in ${directive}. Remove it.`);
+          assertThrowsWithDirective(key, ['unsafe-inline'], `"unsafe-inline" does not make sense in ${directive}. Remove it.`);
+          assertThrowsWithDirective(key, ['unsafe-eval'], `"unsafe-eval" does not make sense in ${directive}. Remove it.`);
+          assertThrowsWithDirective(key, ["'self'"], `"'self'" does not make sense in ${directive}. Remove it.`);
+          assertThrowsWithDirective(key, ["'unsafe-inline'"], `"'unsafe-inline'" does not make sense in ${directive}. Remove it.`);
+          assertThrowsWithDirective(key, ["'unsafe-eval'"], `"'unsafe-eval'" does not make sense in ${directive}. Remove it.`);
         });
       });
     });
@@ -217,7 +227,7 @@ describe('with bad arguments', () => {
 
   URI_DIRECTIVES.forEach((directive) => {
     [directive, camelize(directive)].forEach((key) => {
-      describe(`${key } directive, a URI`, () => {
+      describe(`${key} directive, a URI`, () => {
         it('errors when called with non-string values', () => {
           [
             null,
@@ -231,7 +241,7 @@ describe('with bad arguments', () => {
             true,
             '',
           ].forEach((value) => {
-            assertThrowsWithDirective(key, value, `"${ value }" is not a valid value for ${ directive }. Use a non-empty string.`);
+            assertThrowsWithDirective(key, value, `"${value}" is not a valid value for ${directive}. Use a non-empty string.`);
           });
         });
       });
@@ -257,7 +267,7 @@ describe('with bad arguments', () => {
             'script',
             function () {},
           ].forEach((value) => {
-            assertThrowsWithDirective(key, value, `"${ value }" is not a valid value for require-sri-for. Use an array of strings.`);
+            assertThrowsWithDirective(key, value, `"${value}" is not a valid value for require-sri-for. Use an array of strings.`);
           });
         });
 
@@ -290,7 +300,7 @@ describe('with bad arguments', () => {
         0,
         1,
       ].forEach((value) => {
-        assertThrowsWithDirective('sandbox', value, `"${ value }" is not a valid value for sandbox. Use an array of strings or \`true\`.`);
+        assertThrowsWithDirective('sandbox', value, `"${value}" is not a valid value for sandbox. Use an array of strings or \`true\`.`);
       });
     });
 

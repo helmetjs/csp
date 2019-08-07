@@ -31,7 +31,7 @@ export = function sourceListCheck (key: string, value: unknown) {
       throw new Error(`"${sourceExpression}" is not a valid source expression. Only non-empty strings are allowed.`);
     }
 
-    const directiveInfo: SourceListConfig = config.directives[key as keyof typeof config.directives] as any;
+    const directiveInfo = config.directives[key as keyof typeof config.directives] as SourceListConfig;
 
     if (!directiveInfo.hasUnsafes && config.unsafes.indexOf(sourceExpression) !== -1 ||
       !directiveInfo.hasStrictDynamic && config.strictDynamics.indexOf(sourceExpression) !== -1) {

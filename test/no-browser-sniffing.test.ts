@@ -13,6 +13,7 @@ const POLICY = {
   'script-src': ['scripts.biz'],
   styleSrc: [
     'styles.biz', function (_req: IncomingMessage, res: ServerResponse) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (res as any).nonce;
     },
   ],
@@ -31,6 +32,7 @@ const EXPECTED_POLICY = {
 function makeApp (middleware: ReturnType<typeof csp>) {
   const result = connect();
   result.use((_req: IncomingMessage, res: ServerResponse, next: NextFunction) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (res as any).nonce = 'abc123';
     next();
   });

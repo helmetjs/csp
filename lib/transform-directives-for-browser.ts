@@ -1,7 +1,13 @@
 import { CamelCaseDirectives as Directives, SourceListDirective } from './types';
 
-function createFirefoxPreCSP10Directives (directives: Directives, basePolicy: any) {
-  const result = Object.assign({}, basePolicy);
+interface BasePolicy {
+  allow?: SourceListDirective;
+  defaultSrc?: SourceListDirective;
+}
+
+function createFirefoxPreCSP10Directives (directives: Directives, basePolicy: BasePolicy) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const result: any = Object.assign({}, basePolicy);
 
   // Copy `connectSrc` to `xhrSrc`
   const { connectSrc } = directives;
@@ -47,7 +53,7 @@ const handlers: Handlers = {
     const version = parseFloat(browser.version!);
 
     if (version >= 4 && version < 23) {
-      const basePolicy: { allow?: SourceListDirective; defaultSrc?: SourceListDirective } = {};
+      const basePolicy: BasePolicy = {};
       if (version < 5) {
         basePolicy.allow = ['*'];
 

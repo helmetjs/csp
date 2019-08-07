@@ -76,7 +76,10 @@ describe('csp middleware', () => {
       .expect('Content-Security-Policy-Report-Only', "default-src 'self' domain.com")
       .expect('X-WebKit-CSP-Report-Only', "default-src 'self' domain.com")
       .end((err, res) => {
-        if (err) { return done(err); }
+        if (err) {
+          done(err);
+          return;
+        }
 
         expect(res.header['content-security-policy']).toBeUndefined();
         expect(res.header['x-content-security-policy']).toBeUndefined();
@@ -100,7 +103,10 @@ describe('csp middleware', () => {
 
     request(app).get('/').set('User-Agent', AGENTS['Firefox 23'].string)
       .end((err, res) => {
-        if (err) { return done(err); }
+        if (err) {
+          done(err);
+          return;
+        }
 
         const expected = {
           'default-src': ["'self'"],
@@ -135,7 +141,10 @@ describe('csp middleware', () => {
       .expect('Content-Security-Policy', "default-src 'self' domain.com")
       .expect('X-WebKit-CSP', "default-src 'self' domain.com")
       .end((err, res) => {
-        if (err) { return done(err); }
+        if (err) {
+          done(err);
+          return;
+        }
 
         expect(res.header['content-security-policy-report-only']).toBeUndefined();
         expect(res.header['x-content-security-policy-report-only']).toBeUndefined();
@@ -168,7 +177,7 @@ describe('csp middleware', () => {
       .end(done);
   });
 
-  it("doesn't splice the original array", (done) => {
+  it("doesn't splice the original array", async () => {
     const app = makeApp(csp({
       directives: {
         'style-src': [
@@ -180,17 +189,14 @@ describe('csp middleware', () => {
     const chrome = AGENTS['Chrome 27'];
     const firefox = AGENTS['Firefox 22'];
 
-    request(app).get('/').set('User-Agent', chrome.string)
-      .expect(chrome.header, /style-src 'self' 'unsafe-inline'/)
-      .end(() => {
-        request(app).get('/').set('User-Agent', firefox.string)
-          .expect((firefox as any).header, /style-src 'self'/)
-          .end(() => {
-            request(app).get('/').set('User-Agent', chrome.string)
-              .expect(chrome.header, /style-src 'self' 'unsafe-inline'/)
-              .end(done);
-          });
-      });
+    await request(app).get('/').set('User-Agent', chrome.string)
+      .expect(chrome.header, /style-src 'self' 'unsafe-inline'/);
+
+    await request(app).get('/').set('User-Agent', firefox.string)
+      .expect('X-Content-Security-Policy', /style-src 'self' 'unsafe-inline'/);
+
+    await request(app).get('/').set('User-Agent', chrome.string)
+      .expect(chrome.header, /style-src 'self' 'unsafe-inline'/);
   });
 
   it('allows you to disable directives with a false value', (done) => {

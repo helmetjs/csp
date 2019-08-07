@@ -1,12 +1,13 @@
 import isFunction from './is-function';
 
-export = function containsFunction (obj: object) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export = function containsFunction (obj: { [key: string]: any }) {
   for (const key in obj) {
     if (!Object.prototype.hasOwnProperty.call(obj, key)) {
       continue;
     }
 
-    let value = (obj as any)[key];
+    let value = obj[key];
 
     if (!Array.isArray(value)) {
       value = [value];

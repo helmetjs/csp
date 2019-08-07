@@ -63,7 +63,7 @@ describe('special browsers', () => {
           },
         }));
 
-        request(app).get('/').set('User-Agent', (AGENTS as any)[browser].string)
+        request(app).get('/').set('User-Agent', AGENTS[browser as keyof typeof AGENTS].string)
           .end((err, res) => {
             if (err) {
               done(err);
