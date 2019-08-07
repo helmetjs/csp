@@ -42,7 +42,9 @@ function makeApp (middleware: ReturnType<typeof csp>) {
 }
 
 describe('with browser sniffing disabled', () => {
-  Object.entries(AGENTS).forEach(([name, agent]) => {
+  Object.keys(AGENTS).forEach((name) => {
+    const agent = AGENTS[name as keyof typeof AGENTS];
+
     it(`sets the header for ${name}`, (done) => {
       const app = makeApp(csp({
         browserSniff: false,
@@ -51,7 +53,10 @@ describe('with browser sniffing disabled', () => {
 
       request(app).get('/').set('User-Agent', agent.string)
         .end((err, res) => {
-          if (err) { return done(err); }
+          if (err) {
+            done(err);
+            return;
+          }
 
           expect(parseCsp(res.header['content-security-policy'])).toStrictEqual(EXPECTED_POLICY);
           expect(res.header['x-content-security-policy']).toBeUndefined();
