@@ -2,8 +2,6 @@ Content Security Policy middleware
 ==================================
 [![Build Status](https://travis-ci.org/helmetjs/csp.svg?branch=master)](https://travis-ci.org/helmetjs/csp)
 
-[_Looking for a changelog?_](https://github.com/helmetjs/helmet/blob/master/HISTORY.md)
-
 Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate cross-site scripting (XSS) vulnerabilities, malicious frames, unwanted trackers, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/). This module helps set Content Security Policies.
 
 Usage:
@@ -113,10 +111,10 @@ Generating nonces
 You can dynamically generate nonces to allow inline `<script>` tags to be safely evaluated. Here's a simple example:
 
 ```js
-const uuidv4 = require('uuid/v4')
+const crypto = require('crypto')
 
 app.use(function (req, res, next) {
-  res.locals.nonce = uuidv4()
+  res.locals.nonce = crypto.randomBytes(16).toString('hex')
   next()
 })
 
@@ -124,7 +122,7 @@ app.use(csp({
   directives: {
     scriptSrc: [
       "'self'",
-      (req, res) => `'nonce-${res.locals.nonce}'`  // 'nonce-614d9122-d5b0-4760-aecf-3a5d17cf0ac9'
+      (req, res) => `'nonce-${res.locals.nonce}'`  // 'nonce-348c18b14aaf3e00938d8bdd613f1149'
     ]
   }
 }))
@@ -142,5 +140,6 @@ The default behavior of CSP is generate headers tailored for the browser that's 
 See also
 --------
 
+* [Google's CSP Evaluator tool](https://csp-evaluator.withgoogle.com/)
 * [GitHub's CSP journey](http://githubengineering.com/githubs-csp-journey/)
 * [Content Security Policy for Single Page Web Apps](https://corner.squareup.com/2016/05/content-security-policy-single-page-app.html)

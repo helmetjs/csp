@@ -6,7 +6,7 @@
     "Ryan Cannon <ryan@ryancannon.com> (https://ryancannon.com)"
   ],
   "description": "Content Security Policy middleware.",
-  "version": "2.7.1",
+  "version": "2.8.0",
   "license": "MIT",
   "keywords": [
     "helmet",
@@ -23,13 +23,18 @@
     "type": "git",
     "url": "git://github.com/helmetjs/csp.git"
   },
-  "bugs": "https://github.com/helmetjs/csp/issues",
+  "bugs": {
+    "url": "https://github.com/helmetjs/csp/issues",
+    "email": "me@evanhahn.com"
+  },
+  "homepage": "https://helmetjs.github.io/docs/csp/",
   "engines": {
     "node": ">=4.0.0"
   },
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
   "files": [
+    "CHANGELOG.md",
     "LICENSE",
     "README.md",
     "dist/index.js",

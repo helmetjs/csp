@@ -27,7 +27,7 @@ export = {
     },
     'prefetch-src': { type: 'sourceList' },
     'plugin-types': { type: 'pluginTypes' },
-    'sandbox': { type: 'sandbox' },
+    sandbox: { type: 'sandbox' },
     'report-to': { type: 'reportUri' },
     'report-uri': { type: 'reportUri' },
     'require-sri-for': { type: 'requireSriFor' },
@@ -47,6 +47,7 @@ export = {
   strictDynamics: ["'strict-dynamic'", 'strict-dynamic'],
   requireSriForValues: ['script', 'style'],
   sandboxDirectives: [
+    'allow-downloads-without-user-activation',
     'allow-forms',
     'allow-modals',
     'allow-orientation-lock',
