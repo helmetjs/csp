@@ -31,9 +31,11 @@ const URI_DIRECTIVES = ['report-to', 'report-uri'];
 const REQUIRESRIFOR_DIRECTIVES = ['require-sri-for'];
 const SANDBOX_DIRECTIVES = ['sandbox'];
 
-function assertThrowsWithArg (arg: 'NO_ARGUMENTS' | CSPOptions, expectedMessage: string) {
+const NO_ARGUMENTS = Symbol('NO_ARGUMENTS');
+
+function assertThrowsWithArg (arg: typeof NO_ARGUMENTS | CSPOptions, expectedMessage: string) {
   expect(() => {
-    if (arg === 'NO_ARGUMENTS') {
+    if (arg === NO_ARGUMENTS) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (csp as any)();
     } else {
@@ -55,7 +57,7 @@ function assertThrowsWithDirective (directiveKey: string, directiveValue: any, e
 describe('with bad arguments', () => {
   describe('missing directives', () => {
     it('errors without arguments', () => {
-      assertThrowsWithArg('NO_ARGUMENTS', 'csp must be called with an object argument. See the documentation.');
+      assertThrowsWithArg(NO_ARGUMENTS, 'csp must be called with an object argument. See the documentation.');
     });
 
     it('errors with non-objects', () => {
@@ -95,21 +97,22 @@ describe('with bad arguments', () => {
 
   it('tests all directives', () => {
     const actualDirectives = Object.keys(config.directives);
-    const expectedDirectives = SOURCELIST_DIRECTIVES.concat(
-      BOOLEAN_DIRECTIVES,
-      PLUGINTYPE_DIRECTIVES,
-      URI_DIRECTIVES,
-      REQUIRESRIFOR_DIRECTIVES,
-      SANDBOX_DIRECTIVES
-    );
+    const expectedDirectives = [
+      ...SOURCELIST_DIRECTIVES,
+      ...BOOLEAN_DIRECTIVES,
+      ...PLUGINTYPE_DIRECTIVES,
+      ...URI_DIRECTIVES,
+      ...REQUIRESRIFOR_DIRECTIVES,
+      ...SANDBOX_DIRECTIVES,
+    ];
     expect(actualDirectives.sort()).toStrictEqual(expectedDirectives.sort());
   });
 
   SOURCELIST_DIRECTIVES.forEach((directive) => {
     [directive, camelize(directive)].forEach((key) => {
-      describe(`${key } directive, a source list`, () => {
+      describe(`${key} directive, a source list`, () => {
         it('errors with an empty array', () => {
-          assertThrowsWithDirective(key, [], `${directive} must have at least one value. To block everything, set ${ directive } to ["'none'"].`);
+          assertThrowsWithDirective(key, [], `${directive} must have at least one value. To block everything, set ${directive} to ["'none'"].`);
         });
 
         it('errors with a non-array', () => {
@@ -163,7 +166,7 @@ describe('with bad arguments', () => {
 
   BOOLEAN_DIRECTIVES.forEach((directive) => {
     [directive, camelize(directive)].forEach((key) => {
-      describe(`${key } directive, a boolean`, () => {
+      describe(`${key} directive, a boolean`, () => {
         it('errors when called with non-boolean values', () => {
           [
             null,
@@ -186,7 +189,7 @@ describe('with bad arguments', () => {
 
   PLUGINTYPE_DIRECTIVES.forEach((directive) => {
     [directive, camelize(directive)].forEach((key) => {
-      describe(`${key } directive`, () => {
+      describe(`${key} directive`, () => {
         it('errors with an empty array', () => {
           assertThrowsWithDirective(key, [], `${directive} must have at least one value. To block everything, set ${directive} to ["'none'"].`);
         });
@@ -252,7 +255,7 @@ describe('with bad arguments', () => {
 
   REQUIRESRIFOR_DIRECTIVES.forEach((directive) => {
     [directive, camelize(directive)].forEach((key) => {
-      describe(`${key } directive, a require-sri-for`, () => {
+      describe(`${key} directive, a require-sri-for`, () => {
         it('errors with an empty array', () => {
           assertThrowsWithDirective(key, [], 'require-sri-for must have at least one value. To require nothing, omit the directive.');
         });

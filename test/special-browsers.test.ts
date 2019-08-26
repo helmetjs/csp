@@ -32,7 +32,7 @@ describe('special browsers', () => {
           },
         }));
 
-        request(app).get('/').set('User-Agent', AGENTS['Firefox 22'].string)
+        request(app).get('/').set('User-Agent', AGENTS[browser as keyof typeof AGENTS].string)
           .end((err, res) => {
             if (err) {
               done(err);

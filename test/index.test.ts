@@ -213,19 +213,11 @@ describe('csp middleware', () => {
   });
 
   it('names its function and middleware', () => {
-    const POLICY = {
+    const policy = {
       defaultSrc: ["'self'"],
-      'script-src': ['scripts.biz'],
-      styleSrc: [
-        'styles.biz', function () {
-          return 'abcdef';
-        },
-      ],
-      objectSrc: ["'none'"],
-      imgSrc: ['data:'],
     };
 
     expect(csp.name).toStrictEqual('csp');
-    expect(csp({ directives: POLICY }).name).toStrictEqual('csp');
+    expect(csp({ directives: policy }).name).toStrictEqual('csp');
   });
 });
