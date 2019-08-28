@@ -14,13 +14,13 @@ export = function parseDynamicDirectives (directives: CamelCaseDirectives, funct
     if (Array.isArray(value)) {
       result[typedKey] = value.map((element) => {
         if (isFunction(element)) {
-          return element.apply(null, functionArgs);
+          return element(...functionArgs);
         } else {
           return element;
         }
       });
     } else if (isFunction(value)) {
-      result[typedKey] = value.apply(null, functionArgs);
+      result[typedKey] = value(...functionArgs);
     } else if (value === true || isString(value)) {
       result[typedKey] = value;
     }

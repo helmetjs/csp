@@ -122,7 +122,7 @@ describe('with bad arguments', () => {
             {},
             '',
             'https://example.com',
-            function () {},
+            function () {}, // eslint-disable-line @typescript-eslint/no-empty-function
           ].forEach((value) => {
             assertThrowsWithDirective(key, value, `"${value}" is not a valid value for ${directive}. Use an array of strings.`);
           });
@@ -201,7 +201,7 @@ describe('with bad arguments', () => {
             {},
             '',
             'https://example.com',
-            function () {},
+            function () {}, // eslint-disable-line @typescript-eslint/no-empty-function
           ].forEach((value) => {
             assertThrowsWithDirective(key, value, `"${value}" is not a valid value for ${directive}. Use an array of strings.`);
           });
@@ -267,7 +267,7 @@ describe('with bad arguments', () => {
             {},
             '',
             'script',
-            function () {},
+            function () {}, // eslint-disable-line @typescript-eslint/no-empty-function
           ].forEach((value) => {
             assertThrowsWithDirective(key, value, `"${value}" is not a valid value for require-sri-for. Use an array of strings.`);
           });
