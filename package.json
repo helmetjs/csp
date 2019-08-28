@@ -58,10 +58,10 @@
   },
   "devDependencies": {
     "@types/connect": "^3.4.32",
-    "@types/jest": "^24.0.13",
+    "@types/jest": "^24.0.18",
     "@types/supertest": "^2.0.7",
-    "@typescript-eslint/eslint-plugin": "^1.9.0",
-    "@typescript-eslint/parser": "^1.9.0",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
     "connect": "^3.7.0",
     "content-security-policy-parser": "^0.2.0",
     "eslint": "^5.16.0",
@@ -69,6 +69,6 @@
     "jest": "^24.9.0",
     "supertest": "^4.0.2",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.5.3"
+    "typescript": "^3.6.2"
   }
 }
