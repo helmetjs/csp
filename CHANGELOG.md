@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+### Added
+- Added TypeScript type definitions. See [#86](https://github.com/helmetjs/csp/pull/86)
+
+### Fixed
+- Switched from `platform` to `bowser` to quiet a security vulnerability warning. See [#80](https://github.com/helmetjs/csp/issues/80)
+
 ## 2.8.0 - 2019-07-24
 ### Added
 - Added a new `sandbox` directive, `allow-downloads-without-user-activation` (see [#85](https://github.com/helmetjs/csp/pull/85))
