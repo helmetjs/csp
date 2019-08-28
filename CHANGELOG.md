@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.9.0 - 2019-08-28
 ### Added
 - Added TypeScript type definitions. See [#86](https://github.com/helmetjs/csp/pull/86)
 
