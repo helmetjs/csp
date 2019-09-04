@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Updated `bowser` subdependency from 2.5.3 to 2.5.4. See [#88](https://github.com/helmetjs/csp/pull/88)
+
+### Fixed
+- The "security" keyword was declared twice in package metadata. See [#87](https://github.com/helmetjs/csp/pull/87)
+
 ## 2.9.0 - 2019-08-28
 ### Added
 - Added TypeScript type definitions. See [#86](https://github.com/helmetjs/csp/pull/86)
