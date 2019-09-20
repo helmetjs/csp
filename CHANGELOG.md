@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.9.2 - 2019-09-20
 ### Fixed
 - Fixed a bug where a request from Firefox 4 could delete `default-src` from future responses
 - Fixed tablet PC detection by updating `bowser` subdependency to latest version
