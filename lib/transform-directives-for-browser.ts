@@ -72,6 +72,7 @@ export = function transformDirectivesForBrowser (
 
       if (directives.defaultSrc) {
         basePolicy.allow = directives.defaultSrc;
+        directives = Object.assign({}, directives);
         delete directives.defaultSrc;
       }
     } else {
