@@ -38,7 +38,8 @@
     "README.md",
     "dist/index.js",
     "dist/index.d.ts",
-    "dist/lib/**/*.js"
+    "dist/lib/**/*.js",
+    "dist/lib/types.d.ts"
   ],
   "scripts": {
     "pretest": "npm run lint",

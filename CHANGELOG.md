@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Fixed
+- Published a missing TypeScript type definition file. See [#90](https://github.com/helmetjs/csp/issues/90)
+
 ## 2.9.2 - 2019-09-20
 ### Fixed
 - Fixed a bug where a request from Firefox 4 could delete `default-src` from future responses
