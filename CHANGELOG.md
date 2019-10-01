@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.9.3 - 2019-09-30
 ### Fixed
 - Published a missing TypeScript type definition file. See [#90](https://github.com/helmetjs/csp/issues/90)
 
