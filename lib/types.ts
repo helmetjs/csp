@@ -1,6 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
-export type DirectiveType = (string | ((req: IncomingMessage, res: ServerResponse) => string));
+type DirectiveType = (string | ((req: IncomingMessage, res: ServerResponse) => string));
 
 export type SourceListDirective = false | Array<DirectiveType>;
 export type PluginTypesDirective = false | Array<DirectiveType>;
