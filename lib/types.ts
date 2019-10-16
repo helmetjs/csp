@@ -1,14 +1,12 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
-interface DirectiveType {
-  (string | ((req: IncomingMessage, res: ServerResponse) => string));
-}
+type DirectiveType = string | ((req: IncomingMessage, res: ServerResponse) => string);
 
-export type SourceListDirective = false | Array<DirectiveType>;
-export type PluginTypesDirective = false | Array<DirectiveType>;
-export type SandboxDirective = false | Array<DirectiveType>;
+export type SourceListDirective = false | DirectiveType[];
+export type PluginTypesDirective = false | DirectiveType[];
+export type SandboxDirective = false | DirectiveType[];
 export type ReportUriDirective = false | DirectiveType;
-export type RequireSriForDirective = false | Array<DirectiveType>;
+export type RequireSriForDirective = false | DirectiveType[];
 
 export interface KebabCaseDirectives {
   'base-uri'?: SourceListDirective;
