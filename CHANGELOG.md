@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Changed
+- Updated `bowser` subdependency from 2.6.1 to 2.7.0. See [#94](https://github.com/helmetjs/csp/pull/94)
+
 ## 2.9.3 - 2019-09-30
 ### Fixed
 - Published a missing TypeScript type definition file. See [#90](https://github.com/helmetjs/csp/issues/90)
