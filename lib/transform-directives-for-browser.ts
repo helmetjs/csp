@@ -40,6 +40,23 @@ function transformDirectivesForPreCsp1Firefox (directives: Directives, basePolic
     }
   }
 
+  // Rename `scriptSrcElem` values `unsafe-inline` and `unsafe-eval`
+  const { scriptSrcElem } = directives;
+  if (scriptSrcElem) {
+    const optionsValues = [];
+
+    if (scriptSrcElem.indexOf("'unsafe-inline'") !== -1) {
+      optionsValues.push('inline-script');
+    }
+    if (scriptSrcElem.indexOf("'unsafe-eval'") !== -1) {
+      optionsValues.push('eval-script');
+    }
+
+    if (optionsValues.length !== 0) {
+      result.options = optionsValues;
+    }
+  }
+
   return result;
 }
 

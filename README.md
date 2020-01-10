@@ -13,6 +13,7 @@ app.use(csp({
   // Specify directives as normal.
   directives: {
     defaultSrc: ["'self'", 'default.com'],
+    scriptSrcElem: ["'self'", "'unsafe-inline'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
     styleSrc: ['style.com'],
     fontSrc: ["'self'", 'fonts.com'],
@@ -75,6 +76,7 @@ The following directives are supported:
 * `report-uri` or `reportUri`
 * `require-sri-for` or `requireSriFor`
 * `sandbox` or `sandbox`
+* `script-src-elem` or `scriptSrcElem`
 * `script-src` or `scriptSrc`
 * `style-src` or `styleSrc`
 * `upgrade-insecure-requests` or `upgradeInsecureRequests`

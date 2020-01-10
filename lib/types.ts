@@ -23,6 +23,7 @@ export interface KebabCaseDirectives {
   'media-src'?: SourceListDirective;
   'object-src'?: SourceListDirective;
   'sandbox'?: SandboxDirective;
+  'script-src-elem'?: SourceListDirective;
   'script-src'?: SourceListDirective;
   'style-src'?: SourceListDirective;
   'prefetch-src'?: SourceListDirective;

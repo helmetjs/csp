@@ -16,6 +16,11 @@ export = {
     'manifest-src': { type: 'sourceList' },
     'media-src': { type: 'sourceList' },
     'object-src': { type: 'sourceList' },
+    'script-src-elem': {
+      type: 'sourceList',
+      hasUnsafes: true,
+      hasStrictDynamic: true,
+    },
     'script-src': {
       type: 'sourceList',
       hasUnsafes: true,
