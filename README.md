@@ -13,7 +13,6 @@ app.use(csp({
   // Specify directives as normal.
   directives: {
     defaultSrc: ["'self'", 'default.com'],
-    scriptSrcElem: ["'self'", "'unsafe-inline'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
     styleSrc: ['style.com'],
     fontSrc: ["'self'", 'fonts.com'],
@@ -21,6 +20,7 @@ app.use(csp({
     sandbox: ['allow-forms', 'allow-scripts'],
     reportUri: '/report-violation',
     objectSrc: ["'none'"],
+    scriptSrcElem: ["'self'", "'unsafe-inline'"],
     upgradeInsecureRequests: true,
     workerSrc: false  // This is not set.
   },
