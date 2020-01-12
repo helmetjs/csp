@@ -49,6 +49,7 @@ export interface CamelCaseDirectives {
   manifestSrc?: SourceListDirective;
   mediaSrc?: SourceListDirective;
   objectSrc?: SourceListDirective;
+  scriptSrcElem?: SourceListDirective;
   scriptSrc?: SourceListDirective;
   styleSrc?: SourceListDirective;
   prefetchSrc?: SourceListDirective;
