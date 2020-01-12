@@ -203,6 +203,7 @@ describe('csp middleware', () => {
     const app = makeApp(csp({
       directives: {
         'style-src': ['example.com'],
+        'script-src-elem': false,
         'script-src': false,
       },
     }));

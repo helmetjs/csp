@@ -20,11 +20,12 @@ const SOURCELIST_DIRECTIVES = [
   'object-src',
   'prefetch-src',
   'script-src',
+  'script-src-elem',
   'style-src',
   'worker-src',
 ];
-const SOURCELISTS_WITH_UNSAFES = ['script-src', 'style-src', 'worker-src'];
-const SOURCELISTS_WITH_STRICT_DYNAMIC = ['default-src', 'script-src'];
+const SOURCELISTS_WITH_UNSAFES = ['script-src', 'script-src-elem', 'style-src', 'worker-src'];
+const SOURCELISTS_WITH_STRICT_DYNAMIC = ['default-src', 'script-src', 'script-src-elem'];
 const BOOLEAN_DIRECTIVES = ['block-all-mixed-content', 'upgrade-insecure-requests'];
 const PLUGINTYPE_DIRECTIVES = ['plugin-types'];
 const URI_DIRECTIVES = ['report-to', 'report-uri'];
