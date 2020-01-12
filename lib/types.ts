@@ -23,8 +23,8 @@ export interface KebabCaseDirectives {
   'media-src'?: SourceListDirective;
   'object-src'?: SourceListDirective;
   'sandbox'?: SandboxDirective;
-  'script-src-elem'?: SourceListDirective;
   'script-src'?: SourceListDirective;
+  'script-src-elem'?: SourceListDirective;
   'style-src'?: SourceListDirective;
   'prefetch-src'?: SourceListDirective;
   'plugin-types'?: PluginTypesDirective;
@@ -49,8 +49,8 @@ export interface CamelCaseDirectives {
   manifestSrc?: SourceListDirective;
   mediaSrc?: SourceListDirective;
   objectSrc?: SourceListDirective;
-  scriptSrcElem?: SourceListDirective;
   scriptSrc?: SourceListDirective;
+  scriptSrcElem?: SourceListDirective;
   styleSrc?: SourceListDirective;
   prefetchSrc?: SourceListDirective;
   pluginTypes?: PluginTypesDirective;
