@@ -1,6 +1,6 @@
 import camelize from 'camelize';
 import cspBuilder from 'content-security-policy-builder';
-import * as Bowser from 'bowser';
+import Bowser from 'bowser';
 import { IncomingMessage, ServerResponse } from 'http';
 
 import isFunction from './lib/is-function';
