@@ -51,7 +51,7 @@
     "generate-supported-directives-docs": "./scripts/generate_supported_directives_docs"
   },
   "dependencies": {
-    "bowser": "^2.9.0",
+    "bowser": "2.9.0",
     "camelize": "1.0.0",
     "content-security-policy-builder": "2.1.0",
     "dasherize": "2.0.0"
