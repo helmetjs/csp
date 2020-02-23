@@ -57,7 +57,7 @@ function makeApp (middleware: ReturnType<typeof csp>) {
 describe('normal browsers', () => {
   Object.keys(AGENTS).forEach((name) => {
     const agent = AGENTS[name as keyof typeof AGENTS];
-    if (agent.special || !agent.header) {
+    if ('special' in agent || !('header' in agent)) {
       return;
     }
 
