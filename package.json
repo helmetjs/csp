@@ -6,7 +6,7 @@
     "Ryan Cannon <ryan@ryancannon.com> (https://ryancannon.com)"
   ],
   "description": "Content Security Policy middleware.",
-  "version": "2.9.4",
+  "version": "2.9.5",
   "license": "MIT",
   "keywords": [
     "helmet",
