@@ -86,19 +86,20 @@ Handling CSP violations
 If you've specified a `reportUri`, browsers will POST any CSP violations to your server. Here's a simple example of a route that handles those reports:
 
 ```js
-// You need a JSON parser first.
-app.use(bodyParser.json({
-  type: ['json', 'application/csp-report']
-}))
-
-app.post('/report-violation', (req, res) => {
-  if (req.body) {
-    console.log('CSP Violation: ', req.body)
-  } else {
-    console.log('CSP Violation: No data received!')
+app.post(
+  '/report-violation',
+  bodyparser.json({
+    type: ['json', 'application/csp-report']
+  }),
+  (req, res) => {
+    if (req.body) {
+      console.log('csp violation: ', req.body)
+    } else {
+      console.log('csp violation: no data received!')
+    }
+    res.status(204).end()
   }
-  res.status(204).end()
-})
+)
 ```
 
 Not all browsers send CSP violations in the same way, so this might require a little work.
