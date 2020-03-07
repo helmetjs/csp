@@ -28,7 +28,7 @@
   },
   "homepage": "https://helmetjs.github.io/docs/csp/",
   "engines": {
-    "node": ">=4.0.0"
+    "node": ">=10.0.0"
   },
   "main": "./dist/index.js",
   "typings": "./dist/index.d.ts",
