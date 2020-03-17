@@ -48,6 +48,7 @@ export = {
   requireSriForValues: ['script', 'style'],
   sandboxDirectives: [
     'allow-downloads-without-user-activation',
+    'allow-downloads',
     'allow-forms',
     'allow-modals',
     'allow-orientation-lock',
