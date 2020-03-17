@@ -1,9 +1,6 @@
 Content Security Policy middleware
 ==================================
 [![Build Status](https://travis-ci.org/helmetjs/csp.svg?branch=master)](https://travis-ci.org/helmetjs/csp)
-[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com/)
-
-[_Looking for a changelog?_](https://github.com/helmetjs/helmet/blob/master/HISTORY.md)
 
 Content Security Policy helps prevent unwanted content being injected into your webpages; this can mitigate cross-site scripting (XSS) vulnerabilities, malicious frames, unwanted trackers, and more. If you want to learn how CSP works, check out the fantastic [HTML5 Rocks guide](http://www.html5rocks.com/en/tutorials/security/content-security-policy/), the [Content Security Policy Reference](http://content-security-policy.com/), and the [Content Security Policy specification](http://www.w3.org/TR/CSP/). This module helps set Content Security Policies.
 
@@ -89,19 +86,20 @@ Handling CSP violations
 If you've specified a `reportUri`, browsers will POST any CSP violations to your server. Here's a simple example of a route that handles those reports:
 
 ```js
-// You need a JSON parser first.
-app.use(bodyParser.json({
-  type: ['json', 'application/csp-report']
-}))
-
-app.post('/report-violation', (req, res) => {
-  if (req.body) {
-    console.log('CSP Violation: ', req.body)
-  } else {
-    console.log('CSP Violation: No data received!')
+app.post(
+  '/report-violation',
+  bodyparser.json({
+    type: ['json', 'application/csp-report']
+  }),
+  (req, res) => {
+    if (req.body) {
+      console.log('csp violation: ', req.body)
+    } else {
+      console.log('csp violation: no data received!')
+    }
+    res.status(204).end()
   }
-  res.status(204).end()
-})
+)
 ```
 
 Not all browsers send CSP violations in the same way, so this might require a little work.
@@ -116,7 +114,7 @@ You can dynamically generate nonces to allow inline `<script>` tags to be safely
 ```js
 const crypto = require('crypto')
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.locals.nonce = crypto.randomBytes(16).toString('hex')
   next()
 })
@@ -143,5 +141,6 @@ The default behavior of CSP is generate headers tailored for the browser that's 
 See also
 --------
 
+* [Google's CSP Evaluator tool](https://csp-evaluator.withgoogle.com/)
 * [GitHub's CSP journey](http://githubengineering.com/githubs-csp-journey/)
-* [Content Security Policy for Single Page Web Apps](https://corner.squareup.com/2016/05/content-security-policy-single-page-app.html)
+* [Content Security Policy for Single Page Web Apps](https://developer.squareup.com/blog/content-security-policy-for-single-page-web-apps/)

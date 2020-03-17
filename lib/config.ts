@@ -1,4 +1,4 @@
-module.exports = {
+export = {
   directives: {
     'base-uri': { type: 'sourceList' },
     'block-all-mixed-content': { type: 'boolean' },
@@ -6,7 +6,7 @@ module.exports = {
     'connect-src': { type: 'sourceList' },
     'default-src': {
       type: 'sourceList',
-      hasStrictDynamic: true
+      hasStrictDynamic: true,
     },
     'font-src': { type: 'sourceList' },
     'form-action': { type: 'sourceList' },
@@ -19,11 +19,11 @@ module.exports = {
     'script-src': {
       type: 'sourceList',
       hasUnsafes: true,
-      hasStrictDynamic: true
+      hasStrictDynamic: true,
     },
     'style-src': {
       type: 'sourceList',
-      hasUnsafes: true
+      hasUnsafes: true,
     },
     'prefetch-src': { type: 'sourceList' },
     'plugin-types': { type: 'pluginTypes' },
@@ -34,13 +34,13 @@ module.exports = {
     'upgrade-insecure-requests': { type: 'boolean' },
     'worker-src': {
       type: 'sourceList',
-      hasUnsafes: true
-    }
+      hasUnsafes: true,
+    },
   },
   allHeaders: [
     'Content-Security-Policy',
     'X-Content-Security-Policy',
-    'X-WebKit-CSP'
+    'X-WebKit-CSP',
   ],
   mustQuote: ['none', 'self', 'unsafe-inline', 'unsafe-eval', 'strict-dynamic'],
   unsafes: ["'unsafe-inline'", 'unsafe-inline', "'unsafe-eval'", 'unsafe-eval'],
@@ -48,6 +48,7 @@ module.exports = {
   requireSriForValues: ['script', 'style'],
   sandboxDirectives: [
     'allow-downloads-without-user-activation',
+    'allow-downloads',
     'allow-forms',
     'allow-modals',
     'allow-orientation-lock',
@@ -57,6 +58,6 @@ module.exports = {
     'allow-presentation',
     'allow-same-origin',
     'allow-scripts',
-    'allow-top-navigation'
-  ]
+    'allow-top-navigation',
+  ],
 }

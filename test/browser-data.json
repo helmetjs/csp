@@ -1,4 +1,8 @@
 {
+  "Firefox 4": {
+    "string": "Mozilla/5.0 (Windows NT 6.2; rv:22.0) Gecko/20130405 Firefox/4.0",
+    "special": true
+  },
   "Firefox 22": {
     "string": "Mozilla/5.0 (Windows NT 6.2; rv:22.0) Gecko/20130405 Firefox/22.0",
     "special": true
