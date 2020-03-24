@@ -47,6 +47,7 @@ export = {
   strictDynamics: ["'strict-dynamic'", 'strict-dynamic'],
   requireSriForValues: ['script', 'style'],
   sandboxDirectives: [
+    'allow-downloads',
     'allow-downloads-without-user-activation',
     'allow-forms',
     'allow-modals',
