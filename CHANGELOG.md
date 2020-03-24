@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 2.10.0 - 2020-03-24
 ### Added
 - Add support for the `allow-downloads` sandbox directive. See [#103](https://github.com/helmetjs/csp/pull/103)
 
