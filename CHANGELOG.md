@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+### Added
+- Add support for the `allow-downloads` sandbox directive. See [#103](https://github.com/helmetjs/csp/pull/103)
+
 ## 2.9.5 - 2020-02-22
 ### Changed
 - Updated `bowser` subdependency from 2.7.0 to 2.9.0
