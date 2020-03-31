@@ -23,7 +23,7 @@ const handlersByBrowserName: HandlersByBrowserName = {
     const browserVersion = parseFloat(browser.getBrowserVersion());
     if (browserVersion >= 14 && browserVersion < 25) {
       return ['X-WebKit-CSP'];
-    } else if (browserVersion >= 25) {
+    } else if (browserVersion >= 25|| isNaN(browserVersion)) {
       return ['Content-Security-Policy'];
     } else {
       return [];
@@ -46,14 +46,14 @@ const handlersByBrowserName: HandlersByBrowserName = {
 
     const browserVersion = parseFloat(browser.getBrowserVersion());
     if (osName === 'Android') {
-      if (browserVersion >= 25) {
+      if (browserVersion >= 25|| isNaN(browserVersion)) {
         return ['Content-Security-Policy'];
       } else {
         return ['X-Content-Security-Policy'];
       }
     } else if (browser.getPlatformType(true) === 'mobile') {
       // This is probably Firefox OS.
-      if (browserVersion >= 32) {
+      if (browserVersion >= 32 || isNaN(browserVersion)) {
         return ['Content-Security-Policy'];
       } else {
         return ['X-Content-Security-Policy'];
@@ -63,7 +63,7 @@ const handlersByBrowserName: HandlersByBrowserName = {
     } else if (browserVersion >= 4 && browserVersion < 23) {
       return ['X-Content-Security-Policy'];
     } else {
-      return [];
+      return ['Content-Security-Policy'];
     }
   },
 
@@ -79,7 +79,7 @@ const handlersByBrowserName: HandlersByBrowserName = {
 
   Opera (browser) {
     const browserVersion = parseFloat(browser.getBrowserVersion());
-    if (browserVersion >= 15) {
+    if (browserVersion >= 15 || isNaN(browserVersion)) {
       return ['Content-Security-Policy'];
     } else {
       return [];
@@ -88,7 +88,7 @@ const handlersByBrowserName: HandlersByBrowserName = {
 
   Safari (browser) {
     const browserVersion = parseFloat(browser.getBrowserVersion());
-    if (browserVersion >= 7) {
+    if (browserVersion >= 7 || isNaN(browserVersion)) {
       return ['Content-Security-Policy'];
     } else if (browserVersion >= 6) {
       return ['X-WebKit-CSP'];
